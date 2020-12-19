@@ -14,4 +14,4 @@ import random
 table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
 
 # showing the table with the data
-st.write("Data contained into the dataset:", data)
+st.write("Data contained into the dataset:", table)
