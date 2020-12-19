@@ -11,10 +11,7 @@ def get_UN_data():
 try:
     df = get_UN_data()
 except urllib.error.URLError as e:
-    st.error(
-        e.reason
-    )
-    return
+    st.error("Connection Error")
 
 countries = st.multiselect(
     "Choose countries", list(df.index), ["China", "United States of America"]
