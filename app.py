@@ -34,9 +34,9 @@ st.write("Data contained into the dataset:", table)
 # map-box part
 st.write("Map")
 
-st.selectbox("select the nut column", table.columns, 0)
-st.selectbox("select the feature column", col_mul, 0)
-st.number_input("insert the quantile value", 0, 100, 50)
+st.sidebar.selectbox("select the nut column", table.columns, 0)
+st.sidebar.selectbox("select the feature column", col_mul, 0)
+st.sidebar.number_input("insert the quantile value", 0, 100, 50)
 
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
 map_box = px.choropleth_mapbox(table, geojson = eu_nut2, locations = table['Nuts'], featureidkey = 'properties.id',
