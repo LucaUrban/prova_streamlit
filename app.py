@@ -59,7 +59,7 @@ st.plotly_chart(map_box, use_container_width=True)
 st.header("Monovariable Analysis")
 
 st.sidebar.subheader("Monovariable Area")
-monoVar_col = st.sidebar.selectbox("select the monovariable feature", table.columns, 0)
+monoVar_col = st.sidebar.selectbox("select the monovariable feature", col_an, 0)
 
 if len(table[monoVar_col].unique()) > 10:
     monoVar_plot = go.Figure(go.Indicator(
