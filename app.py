@@ -39,7 +39,7 @@ nut_col = st.sidebar.selectbox("select the nut column", table.columns, 0)
 map_feature = st.sidebar.selectbox("select the feature column", col_mul, 0)
 map_q = st.sidebar.number_input("insert the quantile value", 0, 100, 50)
 
-res = {nut_col: table[nut_col].unique(), var_col: []}
+res = {nut_col: table[nut_col].unique(), map_feature: []}
 for nut_id in table[nut_col].unique():
     res[map_feature].append(table[table[nut_col] == nut_id][map_feature].quantile(map_q/100))
 res = pd.DataFrame(res)
