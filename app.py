@@ -85,5 +85,10 @@ multi_index = st.sidebar.selectbox("multivariable index col", table.columns, 1)
 multi_time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
 multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
 multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 2)
-st.write(table[multi_time].min())
 multiSlider = st.sidebar.slider("multivarible time value", int(table[multi_time].min()), int(table[multi_time].max()), int(table[multi_time].min()))
+
+dff = table[table[multi_time] == multiSlider]
+fig = px.scatter(x = dff[multiXax_col], y = dff[multiYax_col], hover_name = dff[multi_index])
+fig.update_traces(customdata = dff[multi_index])
+fig.update_xaxes(title = multiXax_col)
+fig.update_yaxes(title = multiYax_col)
