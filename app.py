@@ -73,6 +73,6 @@ if len(table[monoVar_col].unique()) > 10:
                      {'range': [table[monoVar_col].quantile(0.95), table[monoVar_col].max()], 'color': "gray"}],},
         title = {'text': "Gauge plot for the variable: " + monoVar_col}))
 else:
-    monoVar_plot = px.pie(table, names = col, title = "Pie chart for the variable: " + monoVar_col)
+    monoVar_plot = px.pie(table, names = monoVar_col, title = "Pie chart for the variable: " + monoVar_col)
 
 st.plotly_chart(monoVar_plot, use_container_width=True)
