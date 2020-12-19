@@ -54,3 +54,25 @@ map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = res[nut_col],
                            labels = {map_feature: map_feature})
 
 st.plotly_chart(map_box, use_container_width=True)
+
+# mono variable analysis part
+st.header("Monovariable Analysis")
+
+st.sidebar.subheader("Monovariable")
+monoVar_col = st.sidebar.selectbox("select the nut column", table.columns, 0)
+
+if len(table[monoVar_col].unique()) > 10:
+    monoVar_plot = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = table[monoVar_col].mean(),
+        delta = {"reference": 2 * table[monoVar_col].mean() - table[monoVar_col].quantile(0.95)},
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        gauge = {'axis': {'range': [table[monoVar_col].min(), table[monoVar_col].max()]},
+                 'steps' : [
+                     {'range': [table[monoVar_col].min(), table[monoVar_col].quantile(0.05)], 'color': "lightgray"},
+                     {'range': [table[monoVar_col].quantile(0.95), table[monoVar_col].max()], 'color': "gray"}],},
+        title = {'text': "Gauge plot for the variable: " + monoVar_col}))
+else:
+    monoVar_plot = px.pie(table, names = col, title = "Pie chart for the variable: " + monoVar_col)
+
+st.plotly_chart(monoVar_plot, use_container_width=True)
