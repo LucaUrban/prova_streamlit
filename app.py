@@ -33,7 +33,7 @@ st.write("Data contained into the dataset:", table)
 
 st.write("Map")
 
-px.set_mapbox_access_token(open("https://raw.github.com/LucaUrban/prova_streamlit/main/mapbox_token.txt").read())
+px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
 map_box = px.choropleth_mapbox(table, geojson = eu_nut2, locations = table['Nuts'], featureidkey = 'properties.id',
                            color = 'FOUND_YEAR', color_continuous_scale = px.colors.cyclical.IceFire,
                            range_color = (table['FOUND_YEAR'].min(), table['FOUND_YEAR'].quantile(0.95)),
