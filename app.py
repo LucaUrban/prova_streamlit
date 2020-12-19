@@ -47,7 +47,7 @@ res = pd.DataFrame(res)
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
 map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = table[nut_col], featureidkey = 'properties.id',
                            color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
-                           range_color = (table[map_feature].min(), table[map_feature].max()),
+                           range_color = (res[map_feature].min(), res[map_feature].max()),
                            mapbox_style = "carto-positron",
                            zoom = 3, center = {"lat": 47.4270826, "lon": 15.5322329},
                            opacity = 0.5,
