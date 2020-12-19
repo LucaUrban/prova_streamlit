@@ -18,7 +18,6 @@ countries = st.multiselect(
 )
 if not countries:
     st.error("Please select at least one country.")
-    return
 
 data = df.loc[countries]
 data /= 1000000
