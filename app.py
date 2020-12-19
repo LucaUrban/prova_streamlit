@@ -45,7 +45,7 @@ for nut_id in table[nut_col].unique():
 res = pd.DataFrame(res)
 
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
-map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = table[nut_col], featureidkey = 'properties.id',
+map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = res[nut_col], featureidkey = 'properties.id',
                            color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
                            range_color = (res[map_feature].min(), res[map_feature].max()),
                            mapbox_style = "carto-positron",
