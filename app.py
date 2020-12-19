@@ -76,3 +76,12 @@ else:
     monoVar_plot = px.pie(table, names = monoVar_col, title = "Pie chart for the variable: " + monoVar_col)
 
 st.plotly_chart(monoVar_plot, use_container_width=True)
+
+# multi variable analysis part
+st.header("Multivariable Analysis")
+
+st.sidebar.subheader("Multivariable Area")
+multi_index = st.sidebar.selectbox("multivariable index col", col_mul, 0)
+multi_time = st.sidebar.selectbox("multivariable time col", col_mul, 0)
+multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 0)
+multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 0)
