@@ -3,9 +3,6 @@ import time
 import base64
 import os
 from urllib.parse import quote as urlquote
-import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
 import dash_table
 import pandas as pd
 import numpy as np
