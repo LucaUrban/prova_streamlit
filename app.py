@@ -41,7 +41,7 @@ map_q = st.sidebar.number_input("insert the quantile value", 0, 100, 50)
 
 res = {nut_col: table[nut_col].unique(), var_col: []}
 for nut_id in table[nut_col].unique():
-    res[var_col].append(table[table[nut_col] == nut_id][var_col].quantile(map_q/100))
+    res[map_feature].append(table[table[nut_col] == nut_id][map_feature].quantile(map_q/100))
 res = pd.DataFrame(res)
 
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
