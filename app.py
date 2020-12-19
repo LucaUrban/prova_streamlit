@@ -9,7 +9,11 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype
 import json
 import random
-import plotly
+import plotly.graph_objects as go
+import plotly.express as px
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 
 # importing the table and all other necessary files
 table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
