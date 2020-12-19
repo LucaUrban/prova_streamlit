@@ -24,14 +24,19 @@ with urlopen('https://raw.githubusercontent.com/eurostat/Nuts2json/master/2021/4
     eu_nut3 = json.load(response)
 
 # selection boxes columns
-col_an = [col for col in list(table) if len(table[col].unique()) < 10 or is_numeric_dtype(table[col])]; var_in = col_an[0]
+col_an = [col for col in list(table) if len(table[col].unique()) < 10 or is_numeric_dtype(table[col])]
 col_mul = [col for col in list(table) if is_numeric_dtype(table[col])]
 lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
 # showing the table with the data
 st.write("Data contained into the dataset:", table)
 
+# map-box part
 st.write("Map")
+
+st.selectbox("select the nut column", table.columns, 0)
+st.selectbox("select the feature column", col_mul, 0)
+st.number_input("insert the quantile value", 0, 100, 50)
 
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
 map_box = px.choropleth_mapbox(table, geojson = eu_nut2, locations = table['Nuts'], featureidkey = 'properties.id',
