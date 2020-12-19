@@ -3,13 +3,10 @@ import time
 import base64
 import os
 from urllib.parse import quote as urlquote
+from urllib.request import urlopen
 import pandas as pd
 import numpy as np
 from pandas.api.types import is_numeric_dtype
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
-from urllib.request import urlopen
 import json
 import random
 
