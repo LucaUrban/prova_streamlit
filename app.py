@@ -39,8 +39,13 @@ nut_col = st.sidebar.selectbox("select the nut column", table.columns, 0)
 map_feature = st.sidebar.selectbox("select the feature column", col_mul, 0)
 map_q = st.sidebar.number_input("insert the quantile value", 0, 100, 50)
 
+res = {nut_col: table[nut_col].unique(), var_col: []}
+for nut_id in table[nut_col].unique():
+    res[var_col].append(table[table[nut_col] == nut_id][var_col].quantile(map_q/100))
+res = pd.DataFrame(res)
+
 px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
-map_box = px.choropleth_mapbox(table, geojson = eu_nut2, locations = table[nut_col], featureidkey = 'properties.id',
+map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = table[nut_col], featureidkey = 'properties.id',
                            color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
                            range_color = (table[map_feature].min(), table[map_feature].max()),
                            mapbox_style = "carto-positron",
