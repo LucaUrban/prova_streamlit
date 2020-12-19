@@ -9,6 +9,7 @@ import numpy as np
 from pandas.api.types import is_numeric_dtype
 import json
 import random
+import plotly.figure_factory as ff
 
 # importing the table and all other necessary files
 table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
