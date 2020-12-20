@@ -114,10 +114,17 @@ def create_time_series(dff, title, id_col, time_col):
         fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
     return fig
 
+fig_tot = make_subplots(rows=2, cols=2, specs=[[{"rowspan": 2}, {}], [None, {}]])
+
 dff = table[table[multi_time] == multiSlider]
 multi_plot = px.scatter(x = dff[multiXax_col], y = dff[multiYax_col], hover_name = dff[multi_index])
 multi_plot.update_traces(customdata = dff[multi_index])
 multi_plot.update_xaxes(title = multiXax_col)
 multi_plot.update_yaxes(title = multiYax_col)
 
+fig_tot.add_trace(multi_plot, row=1, col=1)
+#fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=1, col=2)
+#fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=2, col=2)
+
 st.plotly_chart(multi_plot, use_container_width=True)
+st.write(multi_plot[clickData])
