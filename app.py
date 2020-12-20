@@ -128,7 +128,7 @@ multi_plot.update_layout(clickmode = 'event')
 #fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=2, col=2)
 
 st.plotly_chart(multi_plot, use_container_width=True)
-multi_plot.on_click(myFun)
+multi_plot.data[0].on_click(myFun)
 
 def myFun():
     st.write(multi_plot.data)
