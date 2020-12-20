@@ -122,7 +122,7 @@ multi_plot.update_traces(customdata = dff[multi_index])
 multi_plot.update_xaxes(title = multiXax_col)
 multi_plot.update_yaxes(title = multiYax_col)
 
-#fig_tot.add_trace(multi_plot, row=1, col=1)
+fig_tot.add_trace(multi_plot, row=1, col=1)
 #fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=1, col=2)
 #fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=2, col=2)
 
