@@ -89,7 +89,7 @@ multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 2)
 multiSlider = st.sidebar.slider("multivarible time value", int(table[multi_time].min()), int(table[multi_time].max()), int(table[multi_time].min()))
 
 def myFun():
-    st.write(multi_plot.data)
+    st.error(1)
 
 def create_time_series(dff, title, id_col, time_col):
     fig = go.Figure()
