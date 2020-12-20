@@ -127,4 +127,4 @@ multi_plot.update_yaxes(title = multiYax_col)
 #fig_tot.add_trace(create_time_series(dff, "", multi_index, multi_time), row=2, col=2)
 
 st.plotly_chart(multi_plot, use_container_width=True)
-st.write(multi_plot)
+st.write(multi_plot.keys)
