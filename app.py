@@ -88,6 +88,9 @@ multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
 multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 2)
 multiSlider = st.sidebar.slider("multivarible time value", int(table[multi_time].min()), int(table[multi_time].max()), int(table[multi_time].min()))
 
+def myFun():
+    st.write(multi_plot.data)
+
 def create_time_series(dff, title, id_col, time_col):
     fig = go.Figure()
     if dff.shape[0] != 0:
@@ -129,6 +132,3 @@ multi_plot.update_layout(clickmode = 'event')
 
 st.plotly_chart(multi_plot, use_container_width=True)
 multi_plot.data[0].on_click(myFun)
-
-def myFun():
-    st.write(multi_plot.data)
