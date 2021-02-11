@@ -87,9 +87,6 @@ multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
 multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 2)
 multiSlider = st.sidebar.slider("multivarible time value", int(table[multi_time].min()), int(table[multi_time].max()), int(table[multi_time].min()))
 
-def myFun():
-    return 1
-
 def create_time_series(dff, title, id_col, time_col):
     fig = go.Figure()
     if dff.shape[0] != 0:
@@ -122,6 +119,8 @@ multi_plot.update_traces(customdata = dff[multi_index])
 multi_plot.update_xaxes(title = multiXax_col)
 multi_plot.update_yaxes(title = multiYax_col)
 multi_plot.update_layout(clickmode = 'event')
+
+st.plotly_chart(multi_plot, use_container_width=True)
 
 # pareto chart with feature importance on huber regressor
 st.header("Feature Importance Analysis")
