@@ -116,6 +116,13 @@ def create_time_series(dff, title, id_col, time_col):
         fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
     return fig
 
+dff = table[table[multi_time] == multiSlider]
+multi_plot = px.scatter(x = dff[multiXax_col], y = dff[multiYax_col], hover_name = dff[multi_index])
+multi_plot.update_traces(customdata = dff[multi_index])
+multi_plot.update_xaxes(title = multiXax_col)
+multi_plot.update_yaxes(title = multiYax_col)
+multi_plot.update_layout(clickmode = 'event')
+
 # pareto chart with feature importance on huber regressor
 st.header("Feature Importance Analysis")
 
@@ -130,19 +137,10 @@ fig_tot = make_subplots(rows = 2, cols = 2,
                                  [{"secondary_y": True}, {"secondary_y": True}]], 
                         subplot_titles = titles)
 
-fig_tot = make_subplots(rows=2, cols=2, specs=[[{"rowspan": 2}, {}], [None, {}]])
-
-dff = table[table[multi_time] == multiSlider]
-multi_plot = px.scatter(x = dff[multiXax_col], y = dff[multiYax_col], hover_name = dff[multi_index])
-multi_plot.update_traces(customdata = dff[multi_index])
-multi_plot.update_xaxes(title = multiXax_col)
-multi_plot.update_yaxes(title = multiYax_col)
-multi_plot.update_layout(clickmode = 'event')
-
 for num_row in range(2):
     for num_col in range(2):
         clf = Ridge(alpha = Alpha[num_row][num_col])
-        clf.fit(train_nm, table["Expected"])
+        clf.fit(train_nm, table["TOT_RES"])
 
         importance = clf.coef_
         for i in range(len(importance)):
