@@ -131,7 +131,7 @@ scaler = StandardScaler(); train_nm = table[fea_Imp_features]
 
 for name_col in fea_Imp_features:
     train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
-train_nm = scaler.fit_transform(train)
+train_nm = scaler.fit_transform(train_nm)
 
 Alpha = [.1, 1, 10, 100]; titles = tuple("Feature importance for alpha = " + str(alpha) for alpha in Alpha)
 Alpha = [[.1, 1], [10, 100]]
