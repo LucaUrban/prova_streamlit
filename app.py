@@ -134,7 +134,7 @@ for i in range(2):
                            bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
         fig.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
         fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
-    fig_tcc.add_trace(fig)
+    fig_tcc.add_trace(fig, row = i, column = 1)
 
 st.plotly_chart(fig_tcc, use_container_width=True)
 
