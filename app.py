@@ -109,9 +109,8 @@ if len(list(dff_tcc[multi_time].unique())) < dff_tcc.shape[0]:
     dff_tcc = pd.DataFrame(data = res)
 titleX = '<b>{}</b><br>{}'.format(el_id, multiXax_col); titleY = '<b>{}</b><br>{}'.format(el_id, multiYax_col)
 
-fig_tcc = make_subplots(rows = 2, cols = 1, specs = [[{}], [{}]], subplot_titles = (titleX, titleY))
+fig_tcc = go.Figure()
 for i in range(2):
-    fig = go.Figure()
     if dff_tcc.shape[0] != 0:
         x_bar = []
         for inst in table[multi_index].unique():
@@ -129,14 +128,14 @@ for i in range(2):
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_UCL for _ in range(len(x_el))], mode = "lines", name = "Upper Bound"), row=i+1, col=1)
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_LCL for _ in range(len(x_el))], mode = "lines", name = "Lower Bound"), row=i+1, col=1)
         
-fig_tcc.update_xaxes(showgrid = False)
-fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
-                       xref='paper', yref='paper', showarrow=False, align='left',
-                       bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
-fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
-fig_tcc.update_layout(height = 300, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
+        fig_tcc.update_xaxes(showgrid = False)
+        fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                               xref='paper', yref='paper', showarrow=False, align='left',
+                               bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
+        fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
+        fig_tcc.update_layout(height = 300, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
-st.plotly_chart(fig_tcc, use_container_width=True)
+        st.plotly_chart(fig_tcc, use_container_width=True)
 
 # pareto chart with feature importance on huber regressor
 st.header("Feature Importance Analysis")
