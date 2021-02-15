@@ -87,32 +87,6 @@ multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
 multiYax_col = st.sidebar.selectbox("multivariable Y axis col", col_mul, 2)
 multiSlider = st.sidebar.slider("multivarible time value", int(table[multi_time].min()), int(table[multi_time].max()), int(table[multi_time].min()))
 
-def create_time_series(dff, title, id_col, time_col):
-    fig = go.Figure()
-    if dff.shape[0] != 0:
-        x_bar = []
-        for inst in table[id_col].unique():
-            inst_data = table[table[id_col] == inst][list(dff)[1]]
-            if inst_data.count() != 0:
-                x_bar.append(inst_data.mean())
-
-        x_barbar = round(sum(x_bar)/len(x_bar), 3)
-
-        x_LCL = x_barbar - (1.88 * (dff[list(dff)[1]].quantile(0.95) - dff[list(dff)[1]].quantile(0.05)))
-        x_UCL = x_barbar + (1.88 * (dff[list(dff)[1]].quantile(0.95) - dff[list(dff)[1]].quantile(0.05)))
-
-        x_el = [i for i in range(int(dff[time_col].min()), int(dff[time_col].max()) + 1)]
-        fig.add_trace(go.Scatter(x = dff[time_col], y = dff[list(dff)[1]], mode = 'lines+markers', name = "Value"))
-        fig.add_trace(go.Scatter(x = x_el, y = [x_UCL for _ in range(len(x_el))], mode = "lines", name = "Upper Bound"))
-        fig.add_trace(go.Scatter(x = x_el, y = [x_LCL for _ in range(len(x_el))], mode = "lines", name = "Lower Bound"))
-        fig.update_xaxes(showgrid=False)
-        fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
-                           xref='paper', yref='paper', showarrow=False, align='left',
-                           bgcolor='rgba(255, 255, 255, 0.5)', text = title)
-        fig.update_layout(xaxis_title = time_col, yaxis_title = list(dff)[1])
-        fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
-    return fig
-
 dff = table[table[multi_time] == multiSlider]
 multi_plot = px.scatter(x = dff[multiXax_col], y = dff[multiYax_col], hover_name = dff[multi_index])
 multi_plot.update_traces(customdata = dff[multi_index])
@@ -121,6 +95,43 @@ multi_plot.update_yaxes(title = multiYax_col)
 multi_plot.update_layout(clickmode = 'event')
 
 st.plotly_chart(multi_plot, use_container_width=True)
+
+# time control charts
+el_id = st.selectbox("element ID for time control chart", table[multi_index].unique, 1)
+
+dff_tcc = table[table[id_col] == el_ud][[multi_time, multiXax_col]]
+if len(list(dff_tcc[multi_time].unique())) < dff_tcc.shape[0]:
+    res = {multi_time: [], multiXax_col: []}
+    for el in list(dff_tcc[multi_time].unique()):
+        res[multi_time].append(el); res[multiXax_col].append(dff_tcc[dff_tcc[multi_time] == el][multiXax_col].mean())
+    dff_tcc = pd.DataFrame(data = res)
+title = '<b>{}</b><br>{}'.format(el_id, multiXax_col)
+fig = go.Figure()
+
+if dff_tcc.shape[0] != 0:
+    x_bar = []
+    for inst in table[multi_index].unique():
+        inst_data = table[table[multi_index] == inst][list(dff_tcc)[1]]
+        if inst_data.count() != 0:
+            x_bar.append(inst_data.mean())
+
+    x_barbar = round(sum(x_bar)/len(x_bar), 3)
+
+    x_LCL = x_barbar - (1.88 * (dff_tcc[list(dff_tcc)[1]].quantile(0.95) - dff_tcc[list(dff_tcc)[1]].quantile(0.05)))
+    x_UCL = x_barbar + (1.88 * (dff_tcc[list(dff_tcc)[1]].quantile(0.95) - dff_tcc[list(dff_tcc)[1]].quantile(0.05)))
+
+    x_el = [i for i in range(int(dff_tcc[multi_time].min()), int(dff_tcc[multi_time].max()) + 1)]
+    fig.add_trace(go.Scatter(x = dff_tcc[multi_time], y = dff[list(dff_tcc)[1]], mode = 'lines+markers', name = "Value"))
+    fig.add_trace(go.Scatter(x = x_el, y = [x_UCL for _ in range(len(x_el))], mode = "lines", name = "Upper Bound"))
+    fig.add_trace(go.Scatter(x = x_el, y = [x_LCL for _ in range(len(x_el))], mode = "lines", name = "Lower Bound"))
+    fig.update_xaxes(showgrid = False)
+    fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                       xref='paper', yref='paper', showarrow=False, align='left',
+                       bgcolor='rgba(255, 255, 255, 0.5)', text = title)
+    fig.update_layout(xaxis_title = time_col, yaxis_title = list(dff)[1])
+    fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
+
+st.plotly_chart(fig, use_container_width=True)
 
 # pareto chart with feature importance on huber regressor
 st.header("Feature Importance Analysis")
