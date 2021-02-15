@@ -131,7 +131,7 @@ for i in range(2):
         fig.update_xaxes(showgrid = False)
         fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                            xref='paper', yref='paper', showarrow=False, align='left',
-                           bgcolor='rgba(255, 255, 255, 0.5)', text = title)
+                           bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
         fig.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
         fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
     fig_tcc.add_trace(fig)
