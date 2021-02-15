@@ -128,12 +128,13 @@ for i in range(2):
         fig_tcc.add_trace(go.Scatter(x = dff_tcc[multi_time], y = dff_tcc[list(dff_tcc)[1]], mode = 'lines+markers', name = "Value"), row=i+1, col=1)
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_UCL for _ in range(len(x_el))], mode = "lines", name = "Upper Bound"), row=i+1, col=1)
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_LCL for _ in range(len(x_el))], mode = "lines", name = "Lower Bound"), row=i+1, col=1)
-        fig_tcc.update_xaxes(showgrid = False)
-        fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
-                               xref='paper', yref='paper', showarrow=False, align='left',
-                               bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
-        fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
-        fig_tcc.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
+        
+    fig_tcc.update_xaxes(showgrid = False)
+    fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                           xref='paper', yref='paper', showarrow=False, align='left',
+                           bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
+    fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
+    fig_tcc.update_layout(height = 300, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
 st.plotly_chart(fig_tcc, use_container_width=True)
 
