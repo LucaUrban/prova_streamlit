@@ -107,7 +107,7 @@ if len(list(dff_tcc[multi_time].unique())) < dff_tcc.shape[0]:
         res[multiXax_col].append(dff_tcc[dff_tcc[multi_time] == el][multiXax_col].mean())
         res[multiYax_col].append(dff_tcc[dff_tcc[multi_time] == el][multiYax_col].mean())
     dff_tcc = pd.DataFrame(data = res)
-titleX = '<b>{}</b><br>{}'.format(el_id, multiXax_col); titleY = '<b>{}</b><br>{}'.format(el_id, multiYax_col)
+titles = ['<b>{}</b><br>{}'.format(el_id, multiXax_col), '<b>{}</b><br>{}'.format(el_id, multiYax_col)]
 
 fig_tcc = go.Figure()
 for i in range(2):
@@ -131,7 +131,7 @@ for i in range(2):
         fig_tcc.update_xaxes(showgrid = False)
         fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                                xref='paper', yref='paper', showarrow=False, align='left',
-                               bgcolor='rgba(255, 255, 255, 0.5)', text = titleX)
+                               bgcolor='rgba(255, 255, 255, 0.5)', text = titles[i])
         fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i])
         fig_tcc.update_layout(height = 300, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
