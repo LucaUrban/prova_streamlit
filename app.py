@@ -133,7 +133,7 @@ for i in range(2):
                                xref='paper', yref='paper', showarrow=False, align='left',
                                bgcolor='rgba(255, 255, 255, 0.5)', text = titles[i])
         fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i+1])
-        fig_tcc.update_layout(height = 300, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
+        fig_tcc.update_layout(height = 250, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
         st.plotly_chart(fig_tcc, use_container_width=True)
 
