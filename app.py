@@ -125,7 +125,7 @@ for i in range(2):
         x_UCL = x_barbar + (1.88 * (dff_tcc[list(dff_tcc)[i]].quantile(0.95) - dff_tcc[list(dff_tcc)[i]].quantile(0.05)))
 
         x_el = [i for i in range(int(dff_tcc[multi_time].min()), int(dff_tcc[multi_time].max()) + 1)]
-        fig_tcc.add_trace(go.Scatter(x = dff_tcc[multi_time], y = dff_tcc[list(dff_tcc)[1]], mode = 'lines+markers', name = "Value"), row=i+1, col=1)
+        fig_tcc.add_trace(go.Scatter(x = dff_tcc[multi_time], y = dff_tcc[list(dff_tcc)[i]], mode = 'lines+markers', name = "Value"), row=i+1, col=1)
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_UCL for _ in range(len(x_el))], mode = "lines", name = "Upper Bound"), row=i+1, col=1)
         fig_tcc.add_trace(go.Scatter(x = x_el, y = [x_LCL for _ in range(len(x_el))], mode = "lines", name = "Lower Bound"), row=i+1, col=1)
         
