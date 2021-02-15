@@ -128,7 +128,7 @@ if dff_tcc.shape[0] != 0:
     fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                        xref='paper', yref='paper', showarrow=False, align='left',
                        bgcolor='rgba(255, 255, 255, 0.5)', text = title)
-    fig.update_layout(xaxis_title = time_col, yaxis_title = list(dff)[1])
+    fig.update_layout(xaxis_title = multi_time, yaxis_title = list(dff)[1])
     fig.update_layout(height = 245, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
 st.plotly_chart(fig, use_container_width=True)
