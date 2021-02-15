@@ -99,7 +99,7 @@ st.plotly_chart(multi_plot, use_container_width=True)
 # time control charts
 el_id = st.selectbox("element ID for time control chart", table[multi_index].unique(), 1)
 
-dff_tcc = table[table[multi_index] == el_ud][[multi_time, multiXax_col]]
+dff_tcc = table[table[multi_index] == el_id][[multi_time, multiXax_col]]
 if len(list(dff_tcc[multi_time].unique())) < dff_tcc.shape[0]:
     res = {multi_time: [], multiXax_col: []}
     for el in list(dff_tcc[multi_time].unique()):
