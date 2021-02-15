@@ -109,8 +109,8 @@ if len(list(dff_tcc[multi_time].unique())) < dff_tcc.shape[0]:
     dff_tcc = pd.DataFrame(data = res)
 titles = ['<b>{}</b><br>{}'.format(el_id, multiXax_col), '<b>{}</b><br>{}'.format(el_id, multiYax_col)]
 
-fig_tcc = go.Figure()
 for i in range(2):
+    fig_tcc = go.Figure()
     if dff_tcc.shape[0] != 0:
         x_bar = []
         for inst in table[multi_index].unique():
