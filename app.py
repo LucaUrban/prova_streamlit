@@ -15,6 +15,11 @@ from plotly.subplots import make_subplots
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+  df = pd.read_csv(uploaded_file)
+  st.write(dataframe)
+
 # importing the table and all other necessary files
 table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
 with urlopen('https://raw.githubusercontent.com/eurostat/Nuts2json/master/2021/4326/60M/nutsrg_2.json') as response:
