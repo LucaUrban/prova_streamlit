@@ -95,7 +95,6 @@ if uploaded_file is not None:
     multi_plot.update_traces(customdata = dff[multi_index])
     multi_plot.update_xaxes(title = multiXax_col)
     multi_plot.update_yaxes(title = multiYax_col)
-    multi_plot.update_layout(clickmode = 'event')
 
     st.plotly_chart(multi_plot, use_container_width=True)
 
@@ -139,6 +138,21 @@ if uploaded_file is not None:
             fig_tcc.update_layout(height = 250, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
             st.plotly_chart(fig_tcc, use_container_width=True)
+            
+    # crossfilter analysis part
+    st.header("Autocorrelation Analysis")
+
+    st.sidebar.subheader("Multivariable Area")
+    cross_index = st.sidebar.selectbox("multivariable index col", table.columns, 1)
+    cross_time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
+    cross_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
+    crossSlider = st.sidebar.slider("multivarible time value", int(table[cross_time].min()), int(table[cross_time].max()), int(table[cross_time].min()))
+
+    dff_cross = table[table[cross_time] == crossSlider]
+    cross_plot = px.scatter(x = dff_cross[cross_col], y = dff[cross_col], hover_name = dff[cross_index])
+    cross_plot.update_traces(customdata = dff_cross[cross_index])
+    cross_plot.update_xaxes(title = cross_col)
+    cross_plot.update_yaxes(title = cross_col)
 
     # pareto chart with feature importance on ridge regressor
     st.sidebar.subheader("Feature Importance Area")
