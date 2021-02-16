@@ -140,7 +140,10 @@ if uploaded_file is not None:
 
             st.plotly_chart(fig_tcc, use_container_width=True)
 
-    # pareto chart with feature importance on huber regressor
+    # pareto chart with feature importance on ridge regressor
+    st.sidebar.subheader("Feature Importance Area")
+    feaImp_target = st.sidebar.selectbox("multivariable index col", col_mul, 1)
+    
     st.header("Feature Importance Analysis")
 
     fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
@@ -162,7 +165,7 @@ if uploaded_file is not None:
     for num_row in range(2):
         for num_col in range(2):
             clf = Ridge(alpha = Alpha[num_row][num_col])
-            clf.fit(train_nm, table["TOT_RES"])
+            clf.fit(train_nm, table[feaImp_target])
 
             importance = clf.coef_
             for i in range(len(importance)):
