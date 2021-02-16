@@ -19,8 +19,7 @@ uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     table = pd.read_csv(uploaded_file)
 
-    # importing the table and all other necessary files
-    table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
+    # importing all other necessary files
     with urlopen('https://raw.githubusercontent.com/eurostat/Nuts2json/master/2021/4326/60M/nutsrg_2.json') as response:
         eu_nut2 = json.load(response)
 
