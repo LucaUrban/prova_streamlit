@@ -153,6 +153,8 @@ if uploaded_file is not None:
     cross_plot.update_traces(customdata = dff_cross[cross_index])
     cross_plot.update_xaxes(title = cross_col)
     cross_plot.update_yaxes(title = cross_col)
+    
+    st.plotly_chart(cross_plot, use_container_width=True)
 
     # pareto chart with feature importance on ridge regressor
     st.sidebar.subheader("Feature Importance Area")
