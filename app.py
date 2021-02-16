@@ -149,7 +149,7 @@ if uploaded_file is not None:
     crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()), int(table[cross_time].min()))
 
     dff_cross = table[table[cross_time] == crossSlider]
-    cross_plot = px.scatter(x = dff_cross[cross_col], y = dff[cross_col], hover_name = dff[cross_index])
+    cross_plot = px.scatter(x = dff_cross[cross_col], y = dff[cross_col], hover_name = dff_cross[cross_index])
     cross_plot.update_traces(customdata = dff_cross[cross_index])
     cross_plot.update_xaxes(title = cross_col)
     cross_plot.update_yaxes(title = cross_col)
