@@ -17,8 +17,7 @@ from sklearn.preprocessing import StandardScaler
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-  df = pd.read_csv(uploaded_file)
-  st.write(df)
+  table = pd.read_csv(uploaded_file)
 
 # importing the table and all other necessary files
 table = pd.read_csv("https://raw.github.com/LucaUrban/prova_streamlit/main/table_final.csv")
