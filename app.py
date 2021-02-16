@@ -146,10 +146,10 @@ if uploaded_file is not None:
     cross_index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
     cross_time = st.sidebar.selectbox("autocorrelation time col", table.columns, 3)
     cross_col = st.sidebar.selectbox("autocorrelation X axis col", col_mul, 1)
-    crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()), int(table[cross_time].min()))
+    crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()-1), int(table[cross_time].min()))
 
-    dff_cross = table[table[cross_time] == crossSlider]
-    cross_plot = px.scatter(x = dff_cross[cross_col], y = dff_cross[cross_col], hover_name = dff_cross[cross_index])
+    dff_cross_dw = table[table[cross_time] == crossSlider]; dff_cross_up = table[table[cross_time] == crossSlider+1];
+    cross_plot = px.scatter(x = dff_cross_dw[cross_col], y = dff_cross_up[cross_col], hover_name = dff_cross[cross_index])
     cross_plot.update_traces(customdata = dff_cross[cross_index])
     cross_plot.update_xaxes(title = cross_col)
     cross_plot.update_yaxes(title = cross_col)
