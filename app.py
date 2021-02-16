@@ -142,11 +142,11 @@ if uploaded_file is not None:
     # crossfilter analysis part
     st.header("Autocorrelation Analysis")
 
-    st.sidebar.subheader("Multivariable Area")
-    cross_index = st.sidebar.selectbox("multivariable index col", table.columns, 1)
-    cross_time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
-    cross_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
-    crossSlider = st.sidebar.slider("multivarible time value", int(table[cross_time].min()), int(table[cross_time].max()), int(table[cross_time].min()))
+    st.sidebar.subheader("Autocorrelation Area")
+    cross_index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
+    cross_time = st.sidebar.selectbox("autocorrelation time col", table.columns, 3)
+    cross_col = st.sidebar.selectbox("autocorrelation X axis col", col_mul, 1)
+    crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()), int(table[cross_time].min()))
 
     dff_cross = table[table[cross_time] == crossSlider]
     cross_plot = px.scatter(x = dff_cross[cross_col], y = dff[cross_col], hover_name = dff[cross_index])
