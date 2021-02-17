@@ -167,33 +167,36 @@ if uploaded_file is not None:
         res = {cross_time: [], cross_col: []}
         for el in list(dff[cross_time].unique()):
             res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][cross_col].mean())
-        dff = pd.DataFrame(data = res)
-    title = '<b>{}</b><br>{}'.format(hoverData['points'][0]['customdata'], column_name)
+        dff_diff = pd.DataFrame(data = res)
+    title = '<b>{}</b><br>{}'.format(el_id_diff, cross_col)
     
     fig = go.Figure(); flag = 0
-    if dff.shape[0] > 1:
-        x = [[i, 0] for i in range(1, dff.shape[0])]
-        print(x)
-        Y = [dff[column_name].iloc[dff.shape[0] - i - 1] - dff[column_name].iloc[dff.shape[0] - i] for i in range(1, dff.shape[0])]
+    if dff_diff.shape[0] > 1:
+        x = [[i, 0] for i in range(1, dff_diff.shape[0])]
+        Y = [dff_diff[column_name].iloc[dff_diff.shape[0] - i - 1] - dff_diff[column_name].iloc[dff_diff.shape[0] - i] for i in range(1, dff_diff.shape[0])]
         reg = LinearRegression().fit(x, Y); coeff = reg.coef_; intercept = reg.intercept_
         
-        fig.add_trace(go.Scatter(x = [str(dff[time_col].iloc[dff.shape[0] - i]) + "-" + str(dff[time_col].iloc[dff.shape[0] - i - 1]) for i in range(1, dff.shape[0])], 
-                                 y = Y, 
-                                 mode = 'markers', name = "Value"))
-        fig.add_trace(go.Scatter(x = [str(dff[time_col].iloc[dff.shape[0] - i]) + "-" + str(dff[time_col].iloc[dff.shape[0] - i - 1]) for i in range(1, dff.shape[0])], 
-                                 y = [intercept + (i * coeff[0]) for i in range(dff.shape[0])], 
+        fig_diff.add_trace(go.Scatter(x = [str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
+                                 y = Y, mode = 'markers', name = "Value"))
+        fig_diff.add_trace(go.Scatter(x = [str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
+                                 y = [intercept + (i * coeff[0]) for i in range(dff_diff.shape[0])], 
                                  mode = 'lines', name = "Regression"))
-        fig.update_xaxes(showgrid=False)
-        fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+        fig_diff.update_xaxes(showgrid=False)
+        fig_diff.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                            xref='paper', yref='paper', showarrow=False, align='left',
                            bgcolor='rgba(255, 255, 255, 0.5)', text = title)
-        fig.update_layout(xaxis_title = time_col, yaxis_title = list(dff)[1])
+        fig_diff.update_layout(xaxis_title = corr_time, yaxis_title = list(dff_diff)[1])
         flag = 1
     
-    fig.update_layout(height = 245, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
-    #if flag == 1:
-        #return fig, round(intercept, 4), round(coeff[0], 4)
-    #return fig, "None", "None"
+    fig_diff.update_layout(height = 250, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
+    
+    st.plotly_chart(fig_diff, use_container_width = True)
+    if flag == 1:
+        st.write(round(intercept, 4)) 
+        st.write(round(coeff[0], 4))
+    else: 
+        st.write("None") 
+        st.write("None")
 
     # pareto chart with feature importance on ridge regressor
     st.sidebar.subheader("Feature Importance Area")
