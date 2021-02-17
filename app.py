@@ -191,7 +191,7 @@ if uploaded_file is not None:
         flag = 1
     
     fig.update_layout(height = 245, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
-    if flag == 1:
+    #if flag == 1:
         #return fig, round(intercept, 4), round(coeff[0], 4)
     #return fig, "None", "None"
 
