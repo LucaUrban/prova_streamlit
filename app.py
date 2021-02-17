@@ -148,11 +148,14 @@ if uploaded_file is not None:
     cross_col = st.sidebar.selectbox("autocorrelation X axis col", col_mul, 1)
     crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()-1), int(table[cross_time].min()))
 
-    dff_cross_dw = table[table[cross_time] == crossSlider]; dff_cross_up = table[table[cross_time] == crossSlider+1];
-    cross_plot = px.scatter(x = dff_cross_dw[cross_col], y = dff_cross_up[cross_col], hover_name = dff_cross[cross_index])
-    cross_plot.update_traces(customdata = dff_cross[cross_index])
+    dff_cross_dw = table[table[cross_time] == crossSlider][[cross_index, cross_col]]
+    dff_cross_up = table[table[cross_time] == crossSlider + 1][[cross_index, cross_col]]
+    final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = index)
+
+    cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df[cross_index])
+
     cross_plot.update_xaxes(title = cross_col)
-    cross_plot.update_yaxes(title = cross_col)
+    cross_plot.update_yaxes(title = cross_col + " Next Year")
     
     st.plotly_chart(cross_plot, use_container_width=True)
 
