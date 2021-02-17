@@ -160,7 +160,7 @@ if uploaded_file is not None:
     st.plotly_chart(cross_plot, use_container_width=True)
     
     st.subheader("Autocorrelation")
-    st.write("Autocorrelation value: " + str(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"])))
+    st.write("Autocorrelation value: " + str(round(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"])), 5))
     
     # difference timeseries plot
     el_id_diff = st.selectbox("element ID for differences timeseries chart", table[cross_index].unique())
@@ -191,12 +191,14 @@ if uploaded_file is not None:
         fig_diff.update_layout(xaxis_title = cross_time, yaxis_title = list(dff_diff)[1])
         flag = 1
     
-    fig_diff.update_layout(height = 250, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
+    fig_diff.update_layout(height = 250)
     
     st.plotly_chart(fig_diff, use_container_width = True)
+    
+    st.subheader("Regression Parameters")
     if flag == 1:
-        st.write(round(intercept, 4)) 
-        st.write(round(coeff[0], 4))
+        st.write("Intercept: " + str(round(intercept, 4)))
+        st.write("Slope: " + str(round(coeff[0], 4)))
     else: 
         st.write("None") 
         st.write("None")
