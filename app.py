@@ -150,7 +150,7 @@ if uploaded_file is not None:
 
     dff_cross_dw = table[table[cross_time] == crossSlider][[cross_index, cross_col]]
     dff_cross_up = table[table[cross_time] == crossSlider + 1][[cross_index, cross_col]]
-    final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = index)
+    final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = cross_index)
 
     cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df[cross_index])
 
@@ -158,6 +158,42 @@ if uploaded_file is not None:
     cross_plot.update_yaxes(title = cross_col + " Next Year")
     
     st.plotly_chart(cross_plot, use_container_width=True)
+    
+    # difference timeseries plot
+    el_id_diff = st.selectbox("element ID for differences timeseries chart", table[cross_index].unique())
+    
+    dff_diff = table[table[cross_index] == el_id_diff]
+    if len(list(dff_diff[cross_time].unique())) < dff_diff.shape[0]:
+        res = {cross_time: [], cross_col: []}
+        for el in list(dff[cross_time].unique()):
+            res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][yaxis_column_name].mean())
+        dff = pd.DataFrame(data = res)
+    title = '<b>{}</b><br>{}'.format(hoverData['points'][0]['customdata'], column_name)
+    
+    fig = go.Figure(); flag = 0
+    if dff.shape[0] > 1:
+        x = [[i, 0] for i in range(1, dff.shape[0])]
+        print(x)
+        Y = [dff[column_name].iloc[dff.shape[0] - i - 1] - dff[column_name].iloc[dff.shape[0] - i] for i in range(1, dff.shape[0])]
+        reg = LinearRegression().fit(x, Y); coeff = reg.coef_; intercept = reg.intercept_
+        
+        fig.add_trace(go.Scatter(x = [str(dff[time_col].iloc[dff.shape[0] - i]) + "-" + str(dff[time_col].iloc[dff.shape[0] - i - 1]) for i in range(1, dff.shape[0])], 
+                                 y = Y, 
+                                 mode = 'markers', name = "Value"))
+        fig.add_trace(go.Scatter(x = [str(dff[time_col].iloc[dff.shape[0] - i]) + "-" + str(dff[time_col].iloc[dff.shape[0] - i - 1]) for i in range(1, dff.shape[0])], 
+                                 y = [intercept + (i * coeff[0]) for i in range(dff.shape[0])], 
+                                 mode = 'lines', name = "Regression"))
+        fig.update_xaxes(showgrid=False)
+        fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                           xref='paper', yref='paper', showarrow=False, align='left',
+                           bgcolor='rgba(255, 255, 255, 0.5)', text = title)
+        fig.update_layout(xaxis_title = time_col, yaxis_title = list(dff)[1])
+        flag = 1
+    
+    fig.update_layout(height = 245, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
+    if flag == 1:
+        return fig, round(intercept, 4), round(coeff[0], 4)
+    return fig, "None", "None"
 
     # pareto chart with feature importance on ridge regressor
     st.sidebar.subheader("Feature Importance Area")
