@@ -152,7 +152,7 @@ if uploaded_file is not None:
     dff_cross_up = table[table[cross_time] == crossSlider + 1][[cross_index, cross_col]]
     final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = cross_index)
 
-    cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df[cross_index])
+    cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df_cross[cross_index])
 
     cross_plot.update_xaxes(title = cross_col)
     cross_plot.update_yaxes(title = cross_col + " Next Year")
@@ -166,7 +166,7 @@ if uploaded_file is not None:
     if len(list(dff_diff[cross_time].unique())) < dff_diff.shape[0]:
         res = {cross_time: [], cross_col: []}
         for el in list(dff[cross_time].unique()):
-            res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][yaxis_column_name].mean())
+            res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][cross_col].mean())
         dff = pd.DataFrame(data = res)
     title = '<b>{}</b><br>{}'.format(hoverData['points'][0]['customdata'], column_name)
     
