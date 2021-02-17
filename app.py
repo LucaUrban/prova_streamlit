@@ -191,7 +191,7 @@ if uploaded_file is not None:
         fig_diff.update_layout(xaxis_title = cross_time, yaxis_title = list(dff_diff)[1])
         flag = 1
     
-    fig_diff.update_layout(height = 250)
+    fig_diff.update_layout(height = 400)
     
     st.plotly_chart(fig_diff, use_container_width = True)
     
