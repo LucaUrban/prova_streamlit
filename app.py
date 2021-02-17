@@ -173,7 +173,7 @@ if uploaded_file is not None:
     fig = go.Figure(); flag = 0
     if dff_diff.shape[0] > 1:
         x = [[i, 0] for i in range(1, dff_diff.shape[0])]
-        Y = [dff_diff[column_name].iloc[dff_diff.shape[0] - i - 1] - dff_diff[column_name].iloc[dff_diff.shape[0] - i] for i in range(1, dff_diff.shape[0])]
+        Y = [dff_diff[cross_col].iloc[dff_diff.shape[0] - i - 1] - dff_diff[cross_col].iloc[dff_diff.shape[0] - i] for i in range(1, dff_diff.shape[0])]
         reg = LinearRegression().fit(x, Y); coeff = reg.coef_; intercept = reg.intercept_
         
         fig_diff.add_trace(go.Scatter(x = [str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[corr_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
