@@ -185,7 +185,7 @@ if uploaded_file is not None:
         fig_diff.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                            xref='paper', yref='paper', showarrow=False, align='left',
                            bgcolor='rgba(255, 255, 255, 0.5)', text = title)
-        fig_diff.update_layout(xaxis_title = corr_time, yaxis_title = list(dff_diff)[1])
+        fig_diff.update_layout(xaxis_title = cross_time, yaxis_title = list(dff_diff)[1])
         flag = 1
     
     fig_diff.update_layout(height = 250, margin = {'l': 10, 'b': 10, 'r': 10, 't': 0})
