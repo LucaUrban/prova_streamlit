@@ -160,7 +160,7 @@ if uploaded_file is not None:
     st.plotly_chart(cross_plot, use_container_width=True)
     
     st.subheader("Autocorrelation")
-    st.write("Autocorrelation value: " + str(round(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"])), 5))
+    st.write("Autocorrelation value: " + str(round(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"]), 5)))
     
     # difference timeseries plot
     el_id_diff = st.selectbox("element ID for differences timeseries chart", table[cross_index].unique())
