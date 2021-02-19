@@ -16,7 +16,7 @@ from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 
 st.title("Visual Analytics Environement")
-st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset." +
+st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to regresh the page.")
 
 uploaded_file = st.file_uploader("Choose a file")
@@ -34,17 +34,21 @@ if uploaded_file is not None:
     col_an = [col for col in list(table) if len(table[col].unique()) < 10 or is_numeric_dtype(table[col])]
     col_mul = [col for col in list(table) if is_numeric_dtype(table[col])]
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
-
+         
     # showing the table with the data
+    st.header("Table")
+    st.write("In this part there is a representation of the table with all the data contained into the dataset.")
     st.write("Data contained into the dataset:", table)
-
+         
     # map-box part
-    st.header("Map")
-
     st.sidebar.subheader("Map area")
     nut_col = st.sidebar.selectbox("select the nut column", table.columns, 0)
     map_feature = st.sidebar.selectbox("select the feature column", col_mul, 0)
     map_q = st.sidebar.number_input("insert the quantile value", 0, 100, 50)
+
+    st.header("Map")
+    st.write("In this part you can create a map plot with the information about a certain quantile by specifing in the sidebar a valid nut column, the variable from which " +
+             "you want to vizualize the quantile and the quantile value")
 
     res = {nut_col: table[nut_col].unique(), map_feature: []}
     for nut_id in table[nut_col].unique():
@@ -64,6 +68,7 @@ if uploaded_file is not None:
 
     # mono variable analysis part
     st.header("Monovariable Analysis")
+    st.write("In this part you can a pie chart or a gauge plot (depending on the charasteristics of the variable chosen).")
 
     st.sidebar.subheader("Monovariable Area")
     monoVar_col = st.sidebar.selectbox("select the monovariable feature", col_an, 0)
