@@ -15,7 +15,7 @@ from plotly.subplots import make_subplots
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 
-st.title("Visual Analytics Environement")
+st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to regresh the page.")
 
