@@ -37,7 +37,6 @@ if uploaded_file is not None:
          
     # showing the table with the data
     st.header("Table")
-    st.write("In this part there is a representation of the table with all the data contained into the dataset.")
     st.write("Data contained into the dataset:", table)
          
     # map-box part
@@ -47,8 +46,6 @@ if uploaded_file is not None:
     map_q = st.sidebar.number_input("insert the quantile value", 0, 100, 50)
 
     st.header("Map")
-    st.write("In this part you can create a map plot with the information about a certain quantile by specifing in the sidebar a valid nut column, the variable from which " +
-             "you want to vizualize the quantile and the quantile value")
 
     res = {nut_col: table[nut_col].unique(), map_feature: []}
     for nut_id in table[nut_col].unique():
@@ -67,13 +64,13 @@ if uploaded_file is not None:
     st.plotly_chart(map_box, use_container_width=True)
 
     # mono variable analysis part
-    st.header("Monovariable Analysis")
-    st.write("In this part you can a pie chart or a gauge plot (depending on the charasteristics of the variable chosen).")
+    st.header("Monodimension Analysis")
 
     st.sidebar.subheader("Monovariable Area")
     monoVar_col = st.sidebar.selectbox("select the monovariable feature", col_an, 0)
+    monoVar_type = st.sidebar.selectbox("select the type of the chart", ["gauge plot", "pie chart"], 0)
 
-    if len(table[monoVar_col].unique()) > 10:
+    if monoVar_type == "gauge plot":
         monoVar_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
             value = table[monoVar_col].mean(),
@@ -90,7 +87,7 @@ if uploaded_file is not None:
     st.plotly_chart(monoVar_plot, use_container_width=True)
 
     # multi variable analysis part
-    st.header("Multivariable Analysis")
+    st.header("Multidimension Analysis")
 
     st.sidebar.subheader("Multivariable Area")
     multi_index = st.sidebar.selectbox("multivariable index col", table.columns, 1)
