@@ -87,7 +87,7 @@ if uploaded_file is not None:
                 gauge = {'axis': {'range': [table[monoVar_col].min(), table[monoVar_col].max()]},
                          'steps' : [
                              {'range': [table[monoVar_col].min(), table[monoVar_col].quantile(0.05)], 'color': "lightgray"},
-                             {'range': [table[monoVar_col].quantile(0.95), table[monoVar_col].max()], 'color': "gray"}],},
+                             {'range': [table[monoVar_col].quantile(0.95), table[monoVar_col].max()], 'color': "gray"}]},
                 title = {'text': "Gauge plot for the variable: " + monoVar_col}))
         else:
             monoVar_plot = px.pie(table, names = monoVar_col, title = "Pie chart for the variable: " + monoVar_col)
@@ -112,13 +112,13 @@ if uploaded_file is not None:
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
-            value = res.mean(),
-            delta = {"reference": 2 * res.mean() - res.quantile(0.95)},
+            value = res['R_1'].mean(),
+            delta = {"reference": 2 * res['R_1'].mean() - res['R_1'].quantile(0.95)},
             domain = {'x': [0, 1], 'y': [0, 1]},
-            gauge = {'axis': {'range': [res.min(), res.max()]},
+            gauge = {'axis': {'range': [res['R_1'].min(), res['R_1'].max()]},
                      'steps' : [
-                         {'range': [res.min(), res.quantile(0.05)], 'color': "lightgray"},
-                         {'range': [res.quantile(0.95), res.max()], 'color': "gray"}],},
+                         {'range': [res['R_1'].min(), res['R_1'].quantile(0.05)], 'color': "lightgray"},
+                         {'range': [res['R_1'].quantile(0.95), res['R_1'].max()], 'color': "gray"}],},
             title = {'text': "Gauge plot for the variable: R_1"}))
         
         st.plotly_chart(ratio_plot, use_container_width=True)
