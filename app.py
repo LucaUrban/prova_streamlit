@@ -35,9 +35,9 @@ if uploaded_file is not None:
     col_mul = [col for col in list(table) if is_numeric_dtype(table[col])]
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
-    widget = st.sidebar.selectbox("what is the widget you want to display:", 
-                                   ["Table", "Map Analysis", "Monodimensional Analysis", "Multidimensional Analysis", "Autocorrelation analysis", "Feature Importance Analysis"], 
-                                   0)
+    widget = st.selectbox("what is the widget you want to display:",
+                          ["Table", "Map Analysis", "Monodimensional Analysis", "Multidimensional Analysis", "Autocorrelation analysis", "Feature Importance Analysis"], 
+                          0)
     
     if widget == "Table":
         # showing the table with the data
