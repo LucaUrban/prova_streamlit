@@ -36,9 +36,9 @@ if uploaded_file is not None:
     col_mul = [col for col in list(table) if is_numeric_dtype(table[col])]
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
          
-    col1, col2, col3 = st.beta_columns([1.333, 1, 1])
+    col11, col12 = st.beta_columns(2)
     
-    with col1:
+    with col11:
         # map-box part
         nut_col = st.sidebar.selectbox("select the nut column", table.columns, 0)
         map_feature = st.sidebar.selectbox("select the feature column", col_mul, 0)
@@ -62,71 +62,9 @@ if uploaded_file is not None:
 
         st.plotly_chart(map_box, use_container_width=True)
         
-        # pareto chart with feature importance on ridge regressor
-        st.sidebar.subheader("Feature Importance Area")
-        feaImp_target = st.sidebar.selectbox("multivariable index col", col_mul, 1)
-
-        fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
-        scaler = StandardScaler(); train_nm = table[fea_Imp_features]
-
-        for name_col in fea_Imp_features:
-            train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
-        train_nm = scaler.fit_transform(train_nm)
-
-        Alpha = [.1, 1, 10, 100]; titles = tuple("Feature importance for alpha = " + str(alpha) for alpha in Alpha)
-        Alpha = [[.1, 1], [10, 100]]
-
-        # Create figure with secondary y-axis
-        fig_tot = make_subplots(rows = 2, cols = 2, 
-                                specs = [[{"secondary_y": True}, {"secondary_y": True}], 
-                                         [{"secondary_y": True}, {"secondary_y": True}]], 
-                                subplot_titles = titles)
-
-        for num_row in range(2):
-            for num_col in range(2):
-                clf = Ridge(alpha = Alpha[num_row][num_col])
-                clf.fit(train_nm, table[feaImp_target])
-
-                importance = clf.coef_
-                for i in range(len(importance)):
-                    if importance[i] < 0:
-                        importance[i] *= -1
-                dict_fin = {fea_Imp_features[i]: importance[i] for i in range(importance.shape[0])}
-                dict_fin = {k: v for k, v in sorted(dict_fin.items(), key=lambda item: item[1], reverse = True)}
-                dict_fin_per = {fea_Imp_features[i]: (importance[i] / np.sum(importance)) * 100 for i in range(importance.shape[0])}
-                dict_fin_per = {k: v for k, v in sorted(dict_fin_per.items(), key=lambda item: item[1], reverse = True)}
-                lis_final = []; res_par = 0
-                for value in dict_fin_per.values():
-                    res_par += value; lis_final.append(res_par)
-
-                fig_tot.add_trace(
-                    go.Bar(x = list(dict_fin_per.keys()), y = list(dict_fin_per.values()), 
-                           marker_color = 'rgb(158,202,225)', marker_line_color = 'rgb(8,48,107)', 
-                           marker_line_width = 1.5, opacity = 0.6, name = 'Value'),
-                    row = num_row + 1, col = num_col + 1, secondary_y = False
-                )
-
-                fig_tot.add_trace(
-                    go.Scatter(x = list(dict_fin_per.keys()), y = lis_final, line_color = 'rgb(255, 150, 0)'),
-                    row = num_row + 1, col = num_col + 1, secondary_y = True
-                )
-
-                # Add figure title
-                fig_tot.update_layout(
-                    title_text = "Feature importances", showlegend = False
-                )
-
-                # Set x-axis title
-                fig_tot.update_xaxes(title_text = "Variables")
-
-                # Set y-axes titles
-                fig_tot.update_yaxes(title_text="<b>Value</b> of importance", secondary_y=False)
-                fig_tot.update_yaxes(title_text="<b>%</b> of importance", secondary_y=True)
-
-        fig_tot.update_layout(height = 600)
-        st.plotly_chart(fig_tot, use_container_width=True)
+    with col12:
+        st.header("Monodimension Analysis")
         
-    with col2:
         # mono variable analysis part
         st.sidebar.subheader("Monovariable Area")
         monoVar_col = st.sidebar.selectbox("select the monovariable feature", col_an, 0)
@@ -148,71 +86,13 @@ if uploaded_file is not None:
 
         st.plotly_chart(monoVar_plot, use_container_width=True)
         
-        # crossfilter analysis part
-        st.sidebar.subheader("Autocorrelation Area")
-        cross_index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
-        cross_time = st.sidebar.selectbox("autocorrelation time col", table.columns, 3)
-        cross_col = st.sidebar.selectbox("autocorrelation X axis col", col_mul, 1)
-        crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()-1), int(table[cross_time].min()))
-
-        dff_cross_dw = table[table[cross_time] == crossSlider][[cross_index, cross_col]]
-        dff_cross_up = table[table[cross_time] == crossSlider + 1][[cross_index, cross_col]]
-        final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = cross_index)
-
-        cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df_cross[cross_index])
-
-        cross_plot.update_xaxes(title = cross_col)
-        cross_plot.update_yaxes(title = cross_col + " Next Year")
-
-        st.plotly_chart(cross_plot, use_container_width=True)
-
-        st.subheader("Autocorrelation")
-        st.write("Autocorrelation value: " + str(round(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"]), 5)))
-
-        # difference timeseries plot
-        el_id_diff = st.selectbox("element ID for differences timeseries chart", table[cross_index].unique())
-
-        dff_diff = table[table[cross_index] == el_id_diff]
-        if len(list(dff_diff[cross_time].unique())) < dff_diff.shape[0]:
-            res = {cross_time: [], cross_col: []}
-            for el in list(dff[cross_time].unique()):
-                res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][cross_col].mean())
-            dff_diff = pd.DataFrame(data = res)
-        title = '<b>{}</b><br>{}'.format(el_id_diff, cross_col)
-
-        fig_diff = go.Figure(); flag = 0
-        if dff_diff.shape[0] > 1:
-            x = [[i, 0] for i in range(1, dff_diff.shape[0])]
-            Y = [dff_diff[cross_col].iloc[dff_diff.shape[0] - i - 1] - dff_diff[cross_col].iloc[dff_diff.shape[0] - i] for i in range(1, dff_diff.shape[0])]
-            reg = LinearRegression().fit(x, Y); coeff = reg.coef_; intercept = reg.intercept_
-
-            fig_diff.add_trace(go.Scatter(x = [str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
-                                     y = Y, mode = 'markers', name = "Value"))
-            fig_diff.add_trace(go.Scatter(x = [str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
-                                     y = [intercept + (i * coeff[0]) for i in range(dff_diff.shape[0])], 
-                                     mode = 'lines', name = "Regression"))
-            fig_diff.update_xaxes(showgrid=False)
-            fig_diff.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
-                               xref='paper', yref='paper', showarrow=False, align='left',
-                               bgcolor='rgba(255, 255, 255, 0.5)', text = title)
-            fig_diff.update_layout(xaxis_title = cross_time, yaxis_title = list(dff_diff)[1])
-            flag = 1
-
-        fig_diff.update_layout(height = 400)
-
-        st.plotly_chart(fig_diff, use_container_width = True)
-
-        st.subheader("Regression Parameters")
-        if flag == 1:
-            st.write("Intercept: " + str(round(intercept, 4)))
-            st.write("Slope: " + str(round(coeff[0], 4)))
-        else: 
-            st.write("None") 
-            st.write("None")
-
-    with col3:
+    col21, col22 = st.beta_columns([1, 1.22222])
+        
+    with col21:  
+        st.subheader("Multidimensional Part")
+        
         # multi variable analysis part
-        st.sidebar.subheader("Multivariable Area")
+        st.sidebar.subheader("Multidimensional Area")
         multi_index = st.sidebar.selectbox("multivariable index col", table.columns, 1)
         multi_time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
         multiXax_col = st.sidebar.selectbox("multivariable X axis col", col_mul, 1)
@@ -226,7 +106,8 @@ if uploaded_file is not None:
         multi_plot.update_yaxes(title = multiYax_col)
 
         st.plotly_chart(multi_plot, use_container_width=True)
-
+    
+    with col22:
         # time control charts
         el_id = st.selectbox("element ID for time control chart", table[multi_index].unique(), 1)
 
@@ -267,3 +148,136 @@ if uploaded_file is not None:
                 fig_tcc.update_layout(height = 250, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
                 st.plotly_chart(fig_tcc, use_container_width=True)
+                
+        col31, col32 = st.beta_columns([1, 1.22222])
+        
+    with col31: 
+        st.subheader("Autocorrelation Part")
+        
+        # crossfilter analysis part
+        st.sidebar.subheader("Autocorrelation Area")
+        cross_index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
+        cross_time = st.sidebar.selectbox("autocorrelation time col", table.columns, 3)
+        cross_col = st.sidebar.selectbox("autocorrelation X axis col", col_mul, 1)
+        crossSlider = st.sidebar.slider("autocorrelation time value", int(table[cross_time].min()), int(table[cross_time].max()-1), int(table[cross_time].min()))
+
+        dff_cross_dw = table[table[cross_time] == crossSlider][[cross_index, cross_col]]
+        dff_cross_up = table[table[cross_time] == crossSlider + 1][[cross_index, cross_col]]
+        final_df_cross = pd.merge(dff_cross_dw, dff_cross_up, how = "inner", on = cross_index)
+
+        cross_plot = px.scatter(x = final_df_cross[cross_col + "_x"], y = final_df_cross[cross_col + "_y"], hover_name = final_df_cross[cross_index])
+
+        cross_plot.update_xaxes(title = cross_col)
+        cross_plot.update_yaxes(title = cross_col + " Next Year")
+
+        st.plotly_chart(cross_plot, use_container_width=True)
+
+        st.subheader("Autocorrelation")
+        st.write("Autocorrelation value: " + str(round(final_df_cross[cross_col + "_x"].corr(final_df_cross[cross_col + "_y"]), 5)))
+        
+    with col32:
+        # difference timeseries plot
+        el_id_diff = st.selectbox("element ID for differences timeseries chart", table[cross_index].unique())
+
+        dff_diff = table[table[cross_index] == el_id_diff]
+        if len(list(dff_diff[cross_time].unique())) < dff_diff.shape[0]:
+            res = {cross_time: [], cross_col: []}
+            for el in list(dff[cross_time].unique()):
+                res[cross_time].append(el); res[cross_col].append(dff_diff[dff_diff[cross_time] == el][cross_col].mean())
+            dff_diff = pd.DataFrame(data = res)
+        title = '<b>{}</b><br>{}'.format(el_id_diff, cross_col)
+
+        fig_diff = go.Figure(); flag = 0
+        if dff_diff.shape[0] > 1:
+            x = [[i, 0] for i in range(1, dff_diff.shape[0])]
+            Y = [dff_diff[cross_col].iloc[dff_diff.shape[0] - i - 1] - dff_diff[cross_col].iloc[dff_diff.shape[0] - i] for i in range(1, dff_diff.shape[0])]
+            reg = LinearRegression().fit(x, Y); coeff = reg.coef_; intercept = reg.intercept_
+
+            fig_diff.add_trace(go.Scatter(x = [str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
+                                     y = Y, mode = 'markers', name = "Value"))
+            fig_diff.add_trace(go.Scatter(x = [str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i]) + "-" + str(dff_diff[cross_time].iloc[dff_diff.shape[0] - i - 1]) for i in range(1, dff_diff.shape[0])], 
+                                     y = [intercept + (i * coeff[0]) for i in range(dff_diff.shape[0])], 
+                                     mode = 'lines', name = "Regression"))
+            fig_diff.update_xaxes(showgrid=False)
+            fig_diff.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                               xref='paper', yref='paper', showarrow=False, align='left',
+                               bgcolor='rgba(255, 255, 255, 0.5)', text = title)
+            fig_diff.update_layout(xaxis_title = cross_time, yaxis_title = list(dff_diff)[1])
+            flag = 1
+
+        fig_diff.update_layout(height = 400)
+
+        st.plotly_chart(fig_diff, use_container_width = True)
+
+        st.subheader("Regression Parameters")
+        if flag == 1:
+            st.write("Intercept: " + str(round(intercept, 4)))
+            st.write("Slope: " + str(round(coeff[0], 4)))
+        else: 
+            st.write("None") 
+            st.write("None")
+        
+                
+    # pareto chart with feature importance on ridge regressor
+    st.sidebar.subheader("Feature Importance Area")
+    feaImp_target = st.sidebar.selectbox("multivariable index col", col_mul, 1)
+
+    fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+    scaler = StandardScaler(); train_nm = table[fea_Imp_features]
+
+    for name_col in fea_Imp_features:
+        train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
+    train_nm = scaler.fit_transform(train_nm)
+
+    Alpha = [.1, 1, 10, 100]; titles = tuple("Feature importance for alpha = " + str(alpha) for alpha in Alpha)
+    Alpha = [[.1, 1], [10, 100]]
+
+    # Create figure with secondary y-axis
+    fig_tot = make_subplots(rows = 2, cols = 2, 
+                            specs = [[{"secondary_y": True}, {"secondary_y": True}], 
+                                     [{"secondary_y": True}, {"secondary_y": True}]], 
+                            subplot_titles = titles)
+
+    for num_row in range(2):
+        for num_col in range(2):
+            clf = Ridge(alpha = Alpha[num_row][num_col])
+            clf.fit(train_nm, table[feaImp_target])
+
+            importance = clf.coef_
+            for i in range(len(importance)):
+                if importance[i] < 0:
+                    importance[i] *= -1
+            dict_fin = {fea_Imp_features[i]: importance[i] for i in range(importance.shape[0])}
+            dict_fin = {k: v for k, v in sorted(dict_fin.items(), key=lambda item: item[1], reverse = True)}
+            dict_fin_per = {fea_Imp_features[i]: (importance[i] / np.sum(importance)) * 100 for i in range(importance.shape[0])}
+            dict_fin_per = {k: v for k, v in sorted(dict_fin_per.items(), key=lambda item: item[1], reverse = True)}
+            lis_final = []; res_par = 0
+            for value in dict_fin_per.values():
+                res_par += value; lis_final.append(res_par)
+
+            fig_tot.add_trace(
+                go.Bar(x = list(dict_fin_per.keys()), y = list(dict_fin_per.values()), 
+                       marker_color = 'rgb(158,202,225)', marker_line_color = 'rgb(8,48,107)', 
+                       marker_line_width = 1.5, opacity = 0.6, name = 'Value'),
+                row = num_row + 1, col = num_col + 1, secondary_y = False
+            )
+
+            fig_tot.add_trace(
+                go.Scatter(x = list(dict_fin_per.keys()), y = lis_final, line_color = 'rgb(255, 150, 0)'),
+                row = num_row + 1, col = num_col + 1, secondary_y = True
+            )
+
+            # Add figure title
+            fig_tot.update_layout(
+                title_text = "Feature importances", showlegend = False
+            )
+
+            # Set x-axis title
+            fig_tot.update_xaxes(title_text = "Variables")
+
+            # Set y-axes titles
+            fig_tot.update_yaxes(title_text="<b>Value</b> of importance", secondary_y=False)
+            fig_tot.update_yaxes(title_text="<b>%</b> of importance", secondary_y=True)
+
+    fig_tot.update_layout(height = 600)
+    st.plotly_chart(fig_tot, use_container_width=True)
