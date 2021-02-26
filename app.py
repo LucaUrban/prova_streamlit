@@ -153,7 +153,7 @@ if uploaded_file is not None:
 
                 st.plotly_chart(fig_tcc, use_container_width=True)
     
-    if widget == "Autocorrelation Analysis":
+    if widget == "Autocorrelation analysis":
         # crossfilter analysis part
         st.header("Autocorrelation Analysis")
 
