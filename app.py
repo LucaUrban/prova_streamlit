@@ -36,7 +36,8 @@ if uploaded_file is not None:
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
     widget = st.selectbox("what is the widget you want to display:",
-                          ["Table", "Map Analysis", "Monodimensional Analysis", "Multidimensional Analysis", "Autocorrelation analysis", "Feature Importance Analysis"], 
+                          ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis",
+                           "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis"], 
                           0)
     
     if widget == "Table":
@@ -92,6 +93,35 @@ if uploaded_file is not None:
             monoVar_plot = px.pie(table, names = monoVar_col, title = "Pie chart for the variable: " + monoVar_col)
 
         st.plotly_chart(monoVar_plot, use_container_width=True)
+
+    if widget == "Ratio Analysis":
+        # mono variable analysis part
+        st.header("Ratio Analysis")
+
+        st.sidebar.subheader("Ratio Area")
+        ratio_num = st.sidebar.selectbox("select the ratio numerator", col_mul, 0)
+        ratio_den = st.sidebar.selectbox("select the ratio denominator", col_mul, 1)
+        
+        res = [0 for i in range(table.shape[0])]
+        for i in range(table.shape[0]):
+            if table[ratio_den].iloc[i] != 0:
+                res[i] = table[ratio_num].iloc[i]/table[ratio_den].iloc[i]
+            else:
+                res[i] = np.nan
+        res = pd.DataFrame(res, columns = ['R_1'])
+        
+        ratio_plot = go.Figure(go.Indicator(
+            mode = "gauge+number+delta",
+            value = res.mean(),
+            delta = {"reference": 2 * res.mean() - res.quantile(0.95)},
+            domain = {'x': [0, 1], 'y': [0, 1]},
+            gauge = {'axis': {'range': res.min(), res.max()]},
+                     'steps' : [
+                         {'range': [res.min(), res.quantile(0.05)], 'color': "lightgray"},
+                         {'range': [res.quantile(0.95), res.max()], 'color': "gray"}],},
+            title = {'text': "Gauge plot for the variable: R_1"}))
+        
+        st.plotly_chart(ratio_plot, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
         # multi variable analysis part
