@@ -75,7 +75,7 @@ if uploaded_file is not None:
 
         st.sidebar.subheader("Monovariable Area")
         monoVar_col = st.sidebar.selectbox("select the monovariable feature", col_an, 6)
-        monoVar_type = st.sidebar.selectbox("select the type of the chart", ["gauge plot", "pie chart"], 1)
+        monoVar_type = st.sidebar.selectbox("select the type of the chart", ["gauge plot", "pie chart"], 0)
 
         if monoVar_type == "gauge plot":
             monoVar_plot = go.Figure(go.Indicator(
