@@ -115,7 +115,7 @@ if uploaded_file is not None:
             value = res.mean(),
             delta = {"reference": 2 * res.mean() - res.quantile(0.95)},
             domain = {'x': [0, 1], 'y': [0, 1]},
-            gauge = {'axis': {'range': res.min(), res.max()]},
+            gauge = {'axis': {'range': [res.min(), res.max()]},
                      'steps' : [
                          {'range': [res.min(), res.quantile(0.05)], 'color': "lightgray"},
                          {'range': [res.quantile(0.95), res.max()], 'color': "gray"}],},
