@@ -149,7 +149,7 @@ if uploaded_file is not None:
 
                 st.plotly_chart(fig_tcc, use_container_width=True)
                 
-        col31, col32 = st.beta_columns([1, 1.22222])
+    col31, col32 = st.beta_columns([1, 1.22222])
         
     with col31: 
         st.subheader("Autocorrelation Part")
