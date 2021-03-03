@@ -102,7 +102,7 @@ if uploaded_file is not None:
         ratio_num = st.sidebar.multiselect("select the ratio numerator", col_mul)
         ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
-        res = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 0), np.nansum(table[ratio_den].values, axis = 0)), columns = ['R_1'])
+        res = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
