@@ -99,16 +99,10 @@ if uploaded_file is not None:
         st.header("Ratio Analysis")
 
         st.sidebar.subheader("Ratio Area")
-        ratio_num = st.sidebar.selectbox("select the ratio numerator", col_mul, 0)
-        ratio_den = st.sidebar.selectbox("select the ratio denominator", col_mul, 1)
+        ratio_num = st.sidebar.multiselect("select the ratio numerator", col_mul)
+        ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
-        res = [0 for i in range(table.shape[0])]
-        for i in range(table.shape[0]):
-            if table[ratio_den].iloc[i] != 0:
-                res[i] = table[ratio_num].iloc[i]/table[ratio_den].iloc[i]
-            else:
-                res[i] = np.nan
-        res = pd.DataFrame(res, columns = ['R_1'])
+        res = pd.DataFrame(np.divide(np.nansum(table[[ratio_num]].values, axis = 0), np.nansum(table[[ratio_den]].values, axis = 0)), columns = ['R_1'])
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
