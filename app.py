@@ -37,7 +37,7 @@ if uploaded_file is not None:
 
     widget = st.selectbox("what is the widget you want to display:",
                           ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis",
-                           "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis"], 
+                           "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis", "Heatmap"], 
                           0)
     
     if widget == "Table":
@@ -308,3 +308,14 @@ if uploaded_file is not None:
 
         fig_tot.update_layout(height = 600)
         st.plotly_chart(fig_tot, use_container_width=True)
+        
+    if widget == "Heatmap":
+        heat_cols = st.multiselect("Choose the columns for the correlation heatmap:", col_mul)
+        
+        if len(heat_cols) >= 1:
+            table_heat = table[heat_cols]
+        else:
+            st.warning("Yuo have to choose at least two columns")
+        
+        
+    
