@@ -312,7 +312,7 @@ if uploaded_file is not None:
     if widget == "Heatmap":
         heat_cols = st.multiselect("Choose the columns for the correlation heatmap:", col_mul)
         
-        if len(heat_cols) >= 1:
+        if len(heat_cols) >= 2:
             table_heat = table[heat_cols]
         else:
             st.warning("Yuo have to choose at least two columns")
