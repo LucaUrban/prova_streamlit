@@ -313,8 +313,7 @@ if uploaded_file is not None:
         heat_cols = st.multiselect("Choose the columns for the correlation heatmap:", col_mul)
         
         if len(heat_cols) >= 2:
-            table_heat = table[heat_cols].corr()
-            fig_heat = px.imshow(data, x = heat_cols,  y = heat_cols)
+            fig_heat = px.imshow(table[heat_cols].corr(), x = heat_cols,  y = heat_cols)
             st.plotly_chart(fig_heat, use_container_width=True)
         else:
             st.warning("Yuo have to choose at least two columns")
