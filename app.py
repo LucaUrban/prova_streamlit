@@ -314,7 +314,7 @@ if uploaded_file is not None:
         
         if len(heat_cols) >= 2:
             fig_heat = px.imshow(table[heat_cols].corr(), x = heat_cols,  y = heat_cols, 
-                                 labels = (color = "Corr Value"), color_continuous_scale = px.colors.sequential.Hot)
+                                 labels = dict(color = "Corr Value"), color_continuous_scale = px.colors.sequential.Hot)
             st.plotly_chart(fig_heat, use_container_width=True)
         else:
             st.warning("Yuo have to choose at least two columns")
