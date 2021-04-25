@@ -256,7 +256,8 @@ if uploaded_file is not None:
             train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
         train_nm = scaler.fit_transform(train_nm)
 
-        target = table[feaImp_target].replace({np.nan : train_nm[name_col].mean()}, inplace = False)
+        target = table[feaImp_target]
+        target.replace({np.nan : train_nm[name_col].mean()}, inplace = True)
 
         Alpha = [.1, 1, 10, 100]; titles = tuple("Feature importance for alpha = " + str(alpha) for alpha in Alpha)
         Alpha = [[.1, 1], [10, 100]]
