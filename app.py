@@ -349,8 +349,8 @@ if uploaded_file is not None:
         if modality == "Recurring Forecast":
             fin_mod = 0; MSE_fin_mod = 99999999
             for i in range(1, res.shape[0]):
-                st.write(res[:, 0:i])
-                model = AutoReg(res[:, 0:i], lags = 1).fit()
+                for j in range(res.shape[1]):
+                model = AutoReg(res[j, 0:i], lags = 1).fit()
                 yhat = model.predict()
         
         
