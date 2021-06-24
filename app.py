@@ -336,7 +336,7 @@ if uploaded_file is not None:
         for id in data[index].unique():
             el = data[data[index] == id][use_col]
             if el.shape[0] == 7:
-                res = np.concatenate([res, el.values])
+                res = np.concatenate([res, el.values], axis = 0)
         
         st.write(res.shape)
     
