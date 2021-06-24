@@ -329,18 +329,14 @@ if uploaded_file is not None:
         modality = st.sidebar.selectbox("Type of data for the forecasting", ["Rolling Forecast", "Recurring Forecast"], 1)
         index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
         time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
-        temp_frame = st.sidebar.text_input("Temporal frame")
  
         # pre-work
-        years = temp_frame.split("-")
-        y_pre = int(years[0].strip()); y_post = int(years[1].strip())
-        data = table[(table[time] >= y_pre) & (table[time] <= y_post)][[index, use_col]]
+        data = table[[index, time, use_col]]
         res = np.array([])
         for id in data[index].unique():
-            el = data[data[index] == id][use_col].values
-            if el.shape[0] == 3:
-                break
-        st.write(el)
+            el = data[data[index] == id][use_col]
+        
+        st.write(el.shape)
     
         # rolling forecasting
         
