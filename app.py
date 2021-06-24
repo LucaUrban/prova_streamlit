@@ -340,7 +340,7 @@ if uploaded_file is not None:
             el = data[data[index] == id][use_col].values
             if el.shape[0] == 3:
                 break
-        st.write(el.shape)
+        st.write(el)
     
         # rolling forecasting
         
