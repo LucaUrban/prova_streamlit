@@ -14,6 +14,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
+from statsmodels.tsa.ar_model import AutoReg
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
@@ -332,13 +333,24 @@ if uploaded_file is not None:
  
         # pre-work
         data = table[[index, time, use_col]]
-        res = np.array([])
+        res = np.array([]); ids = []
         for id in data[index].unique():
             el = data[data[index] == id][use_col]
             if el.shape[0] == 7:
                 res = np.concatenate([res, el.values])
+                ids.append(id)
         res = res.reshape(res.shape[0]//7, 7)
-        st.write(res)
     
         # rolling forecasting
+        if modality == "Rolling Forecast":
+            
         
+        # recurring forecasting
+        if modality == "Recurring Forecast":
+            fin_mod = 0; MSE_fin_mod = 99999999
+            for i in range(1, res.shape[0]):
+                model = AutoReg(res[:, 0:i], lags = 1, trend = "t").fit()
+                yhat = model.predict()
+        
+        
+        # visual part
