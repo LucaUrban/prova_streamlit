@@ -338,7 +338,8 @@ if uploaded_file is not None:
         res = np.array([])
         for id in data[index].unique():
             el = data[data[index] == id][use_col].values
-        st.write(data[data[index] == id])
+            if el.shape[0] == 3 | el.shape[1] == 3:
+                break
         st.write(el.shape)
     
         # rolling forecasting
