@@ -337,7 +337,7 @@ if uploaded_file is not None:
             el = data[data[index] == id][use_col]
             if el.shape[0] == 7:
                 res = np.concatenate([res, el.values], axis = 1)
-        
+        res = res.reshape(7, res.shape[0]/7)
         st.write(res.shape)
     
         # rolling forecasting
