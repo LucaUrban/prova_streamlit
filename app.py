@@ -338,7 +338,7 @@ if uploaded_file is not None:
             if el.shape[0] == 7:
                 res = np.concatenate([res, el.values])
         res = res.reshape(7, res.shape[0]//7)
-        st.write(res.shape)
+        st.write(res)
     
         # rolling forecasting
         
