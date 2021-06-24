@@ -343,7 +343,7 @@ if uploaded_file is not None:
     
         # rolling forecasting
         if modality == "Rolling Forecast":
-            
+            pass
         
         # recurring forecasting
         if modality == "Recurring Forecast":
