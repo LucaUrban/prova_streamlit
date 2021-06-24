@@ -335,7 +335,10 @@ if uploaded_file is not None:
         years = temp_frame.split("-")
         y_pre = int(years[0].strip()); y_post = int(years[1].strip())
         data = table[(table[time] >= y_pre) & (table[time] <= y_post)][[index, use_col]]
-        st.write("Data contained into the dataset:", data)
+        res = np.array([])
+        for id in data[index].unique():
+            el = data[data[index] == id][use_col].values
+        st.write(el.shape)
     
         # rolling forecasting
         
