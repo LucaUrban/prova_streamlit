@@ -327,13 +327,14 @@ if uploaded_file is not None:
 
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 5)
         modality = st.sidebar.selectbox("Type of data for the forecasting", ["Rolling Forecast", "Recurring Forecast"], 1)
-        multi_time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
+        index = st.sidebar.selectbox("autocorrelation index col", table.columns, 1)
+        time = st.sidebar.selectbox("multivariable time col", table.columns, 3)
         temp_frame = st.sidebar.text_input("Temporal frame")
  
         # pre-work
         years = temp_frame.split("-")
         y_pre = int(years[0].strip()); y_post = int(years[1].strip())
-        data = table[(table[multi_time] >= y_pre) & (table[multi_time] <= y_post)][use_col]
+        data = table[(table[time] >= y_pre) & (table[time] <= y_post)][[index, use_col]]
         st.write("Data contained into the dataset:", data)
     
         # rolling forecasting
