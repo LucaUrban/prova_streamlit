@@ -384,7 +384,7 @@ if uploaded_file is not None:
                 par_for.append(pred); rif = np.append(rif, pred)
             fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(4)], 
                                                  y = [res[ids.index(ch_id), -1]] + par_for, 
-                                                 mode = 'lines+markers', name = "Prediction", line = dict(color='firebrick', dash='dot')))
+                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick', dash = 'dash')))
         
         if ch_model == 'MA':
             pass
@@ -396,7 +396,7 @@ if uploaded_file is not None:
             pass
         
         fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value", 
-                                             line = dict(color='royalblue', dash='dot')))
+                                             line = dict(color = 'royalblue', dash = 'dash')))
         st.plotly_chart(fig_forecasting, use_container_width=True)
         
         
