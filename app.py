@@ -370,6 +370,6 @@ if uploaded_file is not None:
         # visual part
         mse_mins = np.array([mean_squared_error(pred_ar, res[:, res.shape[1]-1]), mean_squared_error(pred_ma, res[:, res.shape[1]-1]),
                              mean_squared_error(pred_arma, res[:, res.shape[1]-1]), mean_squared_error(pred_arima, res[:, res.shape[1]-1])])
-        st.table(pd.DataFrame(mse_mins.T, columns = ['AR', 'MA', 'ARMA', 'ARIMA'], index = ['MSE error']))
+        st.table(pd.DataFrame(mse_mins.reshape((1, 4)), columns = ['AR', 'MA', 'ARMA', 'ARIMA'], index = ['MSE error']))
          
         el_id = st.selectbox("Choose the model you want to use to forecast the next periods", ['AR', 'MA', 'ARMA', 'ARIMA'], np.argmin(mse_min))
