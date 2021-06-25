@@ -351,7 +351,7 @@ if uploaded_file is not None:
             for i in range(1, res.shape[0]):
                 pred_res = np.array([])
                 
-                for j in range(1, res.shape[1]):
+                for j in range(2, res.shape[1]):
                     model = AutoReg(res[j, 0:i], lags = 1).fit()
                     yhat = model.predict()
                     pred_res = np.append(pred_res, y_hat)
