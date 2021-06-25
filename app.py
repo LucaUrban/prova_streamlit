@@ -384,7 +384,7 @@ if uploaded_file is not None:
                 pred = AutoReg(rif, lags = 1).fit().predict(len(rif), len(rif))[0]
                 par_for.append(pred); rif = np.append(rif, pred)
             fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(4)], 
-                                                 y = par_for.insert(0, res[ids.index(ch_id), -1]), 
+                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
                                                  mode = 'lines+markers', name = "Prediction"))
         
         if ch_model == 'MA':
