@@ -334,7 +334,7 @@ if uploaded_file is not None:
         time = st.sidebar.selectbox("multivariable time col", table.columns, 0)
  
         # pre-work
-        data = table[[index, time, use_col]]
+        data = table[[index, time, use_col]].sort_values(by=[time])
         res = np.array([]); ids = []
         for id in data[index].unique():
             el = data[data[index] == id][use_col]
