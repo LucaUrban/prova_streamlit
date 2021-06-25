@@ -360,7 +360,7 @@ if uploaded_file is not None:
             pred_ma = np.array([])
 
             for i in range(res.shape[0]):
-                pred_ma = np.append(pred_res, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
+                pred_ma = np.append(pred_ma, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
         
         
         # visual part
