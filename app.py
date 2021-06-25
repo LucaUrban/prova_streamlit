@@ -365,5 +365,5 @@ if uploaded_file is not None:
         
         
         # visual part
-        st.write(res)
+        st.write(n)
         st.write(mean_squared_error(pred_res, res[:, res.shape[1]-1]))
