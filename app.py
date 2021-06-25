@@ -375,7 +375,7 @@ if uploaded_file is not None:
         ch_model = st.selectbox("Choose the model you want to use to forecast the next periods", ['AR', 'MA', 'ARMA', 'ARIMA'])
         ch_id = st.selectbox("Choose element you want to forecast", ids)
         fig_forecasting = go.Figure()
-        #fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value"))
+        fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value"))
         
         # forecasting
         if ch_model == 'AR':
