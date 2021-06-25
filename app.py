@@ -379,8 +379,12 @@ if uploaded_file is not None:
         
         # forecasting
         if ch_model == 'AR':
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + i for i in range(2)], 
-                                                 y = [res[ids.index(ch_id), -1], AutoReg(res[ids.index(ch_id)], lags = 1).fit().predict(len(res[0]), len(res[0]))[0]], 
+            par_for = []; rif = res[ids.index(ch_id)]
+            for i in range(3):
+                pred = AutoReg(rif, lags = 1).fit().predict(len(rif), len(rif))[0]
+                par_for.append(pred); rif = np.append(rif, pred)
+            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(4)], 
+                                                 y = par_for.insert(0, res[ids.index(ch_id), -1]), 
                                                  mode = 'lines+markers', name = "Prediction"))
         
         if ch_model == 'MA':
