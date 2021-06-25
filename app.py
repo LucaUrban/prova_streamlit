@@ -16,6 +16,7 @@ from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.tsa.arima.model import ARIMA
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
@@ -357,12 +358,13 @@ if uploaded_file is not None:
         # recurring forecasting
         if modality == "Recurring Forecast":
             fin_mod = 0; MSE_fin_mod = 99999999
-            pred_ma = np.array([])
+            pred_ar = np.array([]); pred_ma = np.array([])
 
             for i in range(res.shape[0]):
-                pred_ma = np.append(pred_ma, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
+                pred_ar = np.append(pred_ar, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
+                pred_ma = np.append(pred_ma, ARIMA(res[i, 0:res.shape[1]-1], order=(0, 0, 1)).fit().predict(len(res), len(res)))
         
         
         # visual part
-        st.write(res)
+        st.write(mean_squared_error(pred_ar, res[:, res.shape[1]-1]))
         st.write(mean_squared_error(pred_ma, res[:, res.shape[1]-1]))
