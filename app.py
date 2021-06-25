@@ -360,8 +360,7 @@ if uploaded_file is not None:
                 
                 for j in range(res.shape[1]):
                     model = AutoReg(res[j, 0:i], lags = 1).fit()
-                    y_hat = model.predict()
-                    pred_res = np.append(pred_res, y_hat)
+                    pred_res = np.append(pred_res, model.predict(len(res), len(res)))
         st.write(res)    
         st.write(pred_res)
         
