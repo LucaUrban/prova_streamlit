@@ -374,15 +374,16 @@ if uploaded_file is not None:
          
         ch_model = st.selectbox("Choose the model you want to use to forecast the next periods", ['AR', 'MA', 'ARMA', 'ARIMA'])
         ch_id = st.selectbox("Choose element you want to forecast", ids)
+        num_fut_pred = st.sidebar.number_input("Insert the number of forecating years", 1, 10, 1)
         fig_forecasting = go.Figure()
         
         # forecasting
         if ch_model == 'AR':
             par_for = []; rif = res[ids.index(ch_id)]
-            for i in range(3):
+            for i in range(num_fur_pred + 1):
                 pred = AutoReg(rif, lags = 1).fit().predict(len(rif), len(rif))[0]
                 par_for.append(pred); rif = np.append(rif, pred)
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(4)], 
+            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fur_pred + 1)], 
                                                  y = [res[ids.index(ch_id), -1]] + par_for, 
                                                  mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         
