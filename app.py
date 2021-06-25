@@ -368,7 +368,7 @@ if uploaded_file is not None:
         
         
         # visual part
-        st.write(round(mean_squared_error(pred_ar, res[:, res.shape[1]-1])), 2)
-        st.write(round(mean_squared_error(pred_ma, res[:, res.shape[1]-1])), 2)
-        st.write(round(mean_squared_error(pred_arma, res[:, res.shape[1]-1])), 2)
-        st.write(round(mean_squared_error(pred_arima, res[:, res.shape[1]-1])), 2)
+        st.write(round(mean_squared_error(pred_ar, res[:, res.shape[1]-1]), 2))
+        st.write(round(mean_squared_error(pred_ma, res[:, res.shape[1]-1]), 2))
+        st.write(round(mean_squared_error(pred_arma, res[:, res.shape[1]-1]), 2))
+        st.write(round(mean_squared_error(pred_arima, res[:, res.shape[1]-1]), 2))
