@@ -362,6 +362,7 @@ if uploaded_file is not None:
                 model = AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit()
                 pred_res = np.append(pred_res, model.predict(len(res), len(res)))
         
-            st.write(mean_squared_error(pred_res, res[:, res.shape[1]-1]))
         
         # visual part
+        st.write(res)
+        st.write(mean_squared_error(pred_res, res[:, res.shape[1]-1]))
