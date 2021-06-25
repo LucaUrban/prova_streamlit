@@ -337,7 +337,7 @@ if uploaded_file is not None:
         res = np.array([]); ids = []
         for id in data[index].unique():
             el = data[data[index] == id][use_col]
-            n = len(list(data[index].unique()))
+            n = len(list(data[time].unique()))
             if el.shape[0] == n:
                 res = np.concatenate([res, el.values])
                 ids.append(id)
