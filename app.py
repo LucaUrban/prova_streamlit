@@ -359,9 +359,10 @@ if uploaded_file is not None:
                 pred_res = np.array([])
                 
                 for j in range(res.shape[1]):
-                    model = AutoReg(res[0:i, j], lags = 1).fit()
+                    model = AutoReg(res[j, 0:i], lags = 1).fit()
                     pred_res = np.append(pred_res, model.predict(len(res), len(res)))
-        st.write(res)    
+        st.write(res.shape)
+        st.write(res[j, 0:i])
         st.write(pred_res)
         
         # visual part
