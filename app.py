@@ -340,7 +340,7 @@ if uploaded_file is not None:
                 res = np.concatenate([res, el.values])
                 ids.append(id)
         res = res.reshape(res.shape[0]//7, 7)
-        col_mean = np.nanmean(res, axis = 1)
+        col_mean = np.nanmean(res, axis = 0)
 
         #Find indices that you need to replace
         inds = np.where(np.isnan(res))
@@ -359,7 +359,7 @@ if uploaded_file is not None:
                 pred_res = np.array([])
                 
                 for j in range(res.shape[1]):
-                    model = AutoReg(res[j, 0:i], lags = 1).fit()
+                    model = AutoReg(res[0:i, j], lags = 1).fit()
                     pred_res = np.append(pred_res, model.predict(len(res), len(res)))
         st.write(res)    
         st.write(pred_res)
