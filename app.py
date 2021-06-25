@@ -388,13 +388,31 @@ if uploaded_file is not None:
                                                  mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         
         if ch_model == 'MA':
-            pass
+            par_for = []; rif = res[ids.index(ch_id)]
+            for i in range(num_fut_pred + 1):
+                pred = ARIMA(rif, order=(0, 0, 1)).fit().predict(len(rif), len(rif))[0]
+                par_for.append(pred); rif = np.append(rif, pred)
+            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
+                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
+                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         
         if ch_model == 'ARMA':
-            pass
+            par_for = []; rif = res[ids.index(ch_id)]
+            for i in range(num_fut_pred + 1):
+                pred = ARIMA(rif, order=(2, 0, 1)).fit().predict(len(rif), len(rif))[0]
+                par_for.append(pred); rif = np.append(rif, pred)
+            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
+                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
+                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         
         if ch_model == 'ARIMA':
-            pass
+            par_for = []; rif = res[ids.index(ch_id)]
+            for i in range(num_fut_pred + 1):
+                pred = ARIMA(rif, order=(1, 1, 1)).fit().predict(len(rif), len(rif))[0]
+                par_for.append(pred); rif = np.append(rif, pred)
+            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
+                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
+                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         
         fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value", 
                                              line = dict(color = 'royalblue')))
