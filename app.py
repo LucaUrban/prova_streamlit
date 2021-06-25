@@ -362,9 +362,7 @@ if uploaded_file is not None:
                     model = AutoReg(res[j, 0:i], lags = 1).fit()
                     y_hat = model.predict()
                     pred_res = np.append(pred_res, y_hat)
-                
-                
                     
-        
+        st.write(pred_res)
         
         # visual part
