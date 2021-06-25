@@ -358,13 +358,17 @@ if uploaded_file is not None:
         # recurring forecasting
         if modality == "Recurring Forecast":
             fin_mod = 0; MSE_fin_mod = 99999999
-            pred_ar = np.array([]); pred_ma = np.array([])
+            pred_ar = np.array([]); pred_ma = np.array([]); pred_arma = np.array([]); pred_arima = np.array([])
 
             for i in range(res.shape[0]):
                 pred_ar = np.append(pred_ar, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
                 pred_ma = np.append(pred_ma, ARIMA(res[i, 0:res.shape[1]-1], order=(0, 0, 1)).fit().predict(len(res), len(res)))
+                pred_arma = np.append(pred_arma, ARIMA(res[i, 0:res.shape[1]-1], order=(2, 0, 1)).fit().predict(len(res), len(res)))
+                pred_arima = np.append(pred_arima, ARIMA(res[i, 0:res.shape[1]-1], order=(1, 1, 1)).fit().predict(len(res), len(res), typ='levels'))
         
         
         # visual part
-        st.write(mean_squared_error(pred_ar, res[:, res.shape[1]-1]))
-        st.write(mean_squared_error(pred_ma, res[:, res.shape[1]-1]))
+        st.write(round(mean_squared_error(pred_ar, res[:, res.shape[1]-1])), 2)
+        st.write(round(mean_squared_error(pred_ma, res[:, res.shape[1]-1])), 2)
+        st.write(round(mean_squared_error(pred_arma, res[:, res.shape[1]-1])), 2)
+        st.write(round(mean_squared_error(pred_arima, res[:, res.shape[1]-1])), 2)
