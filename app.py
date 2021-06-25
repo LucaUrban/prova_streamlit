@@ -340,6 +340,13 @@ if uploaded_file is not None:
                 res = np.concatenate([res, el.values])
                 ids.append(id)
         res = res.reshape(res.shape[0]//7, 7)
+        col_mean = np.nanmean(res, axis = 1)
+
+        #Find indices that you need to replace
+        inds = np.where(np.isnan(res))
+
+        #Place column means in the indices. Align the arrays using take
+        res[inds] = np.take(col_mean, inds[1])
     
         # rolling forecasting
         if modality == "Rolling Forecast":
