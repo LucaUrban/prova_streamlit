@@ -14,6 +14,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 
 st.title("Visual Information Quality Environment")
@@ -355,14 +356,12 @@ if uploaded_file is not None:
         # recurring forecasting
         if modality == "Recurring Forecast":
             fin_mod = 0; MSE_fin_mod = 99999999
-            for i in range(6, res.shape[1]):
-                pred_res = np.array([])
-                
-                for j in range(res.shape[0]):
-                    model = AutoReg(res[j, 0:i], lags = 1).fit()
-                    pred_res = np.append(pred_res, model.predict(len(res), len(res)))
-        st.write(res.shape)
-        st.write(res[j, 0:i])
-        st.write(pred_res)
+            pred_res = np.array([])
+
+            for i in range(res.shape[0]):
+                model = AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit()
+                pred_res = np.append(pred_res, model.predict(len(res), len(res)))
+        
+            st.write(mean_squared_error(pred_res, res[:, res.shape[1]-1]))
         
         # visual part
