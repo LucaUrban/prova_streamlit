@@ -397,7 +397,7 @@ if uploaded_file is not None:
         
         fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value", 
                                              line = dict(color = 'royalblue')))
-        fig_diff.update_layout(xaxis_title = use_col, yaxis_title = time)
+        fig_forecasting.update_layout(xaxis_title = use_col, yaxis_title = time)
         st.plotly_chart(fig_forecasting, use_container_width=True)
         
         
