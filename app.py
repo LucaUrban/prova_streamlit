@@ -357,13 +357,12 @@ if uploaded_file is not None:
         # recurring forecasting
         if modality == "Recurring Forecast":
             fin_mod = 0; MSE_fin_mod = 99999999
-            pred_res = np.array([])
+            pred_ma = np.array([])
 
             for i in range(res.shape[0]):
-                model = AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit()
-                pred_res = np.append(pred_res, model.predict(len(res), len(res)))
+                pred_ma = np.append(pred_res, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
         
         
         # visual part
-        st.write(n)
-        st.write(mean_squared_error(pred_res, res[:, res.shape[1]-1]))
+        st.write(res)
+        st.write(mean_squared_error(pred_ma, res[:, res.shape[1]-1]))
