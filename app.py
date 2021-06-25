@@ -376,8 +376,23 @@ if uploaded_file is not None:
         ch_id = st.selectbox("Choose element you want to forecast", ids)
         fig_forecasting = go.Figure()
         fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value"))
-        st.plotly_chart(fig_forecasting, use_container_width=True)
         
+        # forecasting
+        if ch_model == 'AR':
+            fig_forecasting.add_trace(go.Scatter(x = [list(data[time].unique()).max() + i for i in range(2)], 
+                                                 y = [res[ids.index(ch_id) : -1], AutoReg(res[ids.index(ch_id)], lags = 1).fit().predict(len(res), len(res))], 
+                                                 mode = 'lines+markers', name = "Prediction"))
+        
+        if ch_model == 'MA':
+            pass
+        
+        if ch_model == 'ARMA':
+            pass
+        
+        if ch_model == 'ARIMA':
+            pass
+        
+        st.plotly_chart(fig_forecasting, use_container_width=True)
         
         
         
