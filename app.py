@@ -390,7 +390,7 @@ if uploaded_file is not None:
                 
             par_for.append(pred); rif = np.append(rif, pred)
             # rolling forecasting
-            if modality == "Rolling Forecasting":
+            if modality == "Rolling Forecast":
                 rif = rif[1:]
             st.write(len(rif))
         
