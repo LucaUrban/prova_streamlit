@@ -392,7 +392,6 @@ if uploaded_file is not None:
             # rolling forecasting
             if modality == "Rolling Forecast":
                 rif = rif[1:]
-            st.write(len(rif))
         
         fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
                                              y = [res[ids.index(ch_id), -1]] + par_for, mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
