@@ -350,21 +350,16 @@ if uploaded_file is not None:
 
         #Place column means in the indices. Align the arrays using take
         res[inds] = np.take(col_mean, inds[1])
-    
-        # rolling forecasting
-        if modality == "Rolling Forecast":
-            pass
         
-        # recurring forecasting
-        if modality == "Recurring Forecast":
-            fin_mod = 0; MSE_fin_mod = 99999999
-            pred_ar = np.array([]); pred_ma = np.array([]); pred_arma = np.array([]); pred_arima = np.array([])
+        # fit the init model and making the predictions
+        fin_mod = 0; MSE_fin_mod = 99999999
+        pred_ar = np.array([]); pred_ma = np.array([]); pred_arma = np.array([]); pred_arima = np.array([])
 
-            for i in range(res.shape[0]):
-                pred_ar = np.append(pred_ar, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
-                pred_ma = np.append(pred_ma, ARIMA(res[i, 0:res.shape[1]-1], order=(0, 0, 1)).fit().predict(len(res), len(res)))
-                pred_arma = np.append(pred_arma, ARIMA(res[i, 0:res.shape[1]-1], order=(2, 0, 1)).fit().predict(len(res), len(res)))
-                pred_arima = np.append(pred_arima, ARIMA(res[i, 0:res.shape[1]-1], order=(1, 1, 1)).fit().predict(len(res), len(res), typ='levels'))
+        for i in range(res.shape[0]):
+            pred_ar = np.append(pred_ar, AutoReg(res[i, 0:res.shape[1]-1], lags = 1).fit().predict(len(res), len(res)))
+            pred_ma = np.append(pred_ma, ARIMA(res[i, 0:res.shape[1]-1], order=(0, 0, 1)).fit().predict(len(res), len(res)))
+            pred_arma = np.append(pred_arma, ARIMA(res[i, 0:res.shape[1]-1], order=(2, 0, 1)).fit().predict(len(res), len(res)))
+            pred_arima = np.append(pred_arima, ARIMA(res[i, 0:res.shape[1]-1], order=(1, 1, 1)).fit().predict(len(res), len(res), typ='levels'))
         
         
         # visual part
@@ -374,46 +369,33 @@ if uploaded_file is not None:
          
         ch_model = st.selectbox("Choose the model you want to use to forecast the next periods", ['AR', 'MA', 'ARMA', 'ARIMA'])
         ch_id = st.selectbox("Choose element you want to forecast", ids)
-        num_fut_pred = st.sidebar.number_input("Insert the number of forecating years", 1, 10, 1)
+        num_fut_pred = st.sidebar.number_input("Insert the number of periods you want to forecast ", 1, 10, 1)
         fig_forecasting = go.Figure()
         
         # forecasting
-        if ch_model == 'AR':
-            par_for = []; rif = res[ids.index(ch_id)]
-            for i in range(num_fut_pred + 1):
+        par_for = []; rif = res[ids.index(ch_id)]
+        for i in range(num_fut_pred + 1):
+            # prediction based on the chosen model
+            if ch_model == 'AR':
                 pred = AutoReg(rif, lags = 1).fit().predict(len(rif), len(rif))[0]
-                par_for.append(pred); rif = np.append(rif, pred)
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
-                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
-                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
-        
-        if ch_model == 'MA':
-            par_for = []; rif = res[ids.index(ch_id)]
-            for i in range(num_fut_pred + 1):
+
+            if ch_model == 'MA':
                 pred = ARIMA(rif, order=(0, 0, 1)).fit().predict(len(rif), len(rif))[0]
-                par_for.append(pred); rif = np.append(rif, pred)
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
-                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
-                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
-        
-        if ch_model == 'ARMA':
-            par_for = []; rif = res[ids.index(ch_id)]
-            for i in range(num_fut_pred + 1):
+
+            if ch_model == 'ARMA':
                 pred = ARIMA(rif, order=(2, 0, 1)).fit().predict(len(rif), len(rif))[0]
-                par_for.append(pred); rif = np.append(rif, pred)
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
-                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
-                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
-        
-        if ch_model == 'ARIMA':
-            par_for = []; rif = res[ids.index(ch_id)]
-            for i in range(num_fut_pred + 1):
+
+            if ch_model == 'ARIMA':
                 pred = ARIMA(rif, order=(1, 1, 1)).fit().predict(len(rif), len(rif))[0]
-                par_for.append(pred); rif = np.append(rif, pred)
-            fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
-                                                 y = [res[ids.index(ch_id), -1]] + par_for, 
-                                                 mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
+                
+            par_for.append(pred); rif = np.append(rif, pred)
+            # rolling forecasting
+            if modality == "Rolling Forecasting":
+                rif = rif[1:]
+            st.write(len(rif))
         
+        fig_forecasting.add_trace(go.Scatter(x = [max(list(data[time].unique())) + j for j in range(num_fut_pred + 1)], 
+                                             y = [res[ids.index(ch_id), -1]] + par_for, mode = 'lines+markers', name = "Prediction", line = dict(color = 'firebrick')))
         fig_forecasting.add_trace(go.Scatter(x = list(data[time].unique()), y = data[data[index] == ch_id][use_col].values, mode = 'lines+markers', name = "Value", 
                                              line = dict(color = 'royalblue')))
         fig_forecasting.update_layout(xaxis_title = use_col, yaxis_title = time, title_text = "Values over time with future predictions")
