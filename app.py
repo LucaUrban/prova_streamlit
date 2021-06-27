@@ -330,8 +330,8 @@ if uploaded_file is not None:
 
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
         modality = st.sidebar.selectbox("Type of data for the forecasting", ["Rolling Forecast", "Recurring Forecast"], 0)
-        index = st.sidebar.selectbox("autocorrelation index col", table.columns, 0)
-        time = st.sidebar.selectbox("multivariable time col", table.columns, 0)
+        index = st.sidebar.selectbox("Index col", table.columns, 0)
+        time = st.sidebar.selectbox("Time col", table.columns, 0)
  
         # pre-work
         data = table[[index, time, use_col]].sort_values(by=[time])
