@@ -352,7 +352,6 @@ if uploaded_file is not None:
         res[inds] = np.take(col_mean, inds[1])
         
         # fit the init model and making the predictions
-        fin_mod = 0; MSE_fin_mod = 99999999
         pred_ar = np.array([]); pred_ma = np.array([]); pred_arma = np.array([]); pred_arima = np.array([])
 
         for i in range(res.shape[0]):
