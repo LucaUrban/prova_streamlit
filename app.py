@@ -329,7 +329,7 @@ if uploaded_file is not None:
         st.header("Time series forecasting")
 
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
-        modality = st.sidebar.selectbox("Type of data for the forecasting", ["Rolling Forecast", "Recurring Forecast"], 0)
+        modality = st.sidebar.selectbox("Forecasting Method", ["Rolling Forecast", "Recurring Forecast"], 0)
         index = st.sidebar.selectbox("Index col", table.columns, 0)
         time = st.sidebar.selectbox("Time col", table.columns, 0)
  
