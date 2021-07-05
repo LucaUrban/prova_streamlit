@@ -408,7 +408,7 @@ if uploaded_file is not None:
         sigma_hat = math.sqrt(((table[use_col] - table[use_col].mean()) ** 2).sum() / table[use_col].count())
         
         # computing the p-values for all the distributions
-        result = ot.FittingTest.Kolmogorov(df[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
+        result = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
         
         # visual part
         dis_fit = np.array([[result.getPValue()], [result.getBinaryQualityMeasure()]])
