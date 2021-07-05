@@ -17,6 +17,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
+import math
+import openturns as ot
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
@@ -39,9 +41,8 @@ if uploaded_file is not None:
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
     widget = st.selectbox("what is the widget you want to display:",
-                          ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis",
-                           "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis", "Heatmap", "Time series forecasting"], 
-                          0)
+                          ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", 
+                           "Feature Importance Analysis", "Heatmap", "Time series forecasting", "Anomalies check"], 0)
     
     if widget == "Table":
         # showing the table with the data
@@ -399,7 +400,18 @@ if uploaded_file is not None:
         fig_forecasting.update_layout(xaxis_title = use_col, yaxis_title = time, title_text = "Values over time with future predictions")
         st.plotly_chart(fig_forecasting, use_container_width=True)
         
+    if widget == "Anomalies check":
+        use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
         
+        # MLE normal
+        mu_hat = table[use_col].mean()
+        sigma_hat = math.sqrt(((df[use_col] - df[use_col].mean()) ** 2).sum() / df[use_col].count())
         
+        # computing the p-values for all the distributions
+        result = ot.FittingTest.Kolmogorov(df[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
+        
+        # visual part
+        dis_fit = np.array([[result.getPValue()], [result.getBinaryQualityMeasure()]])
+        st.table(pd.DataFrame(dis_fit, columns = ['Normal'], index = ['P-value', 'P > t']))
         
         
