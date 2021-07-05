@@ -18,7 +18,7 @@ from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 import math
-import openturns as ot
+#import openturns as ot
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
