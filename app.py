@@ -411,7 +411,7 @@ if uploaded_file is not None:
         result = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
         
         # visual part
-        dis_fit = np.array([[result.getPValue()], [result.getBinaryQualityMeasure()]])
+        dis_fit = [[result.getPValue()], [result.getBinaryQualityMeasure()]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal'], index = ['P-value', 'P > t']))
         
         
