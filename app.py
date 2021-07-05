@@ -409,14 +409,19 @@ if uploaded_file is not None:
 
         # MLE exponential
         lambda_hat_exp = table[use_col].count() / table[use_col].sum()
+
+        # MLE log-normal
+        mu_hat_log = ((np.log(table[use_col].values).sum()) / table[use_col].count()
+        sigma_hat_log = math.sqrt(((np.log(table[use_col].values) - mu_hat_log) ** 2).sum() / table[use_col].count())
         
         # computing the p-values for all the distributions
         result_norm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
         result_exp = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Exponential(lambda_hat_exp), 0.05)
+        result_lognorm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.LogNormal(mu_hat_log, sigma_hat_log), 0.05)
         
         # visual part
-        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), 0, 0], 
-                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), "False", "False"]]
+        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), round(result_lognorm.getPValue(), 5), 0], 
+                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), result_lognorm.getBinaryQualityMeasure(), "False"]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
         
         
