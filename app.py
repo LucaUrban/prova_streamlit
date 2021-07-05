@@ -415,9 +415,8 @@ if uploaded_file is not None:
         result_exp = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Exponential(lambda_hat_exp), 0.05)
         
         # visual part
-        dis_fit = [[round(result_norm.getPValue(), 5), result_norm.getBinaryQualityMeasure()], 
-                   [round(result_exp.getPValue(), 5), result_exp.getBinaryQualityMeasure()], 
-                   [0, "False"], [0, "False"]]
-        st.table(pd.DataFrame(dis_fit, columns = ['Normal'], index = ['P-value', 'P > t']))
+        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), 0, 0], 
+                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), "False", "False"]]
+        st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
         
         
