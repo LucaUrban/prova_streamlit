@@ -405,7 +405,7 @@ if uploaded_file is not None:
         
         # MLE normal
         mu_hat = table[use_col].mean()
-        sigma_hat = math.sqrt(((df[use_col] - df[use_col].mean()) ** 2).sum() / df[use_col].count())
+        sigma_hat = math.sqrt(((table[use_col] - table[use_col].mean()) ** 2).sum() / table[use_col].count())
         
         # computing the p-values for all the distributions
         result = ot.FittingTest.Kolmogorov(df[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
