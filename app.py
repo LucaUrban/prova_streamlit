@@ -417,6 +417,6 @@ if uploaded_file is not None:
         # visual part
         dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), 0, 0], 
                    [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), "False", "False"]]
-        st.table(pd.DataFrame(dis_fit, columns = ['Normal'], index = ['P-value', 'P > t']))
+        st.table(pd.DataFrame(dis_fit.reshape((2, 4)), columns = ['Normal'], index = ['P-value', 'P > t']))
         
         
