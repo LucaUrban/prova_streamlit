@@ -417,6 +417,7 @@ if uploaded_file is not None:
         
         # MLE weibull
         a, alpha_hat, b, beta_hat = exponweib.fit(table[use_col], floc=0, fa=1)
+        st.write(alpha_hat); st.write(beta_hat)
         
         # computing the p-values for all the distributions
         result_norm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
