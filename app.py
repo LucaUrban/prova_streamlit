@@ -431,10 +431,15 @@ if uploaded_file is not None:
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
-                                             xbins = dict(start = table[use_col].min(),
-                                                          end = table[use_col].max(),
-                                                          size = (table[use_col].max() - table[use_col].min()) / 10), 
-                                             autobinx = False)])
+                                                   xbins = dict(start = table[use_col].min(),
+                                                                end = table[use_col].max(),
+                                                                size = (table[use_col].max() - table[use_col].min()) / 10), 
+                                                   autobinx = False)])
+
+        if ch_distr == "Normal":
+            x_pos = [i for i in range(1)]
+            fig_distr.add_trace(go.Scatter(x = x_pos, 
+                                           y = x_pos, mode = 'lines+markers', name = "Est Distribution"))
         st.plotly_chart(fig_distr, use_container_width=True)
         
         
