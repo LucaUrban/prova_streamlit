@@ -417,7 +417,6 @@ if uploaded_file is not None:
         
         # MLE weibull
         a, alpha_hat, b, beta_hat = exponweib.fit(table[use_col], floc=0, fa=1)
-        st.write(alpha_hat); st.write(beta_hat)
         
         # computing the p-values for all the distributions
         result_norm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
@@ -429,5 +428,13 @@ if uploaded_file is not None:
         dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), round(result_lognorm.getPValue(), 5), round(result_weibull2.getPValue(), 5)], 
                    [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), result_lognorm.getBinaryQualityMeasure(), result_weibull2.getBinaryQualityMeasure()]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
+
+        ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
+        fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
+                                             xbins = dict(start = table[use_col].min(),
+                                                          end = table[use_col].max(),
+                                                          size = (table[use_col].max() - table[use_col].min()) / 10), 
+                                             autobinx = False)])
+        st.plotly_chart(fig_distr, use_container_width=True)
         
         
