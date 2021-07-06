@@ -412,7 +412,7 @@ if uploaded_file is not None:
         lambda_hat_exp = table[use_col].count() / table[use_col].sum()
 
         # MLE log-normal
-        mu_hat_log = np.log(table[use_col].values).sum() / table[use_col].count()
+        mu_hat_log = (np.log(table[use_col].values)).sum() / table[use_col].count()
         sigma_hat_log = math.sqrt(((np.log(table[use_col].values) - mu_hat_log) ** 2).sum() / table[use_col].count())
         
         # MLE weibull
