@@ -19,6 +19,7 @@ from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 import math
 import openturns as ot
+from scipy.stats import exponweib
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
@@ -414,14 +415,18 @@ if uploaded_file is not None:
         mu_hat_log = np.log(table[use_col].values).sum() / table[use_col].count()
         sigma_hat_log = math.sqrt(((np.log(table[use_col].values) - mu_hat_log) ** 2).sum() / table[use_col].count())
         
+        # MLE weibull
+        a, alpha_hat, b, beta_hat = exponweib.fit(sample, floc=0, fa=1)
+        
         # computing the p-values for all the distributions
         result_norm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
         result_exp = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Exponential(lambda_hat_exp), 0.05)
         result_lognorm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.LogNormal(mu_hat_log, sigma_hat_log), 0.05)
+        result_weibull2 = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.WeibullMax(beta_hat, alpha_hat, 0), 0.05)
         
         # visual part
-        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), round(result_lognorm.getPValue(), 5), 0], 
-                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), result_lognorm.getBinaryQualityMeasure(), "False"]]
+        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), round(result_lognorm.getPValue(), 5), round(result_weibull2.getPValue(), 5)], 
+                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), result_lognorm.getBinaryQualityMeasure(), result_weibull2.getBinaryQualityMeasure()]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
         
         
