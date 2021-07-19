@@ -430,7 +430,7 @@ if uploaded_file is not None:
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
-        start, end, step = table[use_col].min(), table[use_col].max(), (table[use_col].max() - table[use_col].min()) / 15)
+        start, end, step = table[use_col].min(), table[use_col].max(), (table[use_col].max() - table[use_col].min()) / 15
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
                                                    xbins = dict(start = start, end = end, size = step),
                                                    autobinx = False, 
