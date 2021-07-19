@@ -430,16 +430,16 @@ if uploaded_file is not None:
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
+        start, end, step = table[use_col].min(), table[use_col].max(), (table[use_col].max() - table[use_col].min()) / 15)
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
-                                                   xbins = dict(start = table[use_col].min(),
-                                                                end = table[use_col].max(),
-                                                                size = (table[use_col].max() - table[use_col].min()) / 10), 
-                                                   autobinx = False)])
+                                                   xbins = dict(start = start, end = end, size = step),
+                                                   autobinx = False, 
+                                                   histnorm = 'probability density')])
 
         if ch_distr == "Normal":
-            x_pos = [i for i in range(1)]
+            x_pos = [i for i in range(int(start + step / 2), int(end), int(step))]
             fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = x_pos, mode = 'lines+markers', name = "Est Distribution"))
+                                           y = [N.computePDF(i) for i in x_pos], mode = 'lines+markers', name = "Est Distribution"))
         st.plotly_chart(fig_distr, use_container_width=True)
         
         
