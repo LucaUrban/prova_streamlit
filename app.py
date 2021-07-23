@@ -18,7 +18,7 @@ from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 import math
-import openturns as ot
+#import openturns as ot
 from scipy.stats import exponweib
 
 st.title("Visual Information Quality Environment")
@@ -400,7 +400,7 @@ if uploaded_file is not None:
                                              line = dict(color = 'royalblue')))
         fig_forecasting.update_layout(xaxis_title = use_col, yaxis_title = time, title_text = "Values over time with future predictions")
         st.plotly_chart(fig_forecasting, use_container_width=True)
-        
+    '''    
     if widget == "Anomalies check":
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
         
@@ -440,6 +440,6 @@ if uploaded_file is not None:
             x_pos = [i for i in range(int(start + step / 2), int(end), int(step))]
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = [N.computePDF(i) for i in x_pos], mode = 'lines+markers', name = "Est Distribution"))
-        st.plotly_chart(fig_distr, use_container_width=True)
+        st.plotly_chart(fig_distr, use_container_width=True)'''
         
         
