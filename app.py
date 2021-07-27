@@ -125,7 +125,7 @@ if uploaded_file is not None:
         # violin plot on the aggregated results
         ratio_un = st.selectbox("multivariable index col", table.columns, 0)
         
-        res['Sel'] = table[[ratio_un]].str.slice(0, 2).values
+        res['Sel'] = table[ratio_un].str.slice(0, 2).values
         colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
         fig = go.Figure(); uniques = res['Sel'].unique()
         for i in range(len(uniques)):
