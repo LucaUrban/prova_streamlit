@@ -12,6 +12,7 @@ import random
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+from plotly.colors import n_colors
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
@@ -447,6 +448,7 @@ if uploaded_file is not None:
         if ch_distr == 'Weibull':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = stats.dweibull(alpha_hat, beta_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        fig.update_layout(title = 'Title', xaxis_title = 'Data', yaxis_title = 'Country')
         st.plotly_chart(fig_distr, use_container_width=True)
         
         
