@@ -445,10 +445,9 @@ if uploaded_file is not None:
         if ch_distr == 'Log-Norm':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = stats.lognorm(mu_hat_log, sigma_hat_log).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
-        if ch_distr == 'Weibul':
+        if ch_distr == 'Weibull':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = stats.dweibull(alpha_hat, beta_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
-            st.write(stats.dweibull(alpha_hat, beta_hat).pdf(x_pos))
         st.plotly_chart(fig_distr, use_container_width=True)
         
         
