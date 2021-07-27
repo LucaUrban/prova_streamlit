@@ -419,7 +419,7 @@ if uploaded_file is not None:
         
         # computing the p-values for all the distributions
         result_norm = stats.kstest(table[[use_col]].values.flatten(), 'norm', (mu_hat, sigma_hat))
-        result_exp = stats.kstest(table[[use_col]].values.flatten(), 'expon', (lambda_hat_exp))
+        result_exp = stats.kstest(table[[use_col]].values.flatten(), 'expon')
         result_lognorm = stats.kstest(table[[use_col]].values.flatten(), 'lognorm', (mu_hat_log, sigma_hat_log))
         result_weibull2 = stats.kstest(table[[use_col]].values.flatten(), 'dweibull', (beta_hat, alpha_hat, 0))
         
