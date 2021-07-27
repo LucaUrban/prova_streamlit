@@ -18,8 +18,7 @@ from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 import math
-#import openturns as ot
-from scipy.stats import exponweib
+import scipy.stats as stats
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
@@ -400,7 +399,7 @@ if uploaded_file is not None:
                                              line = dict(color = 'royalblue')))
         fig_forecasting.update_layout(xaxis_title = use_col, yaxis_title = time, title_text = "Values over time with future predictions")
         st.plotly_chart(fig_forecasting, use_container_width=True)
-    '''    
+        
     if widget == "Anomalies check":
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
         
@@ -419,14 +418,14 @@ if uploaded_file is not None:
         a, alpha_hat, b, beta_hat = exponweib.fit(table[use_col], floc=0, fa=1)
         
         # computing the p-values for all the distributions
-        result_norm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Normal(mu_hat, sigma_hat), 0.05)
-        result_exp = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.Exponential(lambda_hat_exp), 0.05)
-        result_lognorm = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.LogNormal(mu_hat_log, sigma_hat_log), 0.05)
-        result_weibull2 = ot.FittingTest.Kolmogorov(table[[use_col]].values, ot.WeibullMax(beta_hat, alpha_hat, 0), 0.05)
+        result_norm = stats.kstest(table[[use_col]].values.flatten(), 'norm', (mu_hat, sigma_hat))
+        result_exp = stats.kstest(table[[use_col]].values.flatten(), 'expon', (lambda_hat_exp))
+        result_lognorm = stats.kstest(table[[use_col]].values.flatten(), 'lognorm', (mu_hat_log, sigma_hat_log))
+        result_weibull2 = stats.kstest(table[[use_col]].values.flatten(), 'dweibull', (beta_hat, alpha_hat, 0))
         
         # visual part
-        dis_fit = [[round(result_norm.getPValue(), 5), round(result_exp.getPValue(), 5), round(result_lognorm.getPValue(), 5), round(result_weibull2.getPValue(), 5)], 
-                   [result_norm.getBinaryQualityMeasure(), result_exp.getBinaryQualityMeasure(), result_lognorm.getBinaryQualityMeasure(), result_weibull2.getBinaryQualityMeasure()]]
+        dis_fit = [[result_norm[1], result_exp[1], result_lognorm[1], result_weibull2[1]], 
+                   [result_norm[1] > 0.05, result_exp[1] > 0.05, result_lognorm[1] > 0.05, result_weibull2[1] > 0.05]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
@@ -435,11 +434,20 @@ if uploaded_file is not None:
                                                    xbins = dict(start = start, end = end, size = step),
                                                    autobinx = False, 
                                                    histnorm = 'probability density')])
-
-        if ch_distr == "Normal":
-            x_pos = [i for i in range(int(start + step / 2), int(end), int(step))]
+        
+        x_pos = [i for i in range(int(start + step / 2), int(end), int(step))]
+        if ch_distr == 'Normal':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = [N.computePDF(i) for i in x_pos], mode = 'lines+markers', name = "Est Distribution"))
-        st.plotly_chart(fig_distr, use_container_width=True)'''
+                                           y = stats.norm(mu_hat, sigma_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        if ch_distr == 'Exponential':
+            fig_distr.add_trace(go.Scatter(x = x_pos, 
+                                           y = stats.expon(lambda_hat_exp).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        if ch_distr == 'Log-Norm':
+            fig_distr.add_trace(go.Scatter(x = x_pos, 
+                                           y = stats.lognorm(mu_hat_log, sigma_hat_log).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        if ch_distr == 'Weibul':
+            fig_distr.add_trace(go.Scatter(x = x_pos, 
+                                           y = stats.dweibull(beta_hat, alpha_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        st.plotly_chart(fig_distr, use_container_width=True)
         
         
