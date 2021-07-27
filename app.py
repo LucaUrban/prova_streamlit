@@ -127,14 +127,14 @@ if uploaded_file is not None:
         
         res['Sel'] = table[ratio_un].str.slice(0, 2).values
         colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
-        fig = go.Figure(); uniques = res['Sel'].unique()
+        fig_vio = go.Figure(); uniques = res['Sel'].unique()
         for i in range(len(uniques)):
-            fig.add_trace(go.Violin(x = res[res['Sel'] == uniques[i]]['R_1'].values, line_color = colors[i], name = uniques[i]))
+            fig_vio.add_trace(go.Violin(x = res[res['Sel'] == uniques[i]]['R_1'].values, line_color = colors[i], name = uniques[i]))
 
-        fig.update_traces(orientation = 'h', side = 'positive', width = 3, points = False)
-        fig.update_layout(xaxis_showgrid = False, xaxis_zeroline = False, title = 'Violin plot for the  selected ratio',
+        fig_vio.update_traces(orientation = 'h', side = 'positive', width = 3, points = False)
+        fig_vio.update_layout(xaxis_showgrid = False, xaxis_zeroline = False, title = 'Violin plot for the  selected ratio',
                           xaxis_title = 'Data', yaxis_title = 'Country')
-        fig.show()
+        st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
         # multi variable analysis part
