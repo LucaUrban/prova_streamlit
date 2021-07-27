@@ -421,14 +421,14 @@ if uploaded_file is not None:
         result_norm = stats.kstest(table[[use_col]].values.flatten(), 'norm', (mu_hat, sigma_hat))
         result_exp = stats.kstest(table[[use_col]].values.flatten(), 'expon')
         result_lognorm = stats.kstest(table[[use_col]].values.flatten(), 'lognorm', (mu_hat_log, sigma_hat_log))
-        result_weibull2 = stats.kstest(table[[use_col]].values.flatten(), 'dweibull', (beta_hat, alpha_hat, 0))
+        result_weibull2 = stats.kstest(table[[use_col]].values.flatten(), 'dweibull', (beta_hat, alpha_hat))
         
         # visual part
         dis_fit = [[result_norm[1], result_exp[1], result_lognorm[1], result_weibull2[1]], 
                    [result_norm[1] > 0.05, result_exp[1] > 0.05, result_lognorm[1] > 0.05, result_weibull2[1] > 0.05]]
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
-        ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibul'])
+        ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibull'])
         start, end, step = table[use_col].min(), table[use_col].max(), (table[use_col].max() - table[use_col].min()) / 15
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
                                                    xbins = dict(start = start, end = end, size = step),
