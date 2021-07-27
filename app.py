@@ -430,7 +430,7 @@ if uploaded_file is not None:
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibull'])
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
-                                                   xbins = dict(start = start, end = end, size = step),
+                                                   xbins = dict(start = table[use_col].min(), end = table[use_col].max(), size = (table[use_col].max() - table[use_col].min()) / 25),
                                                    autobinx = False, 
                                                    histnorm = 'probability density')])
         
