@@ -448,7 +448,7 @@ if uploaded_file is not None:
         if ch_distr == 'Weibull':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = stats.dweibull(alpha_hat, beta_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
-        fig_distr.update_layout(title = 'Hist plot to comapre data with possible underlying distr', xaxis_title = use_col + ' values', yaxis_title = use_col + ' PMF and ch. distr. PDF')
+        fig_distr.update_layout(title = 'Hist plot to comapre data with possible underlying distribution', xaxis_title = use_col + ' values', yaxis_title = use_col + ' PMF and ch. distr. PDF')
         st.plotly_chart(fig_distr, use_container_width=True)
         
         
