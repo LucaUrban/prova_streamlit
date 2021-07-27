@@ -100,7 +100,7 @@ if uploaded_file is not None:
         st.plotly_chart(monoVar_plot, use_container_width=True)
 
     if widget == "Ratio Analysis":
-        # mono variable analysis part
+        # ratio analysis part
         st.header("Ratio Analysis")
 
         st.sidebar.subheader("Ratio Area")
@@ -121,6 +121,20 @@ if uploaded_file is not None:
             title = {'text': "Gauge plot for the variable: R_1"}))
         
         st.plotly_chart(ratio_plot, use_container_width=True)
+
+        # violin plot on the aggregated results
+        ratio_un = st.selectbox("multivariable index col", table.columns, 0)
+        
+        res['Sel'] = table[[ratio_un]].str.slice(0, 2).values
+        colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
+        fig = go.Figure(); uniques = res['Sel'].unique()
+        for i in range(len(uniques)):
+            fig.add_trace(go.Violin(x = res[res['Sel'] == uniques[i]]['R_1'].values, line_color = colors[i], name = uniques[i]))
+
+        fig.update_traces(orientation = 'h', side = 'positive', width = 3, points = False)
+        fig.update_layout(xaxis_showgrid = False, xaxis_zeroline = False, title = 'Violin plot for the  selected ratio',
+                          xaxis_title = 'Data', yaxis_title = 'Country')
+        fig.show()
     
     if widget == "Multidimensional Analysis":
         # multi variable analysis part
@@ -175,8 +189,8 @@ if uploaded_file is not None:
 
                 fig_tcc.update_xaxes(showgrid = False)
                 fig_tcc.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
-                                       xref='paper', yref='paper', showarrow=False, align='left',
-                                       bgcolor='rgba(255, 255, 255, 0.5)', text = titles[i])
+                                       xref = 'paper', yref = 'paper', showarrow=False, align = 'left',
+                                       bgcolor = 'rgba(255, 255, 255, 0.5)', text = titles[i])
                 fig_tcc.update_layout(xaxis_title = multi_time, yaxis_title = list(dff_tcc)[i+1])
                 fig_tcc.update_layout(height = 250, margin = {'l': 20, 'b': 30, 'r': 10, 't': 10})
 
