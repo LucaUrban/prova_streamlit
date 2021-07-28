@@ -469,10 +469,10 @@ if uploaded_file is not None:
         tukey_const = st.number_input("Insert the constant for the Tukey interquantile value", 0.5, 3.0, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         
-        st.table(pd.DataFrame([[table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0]], 
-                               [table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0]],
-                               [table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0]],
-                               [table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]],
+        st.table(pd.DataFrame([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
+                               table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
+                               table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
+                               table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]],
                                index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         
         
