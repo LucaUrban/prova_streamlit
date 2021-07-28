@@ -122,10 +122,31 @@ if uploaded_file is not None:
         
         st.plotly_chart(ratio_plot, use_container_width=True)
 
-        # violin plot on the aggregated results
-        ratio_un = st.selectbox("multivariable index col", table.columns, 0)
+        # map pplot + violin plot on the aggregated results
+        left, right = st.beta_columns(2)
+        with left: 
+            ratio_vio_sel1 = st.selectbox("multivariable index col", table.columns, 0)
+        with right:
+            ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + table.columns, 0)
         
-        res['Sel'] = table[ratio_un].str.slice(0, 2).values
+        res = {nut_col: table[nut_col].unique(), map_feature: []}
+        for nut_id in table[nut_col].unique():
+            res[map_feature].append(table[table[nut_col] == nut_id][map_feature].mean())
+        res = pd.DataFrame(res)
+
+        px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
+        map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = res[nut_col], featureidkey = 'properties.id',
+                                   color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
+                                   range_color = (res[map_feature].min(), res[map_feature].max()),
+                                   mapbox_style = "carto-positron",
+                                   zoom = 3, center = {"lat": 47.42, "lon": 15.53},
+                                   opacity = 0.5,
+                                   labels = {map_feature: map_feature})
+
+        st.plotly_chart(map_box, use_container_width=True)
+        
+        
+        res['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
         fig_vio = go.Figure(); uniques = res['Sel'].unique()
         for i in range(len(uniques)):
