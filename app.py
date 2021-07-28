@@ -466,7 +466,7 @@ if uploaded_file is not None:
         st.plotly_chart(fig_distr, use_container_width=True)
          
         # outlier part
-        tukey_const = st.number_input("Insert the constant for the Tukey interquantile value", 0.5, 3, 1.5)
+        tukey_const = st.number_input("Insert the constant for the Tukey interquantile value", 0.5, 3.0, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         
         st.table(pd.DataFrame([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
