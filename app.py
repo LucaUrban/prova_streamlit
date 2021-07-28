@@ -472,7 +472,7 @@ if uploaded_file is not None:
         st.table(pd.DataFrame([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
                                table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) and (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
                                table[(table[use_col] >= Q3 + (tukey_const * ITQ)) and (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
-                               table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]
+                               table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]],
                                index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         
         
