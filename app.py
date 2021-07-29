@@ -135,8 +135,7 @@ if uploaded_file is not None:
         res_ratio['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         res = {ratio_vio_sel1: res_ratio['Sel'].unique(), 'R_1': []}
         for nut_id in res[ratio_vio_sel1]:
-            if nut_id not in ['a', 'm']:
-                res['R_1'].append(res_ratio[res_ratio['Sel'] == nut_id]['R_1'].mean())
+                  res['R_1'].append(res_ratio[res_ratio['Sel'] == nut_id]['R_1'].mean())
         res = pd.DataFrame(res)
 
         px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
