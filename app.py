@@ -153,10 +153,10 @@ if uploaded_file is not None:
         cou_sel = st.selectbox("Choose the id of the country you want to explore", uniques, 0)
         colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(uniques), colortype='rgb')
         if ratio_vio_sel2 == 'None':
-            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", box = True, points = 'all')
+            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'all')
         else:
             res_ratio['Color'] = table[ratio_vio_sel2]
-            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", color = 'Color', box = True, points = 'all')
+            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'all')
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
