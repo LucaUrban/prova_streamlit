@@ -145,7 +145,7 @@ if uploaded_file is not None:
                                        mapbox_style = "carto-positron",
                                        zoom = 3, center = {"lat": 47.42, "lon": 15.53},
                                        opacity = 0.5,
-                                       labels = {ratio_vio_sel1: ratio_vio_sel1})
+                                       labels = {'R_1': 'R_1'})
 
         st.plotly_chart(map_box, use_container_width=True)
         
