@@ -149,14 +149,13 @@ if uploaded_file is not None:
 
         st.plotly_chart(map_box, use_container_width=True)
         
-        colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
-        fig_vio = go.Figure(); uniques = res['Sel'].unique()
-        for i in range(len(uniques)):
-            fig_vio.add_trace(go.Violin(x = res[res['Sel'] == uniques[i]]['R_1'].values, line_color = colors[i], name = uniques[i]))
-
-        fig_vio.update_traces(orientation = 'h', side = 'positive', width = 3, points = False)
-        fig_vio.update_layout(xaxis_showgrid = False, xaxis_zeroline = False, title = 'Violin plot for the  selected ratio',
-                          xaxis_title = 'Data', yaxis_title = 'Country')
+        uniques = res_ratio['Sel'].unique()
+        cou_sel = st.selectbox("Choose the id of the country you want to explore", uniques, 0)
+        colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(uniques), colortype='rgb')
+        if ratio_vio_sel2 == 'None':
+            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", box = True, points = 'all')
+        else:
+            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", color = ratio_vio_sel2, box = True, points = 'all')
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
