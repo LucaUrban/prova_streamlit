@@ -155,7 +155,7 @@ if uploaded_file is not None:
             fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers')
         else:
             res_ratio['Color'] = table[ratio_vio_sel2]
-            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers', violinmode = 'group')
+            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers', violinmode = 'overlay')
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
