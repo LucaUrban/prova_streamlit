@@ -30,6 +30,9 @@ if uploaded_file is not None:
     table = pd.read_csv(uploaded_file)
 
     # importing all other necessary files
+    with urlopen('https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson') as response:
+        eu_nut0 = json.load(response)
+    
     with urlopen('https://raw.githubusercontent.com/eurostat/Nuts2json/master/2021/4326/60M/nutsrg_2.json') as response:
         eu_nut2 = json.load(response)
 
@@ -60,7 +63,7 @@ if uploaded_file is not None:
         st.header("Map")
 
         res = {nut_col: table[nut_col].unique(), map_feature: []}
-        for nut_id in table[nut_col].unique():
+        for nut_id in res[nut_col]:
             res[map_feature].append(table[table[nut_col] == nut_id][map_feature].quantile(map_q/100))
         res = pd.DataFrame(res)
 
@@ -107,17 +110,17 @@ if uploaded_file is not None:
         ratio_num = st.sidebar.multiselect("select the ratio numerator", col_mul)
         ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
-        res = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])
+        res_ratio = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
-            value = res['R_1'].mean(),
-            delta = {"reference": 2 * res['R_1'].mean() - res['R_1'].quantile(0.95)},
+            value = res_ratio['R_1'].mean(),
+            delta = {"reference": 2 * res_ratio['R_1'].mean() - res_ratio['R_1'].quantile(0.95)},
             domain = {'x': [0, 1], 'y': [0, 1]},
-            gauge = {'axis': {'range': [res['R_1'].min(), res['R_1'].max()]},
+            gauge = {'axis': {'range': [res_ratio['R_1'].min(), res_ratio['R_1'].max()]},
                      'steps' : [
-                         {'range': [res['R_1'].min(), res['R_1'].quantile(0.05)], 'color': "lightgray"},
-                         {'range': [res['R_1'].quantile(0.95), res['R_1'].max()], 'color': "gray"}],},
+                         {'range': [res_ratio['R_1'].min(), res_ratio['R_1'].quantile(0.05)], 'color': "lightgray"},
+                         {'range': [res_ratio['R_1'].quantile(0.95), res_ratio['R_1'].max()], 'color': "gray"}],},
             title = {'text': "Gauge plot for the variable: R_1"}))
         
         st.plotly_chart(ratio_plot, use_container_width=True)
@@ -127,26 +130,26 @@ if uploaded_file is not None:
         with left: 
             ratio_vio_sel1 = st.selectbox("multivariable index col", table.columns, 0)
         with right:
-            ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + [table.columns], 0)
+            ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + list(table.columns), 0)
         
-        res = {ratio_vio_sel1: table[ratio_vio_sel1].unique(), map_feature: []}
-        for nut_id in table[ratio_vio_sel1].unique():
-            res[map_feature].append(table[table[ratio_vio_sel1] == nut_id][map_feature].mean())
+        res_ratio['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
+        res = {ratio_vio_sel1: res_ratio['Sel'].unique(), 'R_1': []}
+        for nut_id in res[ratio_vio_sel1]:
+            if nut_id not in ['a', 'm']:
+                res['R_1'].append(res_ratio[res_ratio['Sel'] == nut_id]['R_1'].mean())
         res = pd.DataFrame(res)
 
         px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
-        map_box = px.choropleth_mapbox(res, geojson = eu_nut2, locations = res[nut_col], featureidkey = 'properties.id',
-                                   color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
-                                   range_color = (res[map_feature].min(), res[map_feature].max()),
-                                   mapbox_style = "carto-positron",
-                                   zoom = 3, center = {"lat": 47.42, "lon": 15.53},
-                                   opacity = 0.5,
-                                   labels = {map_feature: map_feature})
+        map_box = px.choropleth_mapbox(res, geojson = eu_nut0, locations = res_ratio['Sel'], featureidkey = 'properties.ISO2',
+                                       color = map_feature, color_continuous_scale = px.colors.cyclical.IceFire,
+                                       range_color = (res_ratio['R_1'].min(), res_ratio['R_1'].max()),
+                                       mapbox_style = "carto-positron",
+                                       zoom = 3, center = {"lat": 47.42, "lon": 15.53},
+                                       opacity = 0.5,
+                                       labels = {map_feature: map_feature})
 
         st.plotly_chart(map_box, use_container_width=True)
         
-        
-        res['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         colors = n_colors('rgb(5, 200, 10)', 'rgb(10, 20, 250)', len(res['Sel'].unique()), colortype='rgb')
         fig_vio = go.Figure(); uniques = res['Sel'].unique()
         for i in range(len(uniques)):
