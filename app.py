@@ -18,6 +18,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.stattools import medcouple
 import math
 import scipy.stats as stats
 
@@ -488,13 +489,30 @@ if uploaded_file is not None:
         st.plotly_chart(fig_distr, use_container_width=True)
          
         # outlier part
-        tukey_const = st.number_input("Insert the constant for the Tukey interquantile value", 0.5, 3.0, 1.5)
+        tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
-        
-        st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
-                                        table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
-                                        table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
-                                        table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]).reshape(1, 4),
-                               index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
+        if stats.skewtest(table[use_col].values) <= 0.01:
+            st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
+                                            table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
+                                            table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
+                                            table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]).reshape(1, 4),
+                                  index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
+        else:
+            MC = medcouple(table[use_col].values)
+            if MC > 0:
+                st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
+                                                table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))].shape[0],
+                                                table[(table[use_col] >= Q3 + (tukey_const * math.exp(3 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))].shape[0],
+                                                table[table[use_col] >= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ)].shape[0]]).reshape(1, 4),
+                                      index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
+            else:
+                st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)].shape[0], 
+                                                table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-3 * MC) * ITQ))].shape[0],
+                                                table[(table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))].shape[0],
+                                                table[table[use_col] >= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ)].shape[0]]).reshape(1, 4),
+                                      index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
+                
+            
+            
         
         
