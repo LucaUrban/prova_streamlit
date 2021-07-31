@@ -491,6 +491,7 @@ if uploaded_file is not None:
         # outlier part
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
+        st.write(stats.skewtest(table[use_col].values)[1])
         if stats.skewtest(table[use_col].values)[1] <= 0.01:
             st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
                                             table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
@@ -499,6 +500,7 @@ if uploaded_file is not None:
                                   index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         else:
             MC = medcouple(table[use_col].values)
+            st.write(MC)
             if MC > 0:
                 st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
                                                 table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))].shape[0],
