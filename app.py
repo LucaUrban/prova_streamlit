@@ -440,26 +440,27 @@ if uploaded_file is not None:
         
     if widget == "Anomalies check":
         use_col = st.sidebar.selectbox("Chosen Variable", col_mul, 0)
+        var_clean = table[use_col].dropna().values
         
         # MLE normal
-        mu_hat = table[use_col].mean()
-        sigma_hat = math.sqrt(((table[use_col] - table[use_col].mean()) ** 2).sum() / table[use_col].count())
+        mu_hat = var_clean.mean()
+        sigma_hat = math.sqrt(((var_clean - var_clean.mean()) ** 2).sum() / var_clean.shape[0])
 
         # MLE exponential
-        lambda_hat_exp = table[use_col].count() / table[use_col].sum()
+        lambda_hat_exp = var_clean.count() / var_clean.sum()
 
         # MLE log-normal
-        mu_hat_log = (np.ma.log(table[use_col].values)).sum() / table[use_col].count()
-        sigma_hat_log = math.sqrt(((np.ma.log(table[use_col].values) - mu_hat_log) ** 2).sum() / table[use_col].count())
+        mu_hat_log = (np.ma.log(var_clean.values)).sum() / var_clean.shape[0]
+        sigma_hat_log = math.sqrt(((np.ma.log(var_clean.values) - mu_hat_log) ** 2).sum() / var_clean.count())
         
         # MLE weibull
-        a, alpha_hat, b, beta_hat = stats.exponweib.fit(table[use_col], floc=0, fa=1)
+        a, alpha_hat, b, beta_hat = stats.exponweib.fit(var_clean, floc=0, fa=1)
         
         # computing the p-values for all the distributions
-        result_norm = stats.kstest(table[[use_col]].values.flatten(), 'norm', (mu_hat, sigma_hat))
-        result_exp = stats.kstest(table[[use_col]].values.flatten(), 'expon')
-        result_lognorm = stats.kstest(table[[use_col]].values.flatten(), 'lognorm', (mu_hat_log, sigma_hat_log))
-        result_weibull2 = stats.kstest(table[[use_col]].values.flatten(), 'dweibull', (beta_hat, alpha_hat))
+        result_norm = stats.kstest(var_clean, 'norm', (mu_hat, sigma_hat))
+        result_exp = stats.kstest(var_clean, 'expon')
+        result_lognorm = stats.kstest(var_clean, 'lognorm', (mu_hat_log, sigma_hat_log))
+        result_weibull2 = stats.kstest(var_clean, 'dweibull', (beta_hat, alpha_hat))
         
         # visual part
         dis_fit = [[result_norm[1], result_exp[1], result_lognorm[1], result_weibull2[1]], 
@@ -468,11 +469,11 @@ if uploaded_file is not None:
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibull'])
         fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
-                                                   xbins = dict(start = table[use_col].min(), end = table[use_col].max(), size = (table[use_col].max() - table[use_col].min()) / 25),
+                                                   xbins = dict(start = var_clean.min(), end = var_clean.max(), size = (var_clean.max() - var_clean.min()) / 25),
                                                    autobinx = False, 
                                                    histnorm = 'probability density')])
         
-        x_pos = np.linspace(table[use_col].min(), table[use_col].max(), 25)
+        x_pos = np.linspace(var_clean.min(), var_clean.max(), 25)
         if ch_distr == 'Normal':
             fig_distr.add_trace(go.Scatter(x = x_pos, 
                                            y = stats.norm(mu_hat, sigma_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
@@ -492,7 +493,7 @@ if uploaded_file is not None:
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         st.write(stats.skewtest(table[use_col].values)[1])
-        if stats.skewtest(table[use_col].values)[1] >= 0.01:
+        if stats.skewtest(var_clean)[1] >= 0.01:
             st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
                                             table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
                                             table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
@@ -500,8 +501,8 @@ if uploaded_file is not None:
                                   index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         else:
             # calculating the medcouple function for the tukey fence
-            if table[use_col].dropna().values.shape[0] > 5000:
-                MC = medcouple(table[use_col].values[np.random.choice(table[use_col].dropna().values.shape[0], 5000)])
+            if var_clean.shape[0] > 5000:
+                MC = medcouple(table[use_col].values[np.random.choice(var_clean.shape[0], 5000)])
             else:
                 MC = medcouple(table[use_col].values)
                 
