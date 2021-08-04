@@ -505,7 +505,7 @@ if uploaded_file is not None:
                 MC = medcouple(var_clean[np.random.choice(var_clean.shape[0], 5000)])
             else:
                 MC = medcouple(var_clean)
-            st.write(MC)
+            st.write(math.exp(4 * MC))
             # calculating the tukey fence
             if MC > 0:
                 st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
