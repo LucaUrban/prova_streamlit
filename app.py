@@ -447,7 +447,7 @@ if uploaded_file is not None:
         sigma_hat = math.sqrt(((var_clean - var_clean.mean()) ** 2).sum() / var_clean.shape[0])
 
         # MLE exponential
-        lambda_hat_exp = var_clean.count() / var_clean.sum()
+        lambda_hat_exp = var_clean.shape[0] / var_clean.sum()
 
         # MLE log-normal
         mu_hat_log = (np.ma.log(var_clean.values)).sum() / var_clean.shape[0]
