@@ -451,7 +451,7 @@ if uploaded_file is not None:
 
         # MLE log-normal
         mu_hat_log = (np.ma.log(var_clean)).sum() / var_clean.shape[0]
-        sigma_hat_log = math.sqrt(((np.ma.log(var_clean) - mu_hat_log) ** 2).sum() / var_clean.count())
+        sigma_hat_log = math.sqrt(((np.ma.log(var_clean) - mu_hat_log) ** 2).sum() / var_clean.shape[0])
         
         # MLE weibull
         a, alpha_hat, b, beta_hat = stats.exponweib.fit(var_clean, floc=0, fa=1)
