@@ -498,7 +498,15 @@ if uploaded_file is not None:
                                             table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]).reshape(1, 4),
                                   index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         else:
-            MC = medcouple(table[use_col].values)
+            st.write(stats.skewtest(table[use_col].values)[1])
+            
+            # calculating the medcouple function for the tukey fence
+            if table[use_col].dropna().values.shape[0] > 5000:
+                MC = medcouple(table[use_col].values[np.random.choice(table[use_col].dropna().values.shape[0], 5000)])
+            else:
+                MC = medcouple(table[use_col].values)
+                
+            # calculating the tukey fence
             if MC > 0:
                 st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
                                                 table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))].shape[0],
