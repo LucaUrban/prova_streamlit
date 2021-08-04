@@ -502,9 +502,9 @@ if uploaded_file is not None:
         else:
             # calculating the medcouple function for the tukey fence
             if var_clean.shape[0] > 5000:
-                MC = medcouple(table[use_col].values[np.random.choice(var_clean.shape[0], 5000)])
+                MC = medcouple(var_clean.values[np.random.choice(var_clean.shape[0], 5000)])
             else:
-                MC = medcouple(table[use_col].values)
+                MC = medcouple(var_clean.values)
             st.write(MC)
             # calculating the tukey fence
             if MC > 0:
