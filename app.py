@@ -493,7 +493,7 @@ if uploaded_file is not None:
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         st.write(stats.skewtest(var_clean)[1])
-        if stats.skewtest(var_clean)[1] >= 0.01:
+        if stats.skewtest(var_clean)[1] >= 0.025:
             st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
                                             table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
                                             table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
@@ -505,7 +505,7 @@ if uploaded_file is not None:
                 MC = medcouple(table[use_col].values[np.random.choice(var_clean.shape[0], 5000)])
             else:
                 MC = medcouple(table[use_col].values)
-                
+            st.write(MC)
             # calculating the tukey fence
             if MC > 0:
                 st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
