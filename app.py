@@ -450,8 +450,8 @@ if uploaded_file is not None:
         lambda_hat_exp = var_clean.shape[0] / var_clean.sum()
 
         # MLE log-normal
-        mu_hat_log = (np.ma.log(var_clean.values)).sum() / var_clean.shape[0]
-        sigma_hat_log = math.sqrt(((np.ma.log(var_clean.values) - mu_hat_log) ** 2).sum() / var_clean.count())
+        mu_hat_log = (np.ma.log(var_clean)).sum() / var_clean.shape[0]
+        sigma_hat_log = math.sqrt(((np.ma.log(var_clean) - mu_hat_log) ** 2).sum() / var_clean.count())
         
         # MLE weibull
         a, alpha_hat, b, beta_hat = stats.exponweib.fit(var_clean, floc=0, fa=1)
