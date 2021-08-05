@@ -468,24 +468,21 @@ if uploaded_file is not None:
         st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibull'])
-        fig_distr = go.Figure(data = [go.Histogram(x = table[use_col], 
+        fig_distr = go.Figure(data = [go.Histogram(x = var_clean, 
                                                    xbins = dict(start = var_clean.min(), end = var_clean.max(), size = (var_clean.max() - var_clean.min()) / 25),
                                                    autobinx = False, 
                                                    histnorm = 'probability density')])
         
         x_pos = np.linspace(var_clean.min(), var_clean.max(), 25)
         if ch_distr == 'Normal':
-            fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = stats.norm(mu_hat, sigma_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+            fig_distr.add_trace(go.Scatter(x = x_pos, y = stats.norm(mu_hat, sigma_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
         if ch_distr == 'Exponential':
-            fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = stats.expon(lambda_hat_exp).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+            fig_distr.add_trace(go.Scatter(x = x_pos, y = stats.expon(lambda_hat_exp).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
         if ch_distr == 'Log-Norm':
-            fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = stats.lognorm(mu_hat_log, sigma_hat_log).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+            fig_distr.add_trace(go.Scatter(x = x_pos, y = stats.lognorm(mu_hat_log, sigma_hat_log).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
         if ch_distr == 'Weibull':
-            fig_distr.add_trace(go.Scatter(x = x_pos, 
-                                           y = stats.dweibull(alpha_hat, beta_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+            fig_distr.add_trace(go.Scatter(x = x_pos, y = stats.dweibull(alpha_hat, beta_hat).pdf(x_pos), mode = 'lines+markers', name = "Est Distribution"))
+        
         fig_distr.update_layout(title = 'Hist plot to comapre data with possible underlying distribution', xaxis_title = use_col + ' values', yaxis_title = use_col + ' PMF and ch. distr. PDF')
         st.plotly_chart(fig_distr, use_container_width=True)
          
