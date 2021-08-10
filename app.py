@@ -495,7 +495,11 @@ if uploaded_file is not None:
             \sum_{k=0}^{n-1} ar^k =
             a \left(\frac{1-r^{n}}{1-r}\right)
             ''')
-        st.latex(r'''$$a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} = \sum_{k=0}^{n-1} ar^k = a \left(\frac{1-r^{n}}{1-r}\right$$''')
+        st.latex(r'''
+            a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} = 
+            \sum_{k=0}^{n-1} ar^k = 
+            a \left(\frac{1-r^{n}}{1-r}\right
+            ''')
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         
