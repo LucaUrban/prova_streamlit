@@ -487,8 +487,9 @@ if uploaded_file is not None:
         st.plotly_chart(fig_distr, use_container_width=True)
          
         # outlier part
-        st.write('In the next part there is the effective calculation of the outliers contained into the data. The calculation is made by the Tukey\'s fences. These fences' + 
-                 'are calculated with the next formulas and the applied formula depend on the type of distribution chosen and the skewness of the data.')
+        st.markdown('In the next part there is the effective detection of the outliers contained into the data. The detection is made by the **Tukey\'s fences**. ' + 
+                    'These fences are calculated by refering to the next formulas and the applied formula depend on the type of distribution chosen ' + 
+                    'and the **skewness** of the data.')
         st.write('If the data is skewed the fence is calculated in this way: ')
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
