@@ -490,10 +490,11 @@ if uploaded_file is not None:
         st.markdown('In the next part there is the effective detection of the outliers contained into the data. The detection is made by the **Tukey\'s fences**. ' + 
                     'These fences are calculated by refering to the next formulas and the applied formula depend on the type of distribution chosen ' + 
                     'and the **skewness** of the data. \n If the data is **skewed** the fences are calculated in this way: ')
-        st.latex(r'''[Q_{1} - k \cdot ITQ, Q_{3} + k \cdot ITQ] = [Q_{1} - t_{f}, Q_{3} + t_{f}]''')
-        st.markdown('In this equation $$Q_{1}$$ represent the first quantile while $$Q_{3}$$ represents the third quantile and k is the **Tukey\'s constant**.' + 
-                    'A value is considered an outlier if it doesen\'t fit into the interval. While if is **not skewed** the formula changes with a correction term and becomes:')
-        st.latex(r'''a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} = \sum_{k=0}^{n-1} ar^k = a \left(\frac{1-r^{n}}{1-r}\right)''')
+        st.latex(r'''[Q_{1} - (k \cdot ITQ), Q_{3} + (k \cdot ITQ)] = [Q_{1} - t_{f}, Q_{3} + t_{f}]''')
+        st.markdown('In this equation $$Q_{1}$$ represent the first quantile while $$Q_{3}$$ represents the third quantile and k is the **Tukey\'s constant**. ' + 
+                    'A value is treated as an outlier if it doesen\'t fit into the interval. If the data distribution is **not skewed** the formula changes with a ' + 
+                    'correction term and becomes:')
+        st.latex(r'''[Q_{1} - (k \cdot e^{3mc} \cdot ITQ), Q_{3} + (k \cdot e^{3mc} \cdot ITQ)] = [Q_{1} - t_{f}', Q_{3} + t_{f}']''')
         st.markdown('')
         
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
