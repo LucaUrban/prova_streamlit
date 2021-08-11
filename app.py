@@ -495,13 +495,16 @@ if uploaded_file is not None:
         st.latex(r'''[Q_{1} - (k \cdot e^{-4mc} \cdot ITQ), Q_{3} + (k \cdot e^{3mc} \cdot ITQ)]''')
         st.markdown('If mc > 0 and: ')
         st.latex(r'''[Q_{1} - (k \cdot e^{-3mc} \cdot ITQ), Q_{3} + (k \cdot e^{4mc} \cdot ITQ)]''')
-        st.markdown('If mc < 0. \n In these equations $Q_{1}$ represent the first quantile, while $Q_{3}$ represents the third quantile, $ITQ = Q_{3} - Q_{1}$,k is the ' + 
-                    '**Tukey\'s constant** (it\'s the value that the user can insert in the numeric input below it is usually setted to 1,5) and mc is  ' + 
-                    'the value of the **MedCouple** function. A value is treated as an outlier if it doesen\'t fit into these intervals. In this application ' + 
-                    'we make a distinction between strong and weak outlier. A strong outlier $o_{s}$ is a value that given a $t_{f}$ value for the fence\'s correction term: ')
+        st.markdown('If mc < 0. \n In these equations $Q_{1}$ represent the first quantile, while $Q_{3}$ represents the third quantile, $ITQ = Q_{3} - Q_{1}$, k is the ' + 
+                    '**Tukey\'s constant** and mc is the value of the **MedCouple** function. A value is treated as an outlier if it doesen\'t fit into these intervals. ' + 
+                    'In this application we make a distinction between strong and weak outlier. A strong outlier $o_{s}$ is a value that given a $t_{f}$ value for the ' + 
+                    'fence\'s correction term: ')
         st.markdown('$o_{s} < Q_{1} - 2 \cdot t_{f}$ if it\'s a left outlier and $o_{s} > Q_{3} + 2 \cdot t_{f}$ if it\'s a right one')
         st.markdown('While a weak outlier $o_{w}$ is defined as: ')
         st.markdown('$o_{w} \in [Q_{1} - 2 \cdot t_{f}, Q_{1} - t_{f}]$ if it\'s a left outlier and $o_{w} \in [Q_{3} + t_{f}, Q_{3} + 2 \cdot t_{f}]$ if it\'s a right one')
+        st.markdown('In the next numeric input you can insert the value of the **Tukey\'s constant** (is usually setted to 1,5), from the previous formulas we can derive ' + 
+                    'that a smaller **k** will reduce the fence\'s size (you will find more outliers but less significant), while a bigger **k** will have an opposite effect,' + 
+                    ' so this value must be chosen wisely.')
         
         tukey_const = st.number_input("Insert the constant for the fence interquantile value", 0.5, 7.5, 1.5)
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
@@ -532,8 +535,8 @@ if uploaded_file is not None:
                                                 table[(table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))].shape[0],
                                                 table[table[use_col] >= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ)].shape[0]]).reshape(1, 4),
                                       index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
-                
-            
+        
+        # a more specific   
             
         
         
