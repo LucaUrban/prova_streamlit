@@ -510,7 +510,7 @@ if uploaded_file is not None:
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         
         if stats.skewtest(var_clean)[1] >= 0.025:
-            df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * ITQ))]
+            df_AllOut = table[(table[use_col] <= Q1 - (tukey_const * ITQ)) & (table[use_col] >= Q3 + (tukey_const * ITQ))]
             df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * ITQ)]
             df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))]
             df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))]
@@ -526,7 +526,7 @@ if uploaded_file is not None:
             
             # calculating the tukey fence
             if MC > 0:
-                df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))]
+                df_AllOut = table[(table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] >= Q3 + (tukey_const * math.exp(3 * MC) * ITQ))]
                 df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)]
                 df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))]
                 df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * math.exp(3 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))]
@@ -534,7 +534,7 @@ if uploaded_file is not None:
                 st.table(pd.DataFrame(np.array([df_StLeftOut.shape[0], df_WeLeftOut.shape[0], df_WeRightOut.shape[0], df_StRightOut.shape[0]]).reshape(1, 4),
                                       index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
             else:
-                df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))]
+                df_AllOut = table[(table[use_col] <= Q1 - (tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ))]
                 df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)]
                 df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-3 * MC) * ITQ))]
                 df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))]
@@ -550,10 +550,10 @@ if uploaded_file is not None:
             out_type = st.selectbox("Type of outliers you want to investigate", ['All', 'Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers'], 0)
         
         if out_type == 'All':
-            res_out['Sel'] = df_AllOut[out_id_col].str.slice(0, 2).values
-            res = {out_id_col: res_out['Sel'].unique(), 'Num. Out.': []}
+            df_AllOut['Sel'] = df_AllOut[out_id_col].str.slice(0, 2).values
+            res = {out_id_col: df_AllOut['Sel'].unique(), 'Num. Out.': []}
             for nut_id in res[out_id_col]:
-                      res['Num. Out.'].append(res_out[res_out['Sel'] == nut_id]['R_1'].shape[0])
+                      res['Num. Out.'].append(df_AllOut[df_AllOut['Sel'] == nut_id]['R_1'].shape[0])
             res = pd.DataFrame(res)
 
             px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
