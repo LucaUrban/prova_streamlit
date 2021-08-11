@@ -510,10 +510,12 @@ if uploaded_file is not None:
         Q3 = table[use_col].quantile(0.75); Q1 = table[use_col].quantile(0.25); ITQ = Q3- Q1
         
         if stats.skewtest(var_clean)[1] >= 0.025:
-            st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * ITQ)].shape[0], 
-                                            table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))].shape[0],
-                                            table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))].shape[0],
-                                            table[table[use_col] >= Q3 + (2 * tukey_const * ITQ)].shape[0]]).reshape(1, 4),
+            df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * ITQ))]
+            df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * ITQ)]
+            df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * ITQ)) & (table[use_col] <= Q1 - (tukey_const * ITQ))]
+            df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * ITQ))]
+            df_StRightOut = table[table[use_col] > Q3 + (2 * tukey_const * ITQ)]
+            st.table(pd.DataFrame(np.array([df_StLeftOut.shape[0], df_WeLeftOut.shape[0], df_WeRightOut.shape[0], df_StRightOut.shape[0]]).reshape(1, 4),
                                   index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         else:
             # calculating the medcouple function for the tukey fence
@@ -524,19 +526,52 @@ if uploaded_file is not None:
             
             # calculating the tukey fence
             if MC > 0:
-                st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)].shape[0], 
-                                                table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))].shape[0],
-                                                table[(table[use_col] >= Q3 + (tukey_const * math.exp(3 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))].shape[0],
-                                                table[table[use_col] >= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ)].shape[0]]).reshape(1, 4),
+                df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))]
+                df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)]
+                df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-4 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-4 * MC) * ITQ))]
+                df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * math.exp(3 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ))]
+                df_StRightOut = table[table[use_col] > Q3 + (2 * tukey_const * math.exp(3 * MC) * ITQ)]
+                st.table(pd.DataFrame(np.array([df_StLeftOut.shape[0], df_WeLeftOut.shape[0], df_WeRightOut.shape[0], df_StRightOut.shape[0]]).reshape(1, 4),
                                       index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
             else:
-                st.table(pd.DataFrame(np.array([table[table[use_col] <= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)].shape[0], 
-                                                table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-3 * MC) * ITQ))].shape[0],
-                                                table[(table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))].shape[0],
-                                                table[table[use_col] >= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ)].shape[0]]).reshape(1, 4),
+                df_AllOut = table[(table[use_col] < Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] > Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))]
+                df_StLeftOut = table[table[use_col] < Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)]
+                df_WeLeftOut = table[(table[use_col] >= Q1 - (2 * tukey_const * math.exp(-3 * MC) * ITQ)) & (table[use_col] <= Q1 - (tukey_const * math.exp(-3 * MC) * ITQ))]
+                df_WeRightOut = table[(table[use_col] >= Q3 + (tukey_const * math.exp(4 * MC) * ITQ)) & (table[use_col] <= Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ))]
+                df_StRightOut = table[table[use_col] > Q3 + (2 * tukey_const * math.exp(4 * MC) * ITQ)]
+                st.table(pd.DataFrame(np.array([df_StLeftOut.shape[0], df_WeLeftOut.shape[0], df_WeRightOut.shape[0], df_StRightOut.shape[0]]).reshape(1, 4),
                                       index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         
-        # a more specific   
+        # a more specific view of the ouliers by country or generic id and type
+        left, right = st.beta_columns(2)
+        with left: 
+            out_id_col = st.selectbox("Outlier index col", table.columns, 0)
+        with right:
+            out_type = st.selectbox("Type of outliers you want to investigate", ['All', 'Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers'], 0)
+        
+        if out_type == 'All':
+            res_out['Sel'] = df_AllOut[out_id_col].str.slice(0, 2).values
+            res = {out_id_col: res_out['Sel'].unique(), 'Num. Out.': []}
+            for nut_id in res[out_id_col]:
+                      res['Num. Out.'].append(res_out[res_out['Sel'] == nut_id]['R_1'].shape[0])
+            res = pd.DataFrame(res)
+
+            px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
+            map_box = px.choropleth_mapbox(res, geojson = eu_nut0, locations = res[out_id_col], featureidkey = 'properties.ISO2',
+                                           color = 'Num. Out.', color_continuous_scale = px.colors.cyclical.IceFire,
+                                           range_color = (min(res['Num. Out.']), max(res['Num. Out.'])),
+                                           mapbox_style = "carto-positron",
+                                           zoom = 3, center = {"lat": 47.42, "lon": 15.53},
+                                           opacity = 0.5,
+                                           labels = {'Num. Out.': 'Num. Out.'})
             
+        if out_type == 'Strong left outliers':
+        
+        if out_type == 'Weak left outliers':
+            
+        if out_type == 'Weak right outliers':
+            
+        if out_type == 'Strong right outliers':
+        
         
         
