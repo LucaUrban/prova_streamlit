@@ -559,7 +559,7 @@ if uploaded_file is not None:
             px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
             map_box = px.choropleth_mapbox(res, geojson = eu_nut0, locations = res[out_id_col], featureidkey = 'properties.ISO2',
                                            color = 'Num. Out.', color_continuous_scale = px.colors.cyclical.IceFire,
-                                           range_color = (min(res['Num. Out.']), max(res['Num. Out.'])),
+                                           range_color = (res['Num. Out.'].min(), res['Num. Out.'].max()),
                                            mapbox_style = "carto-positron",
                                            zoom = 3, center = {"lat": 47.42, "lon": 15.53},
                                            opacity = 0.5,
