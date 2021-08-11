@@ -566,12 +566,12 @@ if uploaded_file is not None:
                                            labels = {'Num. Out.': 'Num. Out.'})
             
         if out_type == 'Strong left outliers':
-        
+            pass
         if out_type == 'Weak left outliers':
-            
+            pass
         if out_type == 'Weak right outliers':
-            
+            pass
         if out_type == 'Strong right outliers':
-        
+            pass
         
         
