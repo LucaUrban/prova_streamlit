@@ -553,7 +553,7 @@ if uploaded_file is not None:
             df_AllOut['Sel'] = df_AllOut[out_id_col].str.slice(0, 2).values
             res = {out_id_col: df_AllOut['Sel'].unique(), 'Num. Out.': []}
             for nut_id in res[out_id_col]:
-                      res['Num. Out.'].append(df_AllOut[df_AllOut['Sel'] == nut_id]['R_1'].shape[0])
+                      res['Num. Out.'].append(df_AllOut[df_AllOut['Sel'] == nut_id].shape[0])
             res = pd.DataFrame(res)
 
             px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
