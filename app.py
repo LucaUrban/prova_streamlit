@@ -564,7 +564,8 @@ if uploaded_file is not None:
                                            zoom = 3, center = {"lat": 47.42, "lon": 15.53},
                                            opacity = 0.5,
                                            labels = {'Num. Out.': 'Num. Out.'})
-            
+            st.plotly_chart(map_box, use_container_width=True)
+         
         if out_type == 'Strong left outliers':
             pass
         if out_type == 'Weak left outliers':
