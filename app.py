@@ -555,7 +555,7 @@ if uploaded_file is not None:
             for nut_id in res[out_id_col]:
                   res['Num. Out.'].append(df_AllOut[df_AllOut['Sel'] == nut_id].shape[0])
             res = pd.DataFrame(res)
-            st.write(res)
+
             px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
             map_box = px.choropleth_mapbox(res, geojson = eu_nut0, locations = res[out_id_col], featureidkey = 'properties.ISO2',
                                            color = 'Num. Out.', color_continuous_scale = px.colors.cyclical.IceFire,
