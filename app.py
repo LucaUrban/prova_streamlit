@@ -152,9 +152,10 @@ if uploaded_file is not None:
         
         uniques = list(res_ratio['Sel'].unique())
         cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
+        res_ratio['Un Name'] = table['INST_NAME']
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
-                fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers')
+                fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers', hover_data = ['Un Name'])
             else:
                 res_ratio['Color'] = table[ratio_vio_sel2]
                 fig_vio = px.violin(res_ratio, y = "R_1", color = 'Color', box = True, points = 'suspectedoutliers')
