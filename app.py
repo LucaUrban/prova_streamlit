@@ -150,7 +150,7 @@ if uploaded_file is not None:
 
         st.plotly_chart(map_box, use_container_width=True)
         
-        uniques = res_ratio['Sel'].unique()
+        uniques = list(res_ratio['Sel'].unique())
         cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
