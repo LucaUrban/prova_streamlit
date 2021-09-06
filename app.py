@@ -151,12 +151,19 @@ if uploaded_file is not None:
         st.plotly_chart(map_box, use_container_width=True)
         
         uniques = res_ratio['Sel'].unique()
-        cou_sel = st.selectbox("Choose the id of the country you want to explore", uniques, 0)
-        if ratio_vio_sel2 == 'None':
-            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers')
+        cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
+        if cou_sel == 'All ids':
+            if ratio_vio_sel2 == 'None':
+                fig_vio = px.violin(res_ratio, y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers')
+            else:
+                res_ratio['Color'] = table[ratio_vio_sel2]
+                fig_vio = px.violin(res_ratio, y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers')
         else:
-            res_ratio['Color'] = table[ratio_vio_sel2]
-            fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers')
+            if ratio_vio_sel2 == 'None':
+                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers')
+            else:
+                res_ratio['Color'] = table[ratio_vio_sel2]
+                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers')
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
