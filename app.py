@@ -155,16 +155,19 @@ if uploaded_file is not None:
         res_ratio['Un Name'] = table['INST_NAME']
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
-                fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers', hover_data = ['Un Name'])
+                fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
             else:
                 res_ratio['Color'] = table[ratio_vio_sel2]
-                fig_vio = px.violin(res_ratio, y = "R_1", color = 'Color', box = True, points = 'suspectedoutliers')
+                fig_vio = px.violin(res_ratio, y = "R_1", color = 'Color', box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', 
+                                    hover_data = ['Un Name'])
         else:
             if ratio_vio_sel2 == 'None':
-                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers')
+                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', 
+                                    hover_data = ['Un Name'])
             else:
                 res_ratio['Color'] = table[ratio_vio_sel2]
-                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers')
+                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers', 
+                                    title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
