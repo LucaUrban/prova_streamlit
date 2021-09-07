@@ -152,7 +152,7 @@ if uploaded_file is not None:
         
         uniques = list(res_ratio['Sel'].unique())
         cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
-        res_ratio['Un Name'] = table['INST_NAME']
+        res_ratio['Un Name'] = table['Institution Name']
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
                 fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
