@@ -311,16 +311,16 @@ if uploaded_file is not None:
         
         scaler = StandardScaler()
         if id_sel == 'All ids':
+            target = table[feaImp_target]
             train_nm = table[fea_Imp_features]
         else:
-            st.write(table[table[id_sel_col] == id_sel][fea_Imp_features])
+            target = table[table[id_sel_col] == id_sel][feaImp_target]
             train_nm = table[table[id_sel_col] == id_sel][[fea_Imp_features]]
 
         for name_col in fea_Imp_features:
             train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
         train_nm = scaler.fit_transform(train_nm)
 
-        target = table[feaImp_target]
         target.replace({np.nan : 0}, inplace = True)
 
         Alpha = [.1, 1, 10, 100]; titles = tuple("Feature importance for alpha = " + str(alpha) for alpha in Alpha)
