@@ -298,11 +298,17 @@ if uploaded_file is not None:
     if widget == "Feature Importance Analysis":
         # pareto chart with feature importance on ridge regressor
         st.sidebar.subheader("Feature Importance Area")
-        feaImp_target = st.sidebar.selectbox("multivariable index col", col_mul, 1)
+        feaImp_target = st.sidebar.selectbox("Feature Importance target", col_mul, 1)
+        id_sel_col = st.sidebar.selectbox("ID column", table.columns, 2)
 
         st.header("Feature Importance Analysis")
-
-        fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+        
+        left, right = st.beta_columns(2)
+        with left: 
+            fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+        with right:
+            id_sel = st.selectbox("multivariable index col", ['All ids'] + list(table[id_sel_col].unique()), 0)
+        
         scaler = StandardScaler(); train_nm = table[fea_Imp_features]
 
         for name_col in fea_Imp_features:
@@ -324,7 +330,11 @@ if uploaded_file is not None:
         for num_row in range(2):
             for num_col in range(2):
                 clf = Ridge(alpha = Alpha[num_row][num_col])
-                clf.fit(train_nm, target)
+                
+                if id_sel == 'All ids':
+                    clf.fit(train_nm, target)
+                else:
+                    clf.fit(train_nm[train_nm[id_sel_col] == id_sel], target)
 
                 importance = clf.coef_
                 for i in range(len(importance)):
