@@ -309,7 +309,11 @@ if uploaded_file is not None:
         with right:
             id_sel = st.selectbox("multivariable index col", ['All ids'] + list(table[id_sel_col].unique()), 0)
         
-        scaler = StandardScaler(); train_nm = table[fea_Imp_features]
+        scaler = StandardScaler()
+        if id_sel == 'All ids':
+            train_nm = table[fea_Imp_features]
+        else:
+            train_nm = table[table[id_sel_col] == id_sel][fea_Imp_features]
 
         for name_col in fea_Imp_features:
             train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
@@ -330,11 +334,7 @@ if uploaded_file is not None:
         for num_row in range(2):
             for num_col in range(2):
                 clf = Ridge(alpha = Alpha[num_row][num_col])
-                
-                if id_sel == 'All ids':
-                    clf.fit(train_nm, target)
-                else:
-                    clf.fit(train_nm[train_nm[id_sel_col] == id_sel], target)
+                clf.fit(train_nm, target)
 
                 importance = clf.coef_
                 for i in range(len(importance)):
