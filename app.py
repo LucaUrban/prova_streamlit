@@ -314,7 +314,7 @@ if uploaded_file is not None:
             train_nm = table[fea_Imp_features]
         else:
             st.write(table[table[id_sel_col] == id_sel][fea_Imp_features])
-            train_nm = table[table[id_sel_col] == id_sel][fea_Imp_features]
+            train_nm = table[table[id_sel_col] == id_sel][[fea_Imp_features]]
 
         for name_col in fea_Imp_features:
             train_nm[name_col].replace({np.nan : train_nm[name_col].mean()}, inplace = True)
