@@ -656,7 +656,7 @@ if uploaded_file is not None:
                                            labels = {'Num. Out.': 'Num. Out.'})
             st.plotly_chart(map_box, use_container_width=True)
         
-        out_cou = st.selectbox("Choose the specific value for the id", res[out_id_col], 0)
+        out_cou = st.selectbox("Choose the specific value for the id", ['All ids'] + res[out_id_col], 0)
         
         
         
