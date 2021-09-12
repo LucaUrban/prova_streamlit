@@ -658,6 +658,10 @@ if uploaded_file is not None:
         
         out_cou = st.selectbox("Choose the specific value for the id", ['All ids'] + list(res[out_id_col]), 0)
         
+        if out_cou == 'All ids': 
+            st.write(df_AllOut)
+        else:
+            st.write(df_AllOut[df_AllOut[out_id_col] == out_cou])
         
         
         
