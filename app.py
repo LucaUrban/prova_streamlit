@@ -47,7 +47,7 @@ if uploaded_file is not None:
 
     widget = st.selectbox("what is the widget you want to display:",
                           ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", 
-                           "Feature Importance Analysis", "Heatmap", "Time series forecasting", "Anomalies check"], 0)
+                           "Feature Importance Analysis", "Heatmap", "Time series forecasting", "Anomalies check", "Consistency checks"], 0)
     
     if widget == "Table":
         # showing the table with the data
@@ -662,6 +662,37 @@ if uploaded_file is not None:
             st.write(df_AllOut)
         else:
             st.write(df_AllOut[df_AllOut[out_id_col] == out_cou])
+        
+    if widget == "Consistency checks":
+        con_checks_id_col = st.selectbox("Index col", table.columns, 0)
+        con_checks_time_col = st.selectbox("Time column", table.columns, 0)
+        
+        con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+        
+        res = dict()
+        for id_inst in table[con_checks_id_col].unique():
+            inst = table[table[con_checks_id_col] == id_inst][con_checks_features]; list_par = list()
+            
+            for var in var_calc:
+                years = 0; res_par = 1
+                for i in range(inst.shape[0]):
+                    if not np.isnan(inst[var].iloc[i]):
+                        res_par *= inst[var].iloc[i]; years += 1 
+                if years != 0:
+                    list_par.append(math.pow(math.fabs(res_par), 1/years))
+                else:
+                    list_par.append(np.nan)
+            res[id_inst] = list_par
+        
+        indices = pd.DataFrame(res.values(), index = res.keys(), columns = var_calc)
+        st.write(indices)
+        
+        
+        
+        
+        
+        
+        
         
         
         
