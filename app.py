@@ -685,6 +685,19 @@ if uploaded_file is not None:
             res[id_inst] = list_par
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
+        
+        list_threshold = list()
+        for col in con_checks_features:
+            list_threshold.append(indices[col].quantile(0.075))
+            
+        el_row = list()
+        for row in indices.index.values:
+            for j in range(len(con_checks_features)):
+                if not np.isnan(indices[con_checks_features[j]][row]) and indices[con_checks_features[j]][row] < list_threshold[j]:
+                    if row not in el_row:
+                        el_row.append(row)
+
+        indices.drop(index = el_row, axis = 0, inplace = True)
         st.write(indices)
         
         
