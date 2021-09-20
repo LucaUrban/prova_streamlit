@@ -664,8 +664,8 @@ if uploaded_file is not None:
             st.write(df_AllOut[df_AllOut[out_id_col] == out_cou])
         
     if widget == "Consistency checks":
-        con_checks_id_col = st.selectbox("Index col", table.columns, 0)
-        con_checks_time_col = st.selectbox("Time column", table.columns, 0)
+        con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
+        con_checks_time_col = st.sidebar.selectbox("Time column", table.columns, 0)
         
         con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
         
