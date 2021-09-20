@@ -673,7 +673,7 @@ if uploaded_file is not None:
         for id_inst in table[con_checks_id_col].unique():
             inst = table[table[con_checks_id_col] == id_inst][con_checks_features]; list_par = list()
             
-            for var in var_calc:
+            for var in con_checks_features:
                 years = 0; res_par = 1
                 for i in range(inst.shape[0]):
                     if not np.isnan(inst[var].iloc[i]):
