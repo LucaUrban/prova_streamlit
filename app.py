@@ -703,7 +703,7 @@ if uploaded_file is not None:
         # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
         for id_inst in indices.index.values:
             inst = table[table[con_checks_id_col] == id_inst]; delta_pos = list(); delta_neg = list(); num_row = inst.shape[0]
-            for var in var_calc:
+            for var in con_checks_features:
                 for i in range(1, num_row):
                     if not np.isnan(inst[var].iloc[num_row - i]) and not np.isnan(inst[var].iloc[num_row - i - 1]):
                         if inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i] < 0:
