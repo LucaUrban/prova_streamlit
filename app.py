@@ -722,13 +722,29 @@ if uploaded_file is not None:
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                 DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]], 3)
         
+        dict_app = dict()
+        for key, value in DV.items():
+            if key[key.find('.')+1:] not in dict_app.keys():
+                dict_app[key[key.find('.')+1:]] = [value]
+            else:
+                dict_app[key[key.find('.')+1:]].append(value)
         
+        list_threshold = list()
+        for key, value in dict_app.items():
+            np_value = np.array(value); list_threshold.append(np.quantile(np_value, 0.985))
         
+        cont = 0; dict_flag = dict()
+        for key, value in dict_app.items():
+            list_app = [[], []]
+            for el in value:
+                if el > list_threshold[cont]:
+                    if el not in list_app[0]:
+                        list_app[0].append(el); list_app[1].append(1)
+                    else:
+                        list_app[1][list_app[0].index(el)] += 1
+            dict_flag[key] = list_app; cont += 1
         
-        
-        
-        
-        
+        st.write(dict_flag)
         
         
         
