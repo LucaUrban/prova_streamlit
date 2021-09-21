@@ -731,7 +731,7 @@ if uploaded_file is not None:
         
         list_threshold = list()
         for key, value in dict_app.items():
-            np_value = np.array(value); list_threshold.append(np.quantile(np_value, 0.985))
+            np_value = np.array(value); list_threshold.append(np.quantile(np_value, 0.95))
         
         cont = 0; dict_flag = dict()
         for key, value in dict_app.items():
