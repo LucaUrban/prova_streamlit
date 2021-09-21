@@ -754,7 +754,7 @@ if uploaded_file is not None:
                             if key_DV[:key_DV.find('.')] not in var_flag:
                                 var_flag.append(key_DV[:key_DV.find('.')])
                     cont += 1
-        st.write(vat_flag)
+        st.write(var_flag)
         
         
         
