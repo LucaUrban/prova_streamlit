@@ -666,8 +666,8 @@ if uploaded_file is not None:
     if widget == "Consistency checks":
         con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
         con_checks_time_col = st.sidebar.selectbox("Time column", table.columns, 0)
-        retain_quantile = st.number_input("Insert the constant for the fence interquantile value", 1, 10, 2)
-        flag_issue_quantile = st.number_input("Insert the constant for the fence interquantile value", 90, 100, 95)
+        retain_quantile = st.sidebar.number_input("Insert the constant for the fence interquantile value", 1, 10, 2)
+        flag_issue_quantile = st.sidebar.number_input("Insert the constant for the fence interquantile value", 90, 100, 95)
         
         con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
         
