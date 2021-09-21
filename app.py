@@ -762,8 +762,3 @@ if uploaded_file is not None:
         
         st.write(DV_fin_res)
         DV_fin_tab = pd.DataFrame(DV_fin_res, index = con_checks_features, columns = list_countries
-        
-        
-        
-        
-        
