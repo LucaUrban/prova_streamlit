@@ -761,7 +761,7 @@ if uploaded_file is not None:
                 DV_fin_res[inst[:2]] = 1
             else:
                 DV_fin_res[inst[:2]] += 1
-        st.write(DV_fin_res.values())
+        st.write(np.array(DV_fin_res.values()[0]))
         DV_fin_tab = pd.DataFrame(np.array(DV_fin_res.values()).reshape(1, 16), columns = DV_fin_res.keys(), index = con_checks_features)
         
         
