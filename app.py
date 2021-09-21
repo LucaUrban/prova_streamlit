@@ -765,4 +765,4 @@ if uploaded_file is not None:
             DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
         
         DV_fin_tab = pd.DataFrame(DV_fin_res, index = con_checks_features, columns = list_countries)
-        st.write(DV_fin_tab)
+        st.table(DV_fin_tab)
