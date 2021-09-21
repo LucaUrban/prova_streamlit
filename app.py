@@ -744,7 +744,17 @@ if uploaded_file is not None:
                         list_app[1][list_app[0].index(el)] += 1
             dict_flag[key] = list_app; cont += 1
         
-        st.write(dict_flag)
+        var_flag = list()
+        for key, value in dict_flag.items():
+            for i in range(len(value[0])):
+                cont = 0
+                while cont != value[1][i]:
+                    for key_DV, value_DV in DV.items():
+                        if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
+                            if key_DV[:key_DV.find('.')] not in var_flag:
+                                var_flag.append(key_DV[:key_DV.find('.')])
+                    cont += 1
+        st.write(vat_flag)
         
         
         
