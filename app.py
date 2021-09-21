@@ -767,4 +767,4 @@ if uploaded_file is not None:
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
         st.write(con_checks_features + ['Total'])
-        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries) + ['Total'])
+        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
