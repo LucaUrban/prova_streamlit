@@ -754,9 +754,14 @@ if uploaded_file is not None:
                             if key_DV[:key_DV.find('.')] not in var_flag:
                                 var_flag.append(key_DV)
                     cont += 1
-        st.write(var_flag)
-        list_countries = [inst[:2] for inst in var_flag if inst[:2] not in list_countries]
+        
+        list_countries = []
+        for inst in var_flag:
+            if inst[:2] not in list_countries:
+                list_countries.append(inst[:2])
+        st.write(list_countries)
         DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+        
         for flag in var_flag:
             DV_fin_res[con_checks_features.find(flag[flag.find('.')+1:]), list_countries.find(flag[:2])] += 1
         
