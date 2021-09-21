@@ -759,7 +759,7 @@ if uploaded_file is not None:
         DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
         for flag in var_flag:
             DV_fin_res[con_checks_features.find(flag[flag.find('.')+1:]), list_countries.find(flag[:2])] += 1
-        DV_fin_tab = pd.DataFrame(np.array(list(DV_fin_res.values())).reshape(1, 16), index = con_checks_features, columns = list_countries)
+        DV_fin_tab = pd.DataFrame(DV_fin_res, index = con_checks_features, columns = list_countries)
         st.write(DV_fin_tab)
         
         
