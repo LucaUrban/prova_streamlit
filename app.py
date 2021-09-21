@@ -754,7 +754,15 @@ if uploaded_file is not None:
                             if key_DV[:key_DV.find('.')] not in var_flag:
                                 var_flag.append(key_DV[:key_DV.find('.')])
                     cont += 1
-        st.write(var_flag)
+        
+        DV_fin_res = {}
+        for inst in var_flag:
+            if inst[:2] not in DV_fin_res.keys():
+                DV_fin_res[inst[:2]] = 1
+            else:
+                DV_fin_res[inst[:2]] += 1
+        DV_fin_tab = pd.DataFrame(DV_fin_res.values(), columns = DV_fin_res.keys(), index = con_checks_features)
+        st.write(DV_fin_tab)
         
         
         
