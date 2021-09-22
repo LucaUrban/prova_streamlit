@@ -678,7 +678,7 @@ if uploaded_file is not None:
             for var in con_checks_features:
                 years = 0; res_par = 1
                 for i in range(inst.shape[0]):
-                    if not np.isnan(inst[var].iloc[i]):
+                    if not np.isnan(inst[var].iloc[i]) and inst[var].iloc[i] != 0:
                         res_par *= inst[var].iloc[i]; years += 1 
                 if years != 0:
                     list_par.append(math.pow(math.fabs(res_par), 1/years))
