@@ -673,6 +673,7 @@ if uploaded_file is not None:
         
         res = dict()
         for id_inst in table[con_checks_id_col].unique():
+            list_par = []
             for var in con_checks_features:
                 inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
                 geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
