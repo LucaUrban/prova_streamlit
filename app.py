@@ -682,6 +682,7 @@ if uploaded_file is not None:
                 else:
                     list_par.append(np.nan)
             res[id_inst] = list_par
+        st.write(res)
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
         
