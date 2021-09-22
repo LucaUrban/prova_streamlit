@@ -677,12 +677,13 @@ if uploaded_file is not None:
             for var in con_checks_features:
                 inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
                 geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                st.write(geo_mean_vec)
                 if years != 0:
                     list_par.append(math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0]))
                 else:
                     list_par.append(np.nan)
             res[id_inst] = list_par
-        st.write(res)
+        
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
         
