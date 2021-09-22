@@ -666,20 +666,16 @@ if uploaded_file is not None:
     if widget == "Consistency checks":
         con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
         con_checks_time_col = st.sidebar.selectbox("Time column", table.columns, 0)
-        retain_quantile = st.sidebar.number_input("Insert the constant for the fence interquantile value", 1.0, 10.0, 2.0, 0.1)
-        flag_issue_quantile = st.sidebar.number_input("Insert the constant for the fence interquantile value", 90.0, 100.0, 95.0, 0.1)
+        retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations", 1.0, 10.0, 2.0, 0.1)
+        flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag", 90.0, 100.0, 95.0, 0.1)
         
         con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
         
         res = dict()
         for id_inst in table[con_checks_id_col].unique():
-            inst = table[table[con_checks_id_col] == id_inst][con_checks_features]; list_par = list()
-            
             for var in con_checks_features:
-                years = 0; res_par = 1
-                for i in range(inst.shape[0]):
-                    if not np.isnan(inst[var].iloc[i]) and inst[var].iloc[i] != 0:
-                        res_par *= inst[var].iloc[i]; years += 1 
+                inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
+                geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
                 if years != 0:
                     list_par.append(math.pow(math.fabs(res_par), 1/years))
                 else:
