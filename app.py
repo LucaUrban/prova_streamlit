@@ -688,6 +688,7 @@ if uploaded_file is not None:
         list_threshold = list()
         for col in con_checks_features:
             list_threshold.append(indices[col].quantile(retain_quantile/100))
+        st.write(list_threshold)
             
         el_row = list()
         for row in indices.index.values:
