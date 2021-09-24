@@ -674,7 +674,7 @@ if uploaded_file is not None:
         with left1: 
             con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
         with right1:
-            out_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
+            cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
         
         
         res = dict()
