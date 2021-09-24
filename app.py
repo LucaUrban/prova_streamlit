@@ -666,10 +666,16 @@ if uploaded_file is not None:
     if widget == "Consistency checks":
         con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
         con_checks_time_col = st.sidebar.selectbox("Time column", table.columns, 0)
+        cat_sel_col = st.sidebar.selectbox("Category selection column", table.columns, 0)
         retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations", 1.0, 10.0, 2.0, 0.1)
         flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag", 90.0, 100.0, 95.0, 0.1)
         
-        con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+        left1, right1 = st.beta_columns(2)
+        with left1: 
+            con_checks_features = st.multiselect("Feature Importance multiselection box:", col_mul)
+        with right1:
+            out_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
+        
         
         res = dict()
         for id_inst in table[con_checks_id_col].unique():
