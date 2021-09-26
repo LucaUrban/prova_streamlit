@@ -767,8 +767,10 @@ if uploaded_file is not None:
                 list_countries.append(inst[:2])
         DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
         
+        dict_check_flags = {col: set() for col in con_checks_features}
         for flag in var_flag:
             DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
+            dict_check_flags.add(flag[:flag.find('.')])
         
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
@@ -783,7 +785,7 @@ if uploaded_file is not None:
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
         st.table(pd.DataFrame([[0], [0], [0]], columns = [''], 
                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
-        st.write(var_flag)
+        st.write(dict_check_flags)
         
         
         
