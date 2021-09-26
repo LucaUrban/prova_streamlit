@@ -773,3 +773,15 @@ if uploaded_file is not None:
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
         st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
+
+        left2, right2 = st.beta_columns(2)
+        with left2: 
+            var_control_checks_flag = st.selectbox("Feature Importance multiselection box:", con_checks_features)
+        with right2:
+            cat_type = st.selectbox("Select the specific category you want to analize", table.columns)
+            
+        
+        
+        
+        
+        
