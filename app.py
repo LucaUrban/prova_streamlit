@@ -781,8 +781,8 @@ if uploaded_file is not None:
             flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.table(pd.DataFrame([[0], [0], [0]], index = [''], 
-                              columns = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+        st.table(pd.DataFrame([[0], [0], [0]], columns = [''], 
+                              index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
         
         
         
