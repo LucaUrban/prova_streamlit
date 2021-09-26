@@ -786,7 +786,7 @@ if uploaded_file is not None:
         st.table(pd.DataFrame([[str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos)))], 
                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))]], 
-                              columns = [''], 
+                              columns = ['Values'], 
                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
         
         
