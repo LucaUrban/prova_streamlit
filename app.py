@@ -778,9 +778,11 @@ if uploaded_file is not None:
         with left2: 
             var_control_checks_flag = st.selectbox("Feature Importance multiselection box:", con_checks_features)
         with right2:
-            cat_type = st.selectbox("Select the specific category you want to analize", table.columns)
+            flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
-        
+        ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
+        st.write(ones); st.write(twos)
+        #st.table(pd.Dataframe([[], [], []]))
         
         
         
