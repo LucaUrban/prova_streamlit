@@ -726,7 +726,7 @@ if uploaded_file is not None:
             if len(value[0]) != 0 or len(value[1]) != 0:
                 res_par = sum(value[0]) * sum(value[1])
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
-                DV[key] = round(math.fabs(res_par)/(indices[key[key.find('.')+1:]][key[:key.find('.')]] ** .5), 3)
+                DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]], 3)
         
         dict_app = dict()
         for key, value in DV.items():
