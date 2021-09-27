@@ -723,7 +723,7 @@ if uploaded_file is not None:
         DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
         for key, value in res.items():
             res_par = 0
-            if len(value[0]) != 0 or len(value[1]) != 0:
+            if len(value[0]) != 0 and len(value[1]) != 0:
                 res_par = sum(value[0]) * sum(value[1])
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                 DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
