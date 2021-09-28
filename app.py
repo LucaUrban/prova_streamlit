@@ -818,7 +818,7 @@ if uploaded_file is not None:
             flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' on ' str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' on ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(1 - (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos)))) + '%'], 
                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))) / len(dict_check_flags[var_control_checks_flag])) + '%']], 
                               columns = ['Absolute Values', 'In percentage'], 
