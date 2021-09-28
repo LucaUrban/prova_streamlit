@@ -676,7 +676,6 @@ if uploaded_file is not None:
         with right1:
             cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
         
-        
         res = dict()
         for id_inst in table[con_checks_id_col].unique():
             list_par = []
@@ -688,7 +687,6 @@ if uploaded_file is not None:
                 else:
                     list_par.append(np.nan)
             res[id_inst] = list_par
-        
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
         
@@ -735,7 +733,6 @@ if uploaded_file is not None:
                 res_par = np.var(np.array(value[0] + value[1]))
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                 VDS[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-        st.write(1)
         
         dict_app_DV = dict()
         for key, value in DV.items():
@@ -758,7 +755,6 @@ if uploaded_file is not None:
         list_threshold_VDS = list()
         for key, value in dict_app_VDS.items():
             list_threshold_VDS.append(np.quantile(np.array(value), flag_issue_quantile/100))
-        st.write(1)
         
         cont = 0; dict_flag_DV = dict()
         for key, value in dict_app_DV.items():
@@ -781,7 +777,6 @@ if uploaded_file is not None:
                     else:
                         list_app[1][list_app[0].index(el)] += 1
             dict_flag_VDS[key] = list_app; cont += 1
-        st.write(1)
         
         var_flag = set()
         for key, value in dict_flag_DV.items():
@@ -800,7 +795,6 @@ if uploaded_file is not None:
                         if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
                                 var_flag.add(key_VDS)
                     cont += 1
-        st.write(1)
          
         list_countries = []
         for inst in var_flag:
@@ -824,10 +818,10 @@ if uploaded_file is not None:
             flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.table(pd.DataFrame([[str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos)))], 
-                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))]], 
-                              columns = ['Values'], 
+        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag])) + ' on ' str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(1 - (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos)))) + '%'], 
+                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))) / len(dict_check_flags[var_control_checks_flag])) + '%']], 
+                              columns = ['Absolute Values', 'In percentage'], 
                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
         
         
