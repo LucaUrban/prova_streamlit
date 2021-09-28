@@ -818,9 +818,9 @@ if uploaded_file is not None:
             flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 3)) + '%'], 
-                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(1 - (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 3)) + '%'], 
-                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round(len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))) / len(dict_check_flags[var_control_checks_flag]), 3)) + '%']], 
+        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (1 - (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos)))), 2)) + '%'], 
+                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
                               columns = ['Absolute Values', 'In percentage'], 
                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
         
