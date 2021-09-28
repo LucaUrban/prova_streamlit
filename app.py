@@ -815,7 +815,7 @@ if uploaded_file is not None:
         with left2: 
             var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
         with right2:
-            flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
+            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
             
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
         st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
