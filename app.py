@@ -798,7 +798,7 @@ if uploaded_file is not None:
                 while cont != value[1][i]:
                     for key_VDS, value_VDS in VDS.items():
                         if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
-                                var_flag.append(key_VDS)
+                                var_flag.add(key_VDS)
                     cont += 1
         st.write(1)
          
