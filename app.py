@@ -727,7 +727,7 @@ if uploaded_file is not None:
                 res_par = sum(value[0]) * sum(value[1])
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                 DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-        
+        st.write(1)
         VDS = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
         for key, value in res.items():
             res_par = 0
@@ -735,6 +735,7 @@ if uploaded_file is not None:
                 res_par = np.var(np.array(value[0] + value[1]))
             if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                 VDS[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
+        st.write(1)
         
         dict_app_DV = dict()
         for key, value in DV.items():
@@ -757,6 +758,7 @@ if uploaded_file is not None:
         list_threshold_VDS = list()
         for key, value in dict_app_VDS.items():
             list_threshold_VDS.append(np.quantile(np.array(value), flag_issue_quantile/100))
+        st.write(1)
         
         cont = 0; dict_flag_DV = dict()
         for key, value in dict_app_DV.items():
@@ -779,6 +781,7 @@ if uploaded_file is not None:
                     else:
                         list_app[1][list_app[0].index(el)] += 1
             dict_flag_VDS[key] = list_app; cont += 1
+        st.write(1)
         
         var_flag = set()
         for key, value in dict_flag_DV.items():
@@ -797,7 +800,8 @@ if uploaded_file is not None:
                         if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
                                 var_flag.append(key_VDS)
                     cont += 1
-        
+        st.write(1)
+         
         list_countries = []
         for inst in var_flag:
             if inst[:2] not in list_countries:
