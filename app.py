@@ -672,7 +672,7 @@ if uploaded_file is not None:
         
         left1, right1 = st.beta_columns(2)
         with left1: 
-            con_checks_features = st.multiselect("Variable chosen for the consistency check:", col_mul)
+            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
         with right1:
             cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
         
@@ -813,7 +813,7 @@ if uploaded_file is not None:
 
         left2, right2 = st.beta_columns(2)
         with left2: 
-            var_control_checks_flag = st.selectbox("Feature Importance multiselection box:", con_checks_features)
+            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
         with right2:
             flags_col = st.selectbox("Select the specific category you want to analize", table.columns)
             
