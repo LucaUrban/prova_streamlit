@@ -689,18 +689,11 @@ if uploaded_file is not None:
             res[id_inst] = list_par
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
-        
-        list_threshold = list()
-        for col in con_checks_features:
-            list_threshold.append(indices[col].quantile(retain_quantile/100))
+        list_threshold = indices.quantile(retain_quantile/100).values
             
-        el_row = list()
-        for row in indices.index.values:
-            for j in range(len(con_checks_features)):
-                if not np.isnan(indices[con_checks_features[j]][row]) and indices[con_checks_features[j]][row] < list_threshold[j]:
-                    if row not in el_row:
-                        el_row.append(row)
-
+        el_row = set()
+        for j in range(len(con_checks_features)):
+            el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) and (indices[con_checks_features[j] <= list_threshold[j])].index))
         indices.drop(index = el_row, axis = 0, inplace = True)
          
         res = dict()
@@ -823,6 +816,8 @@ if uploaded_file is not None:
                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
                               columns = ['Absolute Values', 'In percentage'], 
                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+        
+        set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
         
         
