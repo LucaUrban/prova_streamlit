@@ -669,12 +669,19 @@ if uploaded_file is not None:
         cat_sel_col = st.sidebar.selectbox("Category selection column", table.columns, 0)
         retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
         flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
+        blocked_quantile = st.sidebar.selectbox("Category selection column", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
         
         left1, right1 = st.beta_columns(2)
         with left1: 
             con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
         with right1:
             cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
+            
+        left2, right2 = st.beta_columns(2)
+        with left2: 
+            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
+        with right2:
+            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
         
         res = dict()
         for id_inst in table[con_checks_id_col].unique():
@@ -695,7 +702,7 @@ if uploaded_file is not None:
         for j in range(len(con_checks_features)):
             el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) | (indices[con_checks_features[j]] <= list_threshold[j])].index))
         indices.drop(index = el_row, axis = 0, inplace = True)
-         
+        
         res = dict()
         # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
         for id_inst in indices.index.values:
@@ -734,10 +741,6 @@ if uploaded_file is not None:
             else:
                 dict_app_DV[key[key.find('.')+1:]].append(value)
         
-        list_threshold_DV = list()
-        for key, value in dict_app_DV.items():
-            list_threshold_DV.append(np.quantile(np.array(value), flag_issue_quantile/100))
-        
         dict_app_VDS = dict()
         for key, value in VDS.items():
             if key[key.find('.')+1:] not in dict_app_VDS.keys():
@@ -745,77 +748,89 @@ if uploaded_file is not None:
             else:
                 dict_app_VDS[key[key.find('.')+1:]].append(value)
         
-        list_threshold_VDS = list()
-        for key, value in dict_app_VDS.items():
-            list_threshold_VDS.append(np.quantile(np.array(value), flag_issue_quantile/100))
-        
-        cont = 0; dict_flag_DV = dict()
-        for key, value in dict_app_DV.items():
-            list_app = [[], []]
-            for el in value:
-                if el > list_threshold_DV[cont]:
-                    if el not in list_app[0]:
-                        list_app[0].append(el); list_app[1].append(1)
-                    else:
-                        list_app[1][list_app[0].index(el)] += 1
-            dict_flag_DV[key] = list_app; cont += 1
-            
-        cont = 0; dict_flag_VDS = dict()
-        for key, value in dict_app_VDS.items():
-            list_app = [[], []]
-            for el in value:
-                if el > list_threshold_VDS[cont]:
-                    if el not in list_app[0]:
-                        list_app[0].append(el); list_app[1].append(1)
-                    else:
-                        list_app[1][list_app[0].index(el)] += 1
-            dict_flag_VDS[key] = list_app; cont += 1
-        
-        var_flag = set()
-        for key, value in dict_flag_DV.items():
-            for i in range(len(value[0])):
-                cont = 0
-                while cont != value[1][i]:
-                    for key_DV, value_DV in DV.items():
-                        if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
-                                var_flag.add(key_DV)
-                    cont += 1
-        for key, value in dict_flag_VDS.items():
-            for i in range(len(value[0])):
-                cont = 0
-                while cont != value[1][i]:
-                    for key_VDS, value_VDS in VDS.items():
-                        if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
-                                var_flag.add(key_VDS)
-                    cont += 1
-         
-        list_countries = []
-        for inst in var_flag:
-            if inst[:2] not in list_countries:
-                list_countries.append(inst[:2])
-        DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
-        
-        dict_check_flags = {col: set() for col in con_checks_features}
-        for flag in var_flag:
-            DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
-            dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
-        
-        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
-
-        left2, right2 = st.beta_columns(2)
-        with left2: 
-            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
-        with right2:
-            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
-            
+        results = [[], [], []]
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
-                              columns = ['Absolute Values', 'In percentage'], 
-                              index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+        if blocked_quantile == 'Retain quantile (S1)':
+            second_quantile = np.arange(92.5, 97.5, .25)
+            for S2_S3 in second_quantile:
+            list_threshold_DV = list()
+                for key, value in dict_app_DV.items():
+                    list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
+
+                list_threshold_VDS = list()
+                for key, value in dict_app_VDS.items():
+                    list_threshold_VDS.append(np.quantile(np.array(value), S2_S3/100))
+
+                cont = 0; dict_flag_DV = dict()
+                for key, value in dict_app_DV.items():
+                    list_app = [[], []]
+                    for el in value:
+                        if el > list_threshold_DV[cont]:
+                            if el not in list_app[0]:
+                                list_app[0].append(el); list_app[1].append(1)
+                            else:
+                                list_app[1][list_app[0].index(el)] += 1
+                    dict_flag_DV[key] = list_app; cont += 1
+
+                cont = 0; dict_flag_VDS = dict()
+                for key, value in dict_app_VDS.items():
+                    list_app = [[], []]
+                    for el in value:
+                        if el > list_threshold_VDS[cont]:
+                            if el not in list_app[0]:
+                                list_app[0].append(el); list_app[1].append(1)
+                            else:
+                                list_app[1][list_app[0].index(el)] += 1
+                    dict_flag_VDS[key] = list_app; cont += 1
+
+                var_flag = set()
+                for key, value in dict_flag_DV.items():
+                    for i in range(len(value[0])):
+                        cont = 0
+                        while cont != value[1][i]:
+                            for key_DV, value_DV in DV.items():
+                                if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
+                                        var_flag.add(key_DV)
+                            cont += 1
+                for key, value in dict_flag_VDS.items():
+                    for i in range(len(value[0])):
+                        cont = 0
+                        while cont != value[1][i]:
+                            for key_VDS, value_VDS in VDS.items():
+                                if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
+                                        var_flag.add(key_VDS)
+                            cont += 1
+
+                list_countries = []
+                for inst in var_flag:
+                    if inst[:2] not in list_countries:
+                        list_countries.append(inst[:2])
+                DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+                
+                if S2_S3 == flag_issue_quantile:
+                    dict_check_flags = {col: set() for col in con_checks_features}
+                    for flag in var_flag:
+                        DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
+                        dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+
+                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
+                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                    st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
+            
+                    st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                                           [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
+                                           [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                                          columns = ['Absolute Values', 'In percentage'], 
+                                          index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+                results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
+                results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
+                results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
+        
+        fig_concistency = go.Figure()
+        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = '% Accuracy'))
+        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = '% #application cases vs. #standard cases'))
+        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = '% Flagged cases'))
+        st.plotly_chart(fig_concistency, use_container_width=True)
         
         set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
