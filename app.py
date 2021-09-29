@@ -753,7 +753,7 @@ if uploaded_file is not None:
         if blocked_quantile == 'Retain quantile (S1)':
             second_quantile = np.arange(92.5, 97.5, .25)
             for S2_S3 in second_quantile:
-            list_threshold_DV = list()
+                list_threshold_DV = list()
                 for key, value in dict_app_DV.items():
                     list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
 
