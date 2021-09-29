@@ -750,6 +750,7 @@ if uploaded_file is not None:
         
         results = [[], [], []]
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
+        st.write(1)
         if blocked_quantile == 'Retain quantile (S1)':
             second_quantile = np.arange(92.5, 97.5, .25)
             for S2_S3 in second_quantile:
