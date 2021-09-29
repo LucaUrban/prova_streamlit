@@ -829,7 +829,7 @@ if uploaded_file is not None:
         
         fig_concistency = go.Figure()
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = '% Accuracy'))
-        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = '% #application cases vs. #standard cases'))
+        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = '% #app cases vs. #std cases'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = '% Flagged cases'))
         st.plotly_chart(fig_concistency, use_container_width=True)
         
