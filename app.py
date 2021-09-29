@@ -690,11 +690,11 @@ if uploaded_file is not None:
         
         indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
         list_threshold = indices.quantile(retain_quantile/100).values
-        st.write(1)
+        
         el_row = set()
         for j in range(len(con_checks_features)):
+            st.write(1)
             el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) and (indices[con_checks_features[j]] <= list_threshold[j])].index))
-        
         indices.drop(index = el_row, axis = 0, inplace = True)
          
         res = dict()
