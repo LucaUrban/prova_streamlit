@@ -831,6 +831,7 @@ if uploaded_file is not None:
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Flagged cases'))
+        fig_concistency.update_layout(xaxis_title = 'Flag Issue Quantile', yaxis_title = 'Percentages', title_text = "General results (in %)")
         st.plotly_chart(fig_concistency, use_container_width=True)
         
         set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
