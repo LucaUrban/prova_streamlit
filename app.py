@@ -806,7 +806,6 @@ if uploaded_file is not None:
                     if inst[:2] not in list_countries:
                         list_countries.append(inst[:2])
                 DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
-                st.write(1)
                 
                 if S2_S3 == flag_issue_quantile:
                     dict_check_flags = {col: set() for col in con_checks_features}
@@ -823,6 +822,7 @@ if uploaded_file is not None:
                                            [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
                                           columns = ['Absolute Values', 'In percentage'], 
                                           index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+                st.write(1)
                 results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
                 results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
                 results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
