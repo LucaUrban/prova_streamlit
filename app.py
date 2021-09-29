@@ -750,7 +750,6 @@ if uploaded_file is not None:
         
         results = [[], [], []]
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        st.write(1)
         if blocked_quantile == 'Retain quantile (S1)':
             second_quantile = np.arange(92.5, 97.5, .25)
             for S2_S3 in second_quantile:
@@ -807,6 +806,7 @@ if uploaded_file is not None:
                     if inst[:2] not in list_countries:
                         list_countries.append(inst[:2])
                 DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+                st.write(1)
                 
                 if S2_S3 == flag_issue_quantile:
                     dict_check_flags = {col: set() for col in con_checks_features}
