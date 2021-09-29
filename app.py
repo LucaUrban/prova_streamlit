@@ -694,6 +694,7 @@ if uploaded_file is not None:
         el_row = set()
         for j in range(len(con_checks_features)):
             el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) and (indices[con_checks_features[j]] <= list_threshold[j])].index))
+        st.write(1)
         indices.drop(index = el_row, axis = 0, inplace = True)
          
         res = dict()
