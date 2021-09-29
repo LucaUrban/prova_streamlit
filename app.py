@@ -669,7 +669,7 @@ if uploaded_file is not None:
         cat_sel_col = st.sidebar.selectbox("Category selection column", table.columns, 0)
         retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
         flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
-        blocked_quantile = st.sidebar.selectbox("Category selection column", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
+        blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
         
         left1, right1 = st.beta_columns(2)
         with left1: 
