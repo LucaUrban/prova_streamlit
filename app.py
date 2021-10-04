@@ -833,7 +833,10 @@ if uploaded_file is not None:
                         list_fin_res = DV_fin_res.tolist()
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
-                                list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                                if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                                else:
+                                    list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
                         for fea in con_checks_features:
                             for cat in list_un_cat:
