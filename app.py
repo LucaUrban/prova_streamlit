@@ -680,7 +680,7 @@ if uploaded_file is not None:
             flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
         
         if methodology == 'Ratio methodology':
-            
+            st.write(1)
         else: 
             res = dict()
             for id_inst in table[con_checks_id_col].unique():
