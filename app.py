@@ -831,6 +831,11 @@ if uploaded_file is not None:
                             for cat in list_un_cat:
                                 table_fin_indexes.append(fea + ' (' + cat + ')')
                         table_fin_res = pd.DataFrame(DV_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
+                  
+                    list_fin_res = list(DV_fin_res)
+                    for row in range(len(list_fin_res)):
+                        for i in range(len(row)):
+                            list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(100 * (list_fin_res[row][i]/list_fin_res[row][len(row)-1])) + '%)'
                         
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
