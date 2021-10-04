@@ -826,7 +826,11 @@ if uploaded_file is not None:
                     else:
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(list_un_cat), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                        table_fin_res = pd.DataFrame(DV_fin_res, index = [[fea + ' (' + cat + ')' for cat in list_un_cat] for fea in con_checks_features] + ['Total'], columns = list_countries + ['Total'])
+                        table_fin_indexes = []
+                        for fea in con_checks_features:
+                            for cat in list_un_cat:
+                                table_fin_indexes.append(fea + ' (' + cat + ')')
+                        table_fin_res = pd.DataFrame(DV_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
                         
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
