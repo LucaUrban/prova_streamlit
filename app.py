@@ -833,7 +833,7 @@ if uploaded_file is not None:
         
         st.plotly_chart(fig_concistency, use_container_width=True)
         st.table(summ_table)
-        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features, columns = list_countries]))
+        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features, columns = list_countries))
         
         set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
