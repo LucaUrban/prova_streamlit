@@ -833,6 +833,7 @@ if uploaded_file is not None:
                         table_fin_res = pd.DataFrame(DV_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
                   
                     list_fin_res = list(DV_fin_res)
+                    st.write(list_fin_res)
                     for row in range(len(list_fin_res)):
                         for i in range(len(row)):
                             list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(100 * (list_fin_res[row][i]/list_fin_res[row][len(row)-1])) + '%)'
