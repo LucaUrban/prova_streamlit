@@ -834,7 +834,7 @@ if uploaded_file is not None:
                   
                     list_fin_res = DV_fin_res.tolist()
                     for row in range(len(list_fin_res)):
-                        for i in range(len(row)):
+                        for i in range(len(list_fin_res[row])):
                             list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(100 * (list_fin_res[row][i]/list_fin_res[row][len(row)-1])) + '%)'
                     st.write(list_fin_res)
                         
