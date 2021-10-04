@@ -664,9 +664,9 @@ if uploaded_file is not None:
             st.write(df_AllOut[df_AllOut[out_id_col] == out_cou])
         
     if widget == "Consistency checks":
+        methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
         con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
-        #con_checks_time_col = st.sidebar.selectbox("Time column", table.columns, 0)
-        cat_sel_col = st.sidebar.selectbox("Category selection column", table.columns, 0)
+        cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
         retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
         flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
         blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
@@ -674,79 +674,78 @@ if uploaded_file is not None:
         left1, right1 = st.beta_columns(2)
         with left1: 
             con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
+            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
         with right1:
             cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
-            
-        left2, right2 = st.beta_columns(2)
-        with left2: 
-            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
-        with right2:
             flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
         
-        res = dict()
-        for id_inst in table[con_checks_id_col].unique():
-            list_par = []
-            for var in con_checks_features:
-                inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
-                geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
-                if geo_mean_vec.shape[0] != 0:
-                    list_par.append(math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0]))
+        if methodology == 'Ratio methodology':
+            
+        else:
+            res = dict()
+            for id_inst in table[con_checks_id_col].unique():
+                list_par = []
+                for var in con_checks_features:
+                    inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
+                    geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                    if geo_mean_vec.shape[0] != 0:
+                        list_par.append(math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0]))
+                    else:
+                        list_par.append(np.nan)
+                res[id_inst] = list_par
+
+            indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
+            list_threshold = indices.quantile(retain_quantile/100).values
+
+            el_row = set()
+            for j in range(len(con_checks_features)):
+                el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) | (indices[con_checks_features[j]] <= list_threshold[j])].index))
+            indices.drop(index = el_row, axis = 0, inplace = True)
+
+            res = dict()
+            # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
+            for id_inst in indices.index.values:
+                inst = table[table[con_checks_id_col] == id_inst]; delta_pos = list(); delta_neg = list(); num_row = inst.shape[0]
+                for var in con_checks_features:
+                    for i in range(1, num_row):
+                        if not np.isnan(inst[var].iloc[num_row - i]) and not np.isnan(inst[var].iloc[num_row - i - 1]):
+                            if inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i] < 0:
+                                delta_neg.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
+                            else:
+                                delta_pos.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
+                    lis_app = list(); lis_app.append(delta_pos); lis_app.append(delta_neg)
+                    res[id_inst + "." + var] = lis_app
+                    delta_pos = list(); delta_neg = list()
+
+            DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
+            for key, value in res.items():
+                res_par = 0
+                if len(value[0]) != 0 and len(value[1]) != 0:
+                    res_par = sum(value[0]) * sum(value[1])
+                if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
+                    DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
+
+            VDS = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
+            for key, value in res.items():
+                res_par = 0
+                if len(value[0]) != 0 or len(value[1]) != 0:
+                    res_par = np.var(np.array(value[0] + value[1]))
+                if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
+                    VDS[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
+
+            dict_app_DV = dict()
+            for key, value in DV.items():
+                if key[key.find('.')+1:] not in dict_app_DV.keys():
+                    dict_app_DV[key[key.find('.')+1:]] = [value]
                 else:
-                    list_par.append(np.nan)
-            res[id_inst] = list_par
-        
-        indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
-        list_threshold = indices.quantile(retain_quantile/100).values
-        
-        el_row = set()
-        for j in range(len(con_checks_features)):
-            el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) | (indices[con_checks_features[j]] <= list_threshold[j])].index))
-        indices.drop(index = el_row, axis = 0, inplace = True)
-        
-        res = dict()
-        # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
-        for id_inst in indices.index.values:
-            inst = table[table[con_checks_id_col] == id_inst]; delta_pos = list(); delta_neg = list(); num_row = inst.shape[0]
-            for var in con_checks_features:
-                for i in range(1, num_row):
-                    if not np.isnan(inst[var].iloc[num_row - i]) and not np.isnan(inst[var].iloc[num_row - i - 1]):
-                        if inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i] < 0:
-                            delta_neg.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
-                        else:
-                            delta_pos.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
-                lis_app = list(); lis_app.append(delta_pos); lis_app.append(delta_neg)
-                res[id_inst + "." + var] = lis_app
-                delta_pos = list(); delta_neg = list()
-         
-        DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
-        for key, value in res.items():
-            res_par = 0
-            if len(value[0]) != 0 and len(value[1]) != 0:
-                res_par = sum(value[0]) * sum(value[1])
-            if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
-                DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-        
-        VDS = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
-        for key, value in res.items():
-            res_par = 0
-            if len(value[0]) != 0 or len(value[1]) != 0:
-                res_par = np.var(np.array(value[0] + value[1]))
-            if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
-                VDS[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-        
-        dict_app_DV = dict()
-        for key, value in DV.items():
-            if key[key.find('.')+1:] not in dict_app_DV.keys():
-                dict_app_DV[key[key.find('.')+1:]] = [value]
-            else:
-                dict_app_DV[key[key.find('.')+1:]].append(value)
-        
-        dict_app_VDS = dict()
-        for key, value in VDS.items():
-            if key[key.find('.')+1:] not in dict_app_VDS.keys():
-                dict_app_VDS[key[key.find('.')+1:]] = [value]
-            else:
-                dict_app_VDS[key[key.find('.')+1:]].append(value)
+                    dict_app_DV[key[key.find('.')+1:]].append(value)
+
+            dict_app_VDS = dict()
+            for key, value in VDS.items():
+                if key[key.find('.')+1:] not in dict_app_VDS.keys():
+                    dict_app_VDS[key[key.find('.')+1:]] = [value]
+                else:
+                    dict_app_VDS[key[key.find('.')+1:]].append(value)
         
         results = [[], [], []]
         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -805,23 +804,21 @@ if uploaded_file is not None:
                 for inst in var_flag:
                     if inst[:2] not in list_countries:
                         list_countries.append(inst[:2])
-                DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
                 
                 dict_check_flags = {col: set() for col in con_checks_features}
                 for flag in var_flag:
-                    DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
                     dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])  
                 
                 if S2_S3 == flag_issue_quantile:
+                    DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+                    DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
-            
-                    st.table(pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                                           [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                                           [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
-                                          columns = ['Absolute Values', 'In percentage'], 
-                                          index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+                    summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
+                                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                                               columns = ['Absolute Values', 'In percentage'], 
+                                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                 
                 results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
                 results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
@@ -832,7 +829,10 @@ if uploaded_file is not None:
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Flagged cases'))
         fig_concistency.update_layout(xaxis_title = 'Flag Issue Quantile', yaxis_title = 'Percentages', title_text = "General results (in %)")
+        
         st.plotly_chart(fig_concistency, use_container_width=True)
+        st.table(summ_table)
+        st.table(pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
         
         set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
