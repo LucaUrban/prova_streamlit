@@ -822,7 +822,7 @@ if uploaded_file is not None:
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                     
-                    if if cat_sel_col == '-':
+                    if cat_sel_col == '-':
                         table_fin_res = pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
                     else:
                         table_fin_res = pd.DataFrame(DV_fin_res, index = [[fea + ' (' + cat + ')' for cat in list_un_cat] for fea in con_checks_features] + ['Total'], columns = list_countries + ['Total'])
