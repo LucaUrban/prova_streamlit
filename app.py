@@ -804,16 +804,29 @@ if uploaded_file is not None:
                     if inst[:2] not in list_countries:
                         list_countries.append(inst[:2])
                 
-                DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
-                dict_check_flags = {col: set() for col in con_checks_features}
-                for flag in var_flag:
-                    DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
-                    dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])  
+                if cat_sel_col == '-':
+                    DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+                    dict_check_flags = {col: set() for col in con_checks_features}
+                    for flag in var_flag:
+                        DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
+                        dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+                else:
+                    list_un_cat = list(table[cat_sel_col].unique())
+                    DV_fin_res = np.zeros((len(con_checks_features) * len(list_un_cat), len(list_countries)), dtype = int)
+                    dict_check_flags = {col: set() for col in con_checks_features}
+                    for flag in var_flag:
+                        DV_fin_res[(con_checks_features.index(flag[flag.find('.')+1:]) * len(list_un_cat)) + list_un_cat.index(table[table[con_checks_id_col] == flag[:flag.find('.')]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
+                        dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
                 
                 if S2_S3 == flag_issue_quantile:
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    table_fin_res = pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
+                    
+                    if if cat_sel_col == '-':
+                        table_fin_res = pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
+                    else:
+                        table_fin_res = pd.DataFrame(DV_fin_res, index = [[fea + ' (' + cat + ')' for cat in list_un_cat] for fea in con_checks_features] + ['Total'], columns = list_countries + ['Total'])
+                        
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
                                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
