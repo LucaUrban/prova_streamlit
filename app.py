@@ -813,7 +813,9 @@ if uploaded_file is not None:
                 
                 if S2_S3 == flag_issue_quantile:
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-                    DV_fin_res_vis = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                    table_fin_res = pd.DataFrame(DV_fin_res_vis, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
+                    st.write(1)
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
                                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
@@ -832,7 +834,7 @@ if uploaded_file is not None:
         
         st.plotly_chart(fig_concistency, use_container_width=True)
         st.table(summ_table)
-        st.table(pd.DataFrame(DV_fin_res_vis, index = con_checks_features + ['Total'], columns = list_countries + ['Total']))
+        st.table()
         
         set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
