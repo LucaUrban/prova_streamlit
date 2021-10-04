@@ -819,12 +819,13 @@ if uploaded_file is not None:
                         dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
                 
                 if S2_S3 == flag_issue_quantile:
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    
                     if cat_sel_col == '-':
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                         table_fin_res = pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
                     else:
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(list_un_cat), 1)), axis = 1)
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                         table_fin_res = pd.DataFrame(DV_fin_res, index = [[fea + ' (' + cat + ')' for cat in list_un_cat] for fea in con_checks_features] + ['Total'], columns = list_countries + ['Total'])
                         
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
