@@ -681,7 +681,7 @@ if uploaded_file is not None:
         
         if methodology == 'Ratio methodology':
             
-        else:
+        else: 
             res = dict()
             for id_inst in table[con_checks_id_col].unique():
                 list_par = []
