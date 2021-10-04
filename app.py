@@ -671,12 +671,11 @@ if uploaded_file is not None:
         flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
         blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
         
+        con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
         left1, right1 = st.beta_columns(2)
-        with left1: 
-            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
+        with left1:
             var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
         with right1:
-            cat_type = st.selectbox("Select the specific category you want to analize", ['All ids'] + list(table[cat_sel_col].unique()))
             flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
         
         if methodology == 'Ratio methodology':
@@ -814,9 +813,6 @@ if uploaded_file is not None:
                 if S2_S3 == flag_issue_quantile:
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                     DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    DV_fin_res = list(DV_fin_res)
-                    for i in range(len(DV_fin_res)):
-                        DV_fin_res[0][i] = str(DV_fin_res[0][i]) + '\n(' + str(100 * (DV_fin_res[0][i] / DV_fin_res[0][len(DV_fin_res)-1])) + '%)'
                     table_fin_res = pd.DataFrame(DV_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
