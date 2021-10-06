@@ -685,7 +685,7 @@ if uploaded_file is not None:
                     for cc in countries:
                         country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
                         inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_issue_quantile/100)]['ETER ID'].values)
-                        inst_upper = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
+                        inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
                         dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
                 
                 if flag_quantile == flag_issue_quantile:
