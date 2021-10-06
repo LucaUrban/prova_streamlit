@@ -665,22 +665,54 @@ if uploaded_file is not None:
         
     if widget == "Consistency checks":
         methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
-        con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
-        cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
-        retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
-        flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
-        blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
-        
-        con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
-        left1, right1 = st.beta_columns(2)
-        with left1:
-            var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
-        with right1:
-            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
-        
         if methodology == 'Ratio methodology':
-            st.write(1)
-        else: 
+            con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
+            cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
+            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
+
+            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
+            left1, right1 = st.beta_columns(2)
+            with left1:
+                var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
+            with right1:
+                flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+                
+            results = [[], [], []]; dict_flags = dict();  countries = list(table['Country Code'].unique())
+            ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
+            for flag_quantile in np.arange(2.5, 7.5, .25):
+                for ratio_col in con_checks_features:
+                    dict_flags[ratio_col] = dict()
+                    for cc in countries:
+                        country_table = table[table['Country Code'] = cc][[con_checks_id_col, ratio_col]]
+                        inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_issue_quantile/100)]['ETER ID'].values)
+                        inst_upper = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
+                        dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
+                
+                if flag_quantile == flag_issue_quantile:
+                    list_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
+                    for row in range(len(list_fin_res)):
+                        for i in range(len(list_fin_res[row])):
+                            if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                            else:
+                                list_fin_res[row][i] = '0\n(0%)'
+             
+            st.table(pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = countries + ['Total']))
+            
+        else:
+            con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
+            cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
+            retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
+            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
+            blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
+
+            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
+            left1, right1 = st.beta_columns(2)
+            with left1:
+                var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
+            with right1:
+                flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+                
             res = dict()
             for id_inst in table[con_checks_id_col].unique():
                 list_par = []
@@ -857,7 +889,7 @@ if uploaded_file is not None:
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
         fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
-        fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results (in %)")
+        fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
         
         st.plotly_chart(fig_concistency, use_container_width=True)
         st.table(summ_table)
