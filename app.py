@@ -806,112 +806,112 @@ if uploaded_file is not None:
                 else:
                     dict_app_VDS[key[key.find('.')+1:]].append(value)
         
-        results = [[], [], []]
-        ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-        if blocked_quantile == 'Retain quantile (S1)':
-            second_quantile = np.arange(92.5, 97.5, .25)
-            for S2_S3 in second_quantile:
-                list_threshold_DV = list()
-                for key, value in dict_app_DV.items():
-                    list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
+            results = [[], [], []]
+            ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
+            if blocked_quantile == 'Retain quantile (S1)':
+                second_quantile = np.arange(92.5, 97.5, .25)
+                for S2_S3 in second_quantile:
+                    list_threshold_DV = list()
+                    for key, value in dict_app_DV.items():
+                        list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
 
-                list_threshold_VDS = list()
-                for key, value in dict_app_VDS.items():
-                    list_threshold_VDS.append(np.quantile(np.array(value), S2_S3/100))
+                    list_threshold_VDS = list()
+                    for key, value in dict_app_VDS.items():
+                        list_threshold_VDS.append(np.quantile(np.array(value), S2_S3/100))
 
-                cont = 0; dict_flag_DV = dict()
-                for key, value in dict_app_DV.items():
-                    list_app = [[], []]
-                    for el in value:
-                        if el > list_threshold_DV[cont]:
-                            if el not in list_app[0]:
-                                list_app[0].append(el); list_app[1].append(1)
-                            else:
-                                list_app[1][list_app[0].index(el)] += 1
-                    dict_flag_DV[key] = list_app; cont += 1
-
-                cont = 0; dict_flag_VDS = dict()
-                for key, value in dict_app_VDS.items():
-                    list_app = [[], []]
-                    for el in value:
-                        if el > list_threshold_VDS[cont]:
-                            if el not in list_app[0]:
-                                list_app[0].append(el); list_app[1].append(1)
-                            else:
-                                list_app[1][list_app[0].index(el)] += 1
-                    dict_flag_VDS[key] = list_app; cont += 1
-
-                var_flag = set()
-                for key, value in dict_flag_DV.items():
-                    for i in range(len(value[0])):
-                        cont = 0
-                        while cont != value[1][i]:
-                            for key_DV, value_DV in DV.items():
-                                if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
-                                        var_flag.add(key_DV)
-                            cont += 1
-                for key, value in dict_flag_VDS.items():
-                    for i in range(len(value[0])):
-                        cont = 0
-                        while cont != value[1][i]:
-                            for key_VDS, value_VDS in VDS.items():
-                                if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
-                                        var_flag.add(key_VDS)
-                            cont += 1
-
-                list_countries = []
-                for inst in var_flag:
-                    if inst[:2] not in list_countries:
-                        list_countries.append(inst[:2])
-                
-                if cat_sel_col == '-':
-                    DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
-                    dict_check_flags = {col: set() for col in con_checks_features}
-                    for flag in var_flag:
-                        DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
-                        dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
-                else:
-                    list_un_cat = list(table[cat_sel_col].unique())
-                    DV_fin_res = np.zeros((len(con_checks_features) * len(list_un_cat), len(list_countries)), dtype = int)
-                    dict_check_flags = {col: set() for col in con_checks_features}
-                    for flag in var_flag:
-                        DV_fin_res[(con_checks_features.index(flag[flag.find('.')+1:]) * len(list_un_cat)) + list_un_cat.index(table[table[con_checks_id_col] == flag[:flag.find('.')]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
-                        dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
-                
-                if S2_S3 == flag_issue_quantile:
-                    if cat_sel_col == '-':
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                        list_fin_res = DV_fin_res.tolist()
-                        for row in range(len(list_fin_res)):
-                            for i in range(len(list_fin_res[row])):
-                                list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
-                        table_fin_res = pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
-                    else:
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(list_un_cat), 1)), axis = 1)
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                        list_fin_res = DV_fin_res.tolist()
-                        for row in range(len(list_fin_res)):
-                            for i in range(len(list_fin_res[row])):
-                                if list_fin_res[row][len(list_fin_res[row])-1] != 0:
-                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                    cont = 0; dict_flag_DV = dict()
+                    for key, value in dict_app_DV.items():
+                        list_app = [[], []]
+                        for el in value:
+                            if el > list_threshold_DV[cont]:
+                                if el not in list_app[0]:
+                                    list_app[0].append(el); list_app[1].append(1)
                                 else:
-                                    list_fin_res[row][i] = '0\n(0%)'
-                        table_fin_indexes = []
-                        for fea in con_checks_features:
-                            for cat in list_un_cat:
-                                table_fin_indexes.append(fea + ' (' + cat + ')')
-                        table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
-                        
-                    summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
-                                               columns = ['Absolute Values', 'In percentage'], 
-                                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
-                
-                results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
-                results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
-                results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
+                                    list_app[1][list_app[0].index(el)] += 1
+                        dict_flag_DV[key] = list_app; cont += 1
+
+                    cont = 0; dict_flag_VDS = dict()
+                    for key, value in dict_app_VDS.items():
+                        list_app = [[], []]
+                        for el in value:
+                            if el > list_threshold_VDS[cont]:
+                                if el not in list_app[0]:
+                                    list_app[0].append(el); list_app[1].append(1)
+                                else:
+                                    list_app[1][list_app[0].index(el)] += 1
+                        dict_flag_VDS[key] = list_app; cont += 1
+
+                    var_flag = set()
+                    for key, value in dict_flag_DV.items():
+                        for i in range(len(value[0])):
+                            cont = 0
+                            while cont != value[1][i]:
+                                for key_DV, value_DV in DV.items():
+                                    if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
+                                            var_flag.add(key_DV)
+                                cont += 1
+                    for key, value in dict_flag_VDS.items():
+                        for i in range(len(value[0])):
+                            cont = 0
+                            while cont != value[1][i]:
+                                for key_VDS, value_VDS in VDS.items():
+                                    if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
+                                            var_flag.add(key_VDS)
+                                cont += 1
+
+                    list_countries = []
+                    for inst in var_flag:
+                        if inst[:2] not in list_countries:
+                            list_countries.append(inst[:2])
+
+                    if cat_sel_col == '-':
+                        DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
+                        dict_check_flags = {col: set() for col in con_checks_features}
+                        for flag in var_flag:
+                            DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
+                            dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+                    else:
+                        list_un_cat = list(table[cat_sel_col].unique())
+                        DV_fin_res = np.zeros((len(con_checks_features) * len(list_un_cat), len(list_countries)), dtype = int)
+                        dict_check_flags = {col: set() for col in con_checks_features}
+                        for flag in var_flag:
+                            DV_fin_res[(con_checks_features.index(flag[flag.find('.')+1:]) * len(list_un_cat)) + list_un_cat.index(table[table[con_checks_id_col] == flag[:flag.find('.')]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
+                            dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+
+                    if S2_S3 == flag_issue_quantile:
+                        if cat_sel_col == '-':
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                            list_fin_res = DV_fin_res.tolist()
+                            for row in range(len(list_fin_res)):
+                                for i in range(len(list_fin_res[row])):
+                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                            table_fin_res = pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
+                        else:
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(list_un_cat), 1)), axis = 1)
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                            list_fin_res = DV_fin_res.tolist()
+                            for row in range(len(list_fin_res)):
+                                for i in range(len(list_fin_res[row])):
+                                    if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                                    else:
+                                        list_fin_res[row][i] = '0\n(0%)'
+                            table_fin_indexes = []
+                            for fea in con_checks_features:
+                                for cat in list_un_cat:
+                                    table_fin_indexes.append(fea + ' (' + cat + ')')
+                            table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
+
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                                                   columns = ['Absolute Values', 'In percentage'], 
+                                                   index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+
+                    results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
+                    results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
+                    results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
         
             fig_concistency = go.Figure()
             fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
