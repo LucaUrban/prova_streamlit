@@ -687,6 +687,11 @@ if uploaded_file is not None:
                         inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_issue_quantile/100)]['ETER ID'].values)
                         inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
                         dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
+                        
+                dict_check_flags = {}; set_app = set()
+                for cc in countries:
+                    set_app = set_app.union(dict_flags[var_control_checks_flag][cc])
+                dict_check_flags[var_control_checks_flag] = set_app
                 
                 if flag_quantile == flag_issue_quantile:
                     # table reporting the cases by countries
@@ -702,16 +707,23 @@ if uploaded_file is not None:
                                 list_fin_res[row][i] = '0\n(0%)'
                     
                     # table for the accuracy etc...
-                    dict_check_flags = {}; set_app = set()
-                    for cc in countries:
-                        set_app = set_app.union(dict_flags[var_control_checks_flag][cc])
-                    dict_check_flags[var_control_checks_flag] = set_app
                     summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
                                                [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
                                                [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
                                                columns = ['Absolute Values', 'In percentage'], 
                                                index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                    
+                results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
+                results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
+                results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
             
+            fig_concistency = go.Figure()
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
+            fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
+
+            st.plotly_chart(fig_concistency, use_container_width=True)
             st.table(summ_table)
             st.table(pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = countries + ['Total']))
             
@@ -901,17 +913,17 @@ if uploaded_file is not None:
                 results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
                 results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
         
-        fig_concistency = go.Figure()
-        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
-        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
-        fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
-        fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
-        
-        st.plotly_chart(fig_concistency, use_container_width=True)
-        st.table(summ_table)
-        st.table(table_fin_res)
-        
-        set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
+            fig_concistency = go.Figure()
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
+            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
+            fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
+
+            st.plotly_chart(fig_concistency, use_container_width=True)
+            st.table(summ_table)
+            st.table(table_fin_res)
+
+            set_type = st.selectbox("Type of istitution's set:", ['-', '', '', 'Not flagged cases'])
         
         
         
