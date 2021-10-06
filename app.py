@@ -677,9 +677,9 @@ if uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            results = [[], [], []]; dict_flags = dict();  countries = list(table['Country Code'].unique())
+            results = [[], [], []]; dict_flags = dict();  countries = list(table['Country Code'].unique()); second_quantile = np.arange(2.5, 7.5, .25)
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-            for flag_quantile in np.arange(2.5, 7.5, .25):
+            for flag_quantile in second_quantile:
                 for ratio_col in con_checks_features:
                     dict_flags[ratio_col] = dict()
                     for cc in countries:
