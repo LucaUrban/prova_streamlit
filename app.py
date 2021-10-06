@@ -668,7 +668,7 @@ if uploaded_file is not None:
         if methodology == 'Ratio methodology':
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
-            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
+            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
 
             con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
             left1, right1 = st.beta_columns(2)
