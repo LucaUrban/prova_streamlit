@@ -677,56 +677,66 @@ if uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            results = [[], [], []]; dict_flags = dict();  countries = list(table['Country Code'].unique()); second_quantile = np.arange(2.5, 7.5, .25)
+            results = [[], [], []]; dict_flags = dict(); second_quantile = np.arange(2.5, 7.5, .25)
+            categories = list(table[cat_sel_col].unique()); countries = list(table['Country Code'].unique())
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-            for flag_quantile in second_quantile:
-                for ratio_col in con_checks_features:
-                    dict_flags[ratio_col] = dict()
-                    for cc in countries:
-                        country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
-                        inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
-                        inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
-                        dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
-                        
-                dict_check_flags = {}; set_app = set()
-                for cc in countries:
-                    set_app = set_app.union(dict_flags[var_control_checks_flag][cc])
-                dict_check_flags[var_control_checks_flag] = set_app
-                
-                if flag_quantile == flag_issue_quantile:
-                    # table reporting the cases by countries
-                    DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
-                    list_fin_res = DV_fin_res.tolist()
-                    for row in range(len(list_fin_res)):
-                        for i in range(len(list_fin_res[row])):
-                            if list_fin_res[row][len(list_fin_res[row])-1] != 0:
-                                list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
-                            else:
-                                list_fin_res[row][i] = '0\n(0%)'
-                    
-                    # table for the accuracy etc...
-                    summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                                               [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                                               [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
-                                               columns = ['Absolute Values', 'In percentage'], 
-                                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
-                    
-                results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
-                results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
-                results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
-            
-            fig_concistency = go.Figure()
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
-            fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
+            if cat_sel_col != '-':
+                for flag_quantile in second_quantile:
+                    for ratio_col in con_checks_features:
+                        dict_flags[ratio_col] = dict()
+                        for cc in countries:
+                            country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
+                            inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
+                            inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
+                            dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
+                        for cat in categories:
+                            cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
+                            inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
+                            inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
+                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
 
-            st.plotly_chart(fig_concistency, use_container_width=True)
-            st.table(summ_table)
-            st.table(pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = countries + ['Total']))
-            
+                    dict_check_flags = {}; set_app = set()
+                    for cc in countries:
+                        set_app = set_app.union(dict_flags[var_control_checks_flag][cc])
+                    for cat in categories:
+                        set_app = set_app.union(dict_flags[var_control_checks_flag][cat])
+                    dict_check_flags[var_control_checks_flag] = set_app
+
+                    if flag_quantile == flag_issue_quantile:
+                        # table reporting the cases by countries
+                        DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
+                        list_fin_res = DV_fin_res.tolist()
+                        for row in range(len(list_fin_res)):
+                            for i in range(len(list_fin_res[row])):
+                                if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                                else:
+                                    list_fin_res[row][i] = '0\n(0%)'
+
+                        # table for the accuracy etc...
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                                                   columns = ['Absolute Values', 'In percentage'], 
+                                                   index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+
+                    results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
+                    results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
+                    results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
+
+                fig_concistency = go.Figure()
+                fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
+                fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
+                fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
+                fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
+
+                st.plotly_chart(fig_concistency, use_container_width=True)
+                st.table(summ_table)
+                st.table(pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = countries + ['Total']))
+            else:
+                st.warning('you have to choose a value for the field "Category selection column".')
         else:
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
