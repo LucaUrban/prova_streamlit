@@ -685,12 +685,12 @@ if uploaded_file is not None:
                     for ratio_col in con_checks_features:
                         dict_flags[ratio_col] = dict()
                         for cc in countries:
-                            country_table = table_ind[table_ind['Country Code'] == cc][[con_checks_id_col, ratio_col]]
+                            country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
                             inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
                         for cat in categories:
-                            cat_table = table_ind[table_ind[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
+                            cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
                             inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
@@ -713,7 +713,7 @@ if uploaded_file is not None:
                                 for el in dict_flags[con_checks_features[i]][categories[j]]:
                                     if el not in dict_flags[con_checks_features[i]][countries[countries.index(el[:2])]]:
                                         DV_fin_res[j, countries.index(el[:2])] += 1
-                        st.write(DV_fin_res)
+                        
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(categories), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                         list_fin_res = DV_fin_res.tolist()
