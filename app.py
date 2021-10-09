@@ -720,7 +720,7 @@ if uploaded_file is not None:
                         list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
-                                if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
                                     st.write(num_app)
                                     num_app = list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num_app, 2)) + '%)'
