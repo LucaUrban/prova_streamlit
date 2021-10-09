@@ -681,16 +681,21 @@ if uploaded_file is not None:
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
             if cat_sel_col != '-':
                 categories = list(table[cat_sel_col].unique())
+                
+                table_ind = table[[con_checks_id_col] + con_checks_features + [cat_sel_col] + ['Country Code']]
+                for feature in con_checks_features:
+                    table_ind.drop(table[table[feature] <= table[feature].quantile(.05)].index)
+                    
                 for flag_quantile in second_quantile:
                     for ratio_col in con_checks_features:
                         dict_flags[ratio_col] = dict()
                         for cc in countries:
-                            country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
+                            country_table = table_ind[table_ind['Country Code'] == cc][[con_checks_id_col, ratio_col]]
                             inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
                         for cat in categories:
-                            cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
+                            cat_table = table_ind[table_ind[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
                             inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
