@@ -723,12 +723,11 @@ if uploaded_file is not None:
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
-                        st.write(DV_fin_res)
                         table_fin_indexes = []
                         for fea in con_checks_features:
                             for cat in categories:
                                 table_fin_indexes.append(fea + ' (' + cat + ')')
-                        table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
+                        table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = countries + ['Total'])
 
                         # table for the accuracy etc...
                         summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
