@@ -684,7 +684,7 @@ if uploaded_file is not None:
                 
                 table_ind = table[[con_checks_id_col] + con_checks_features + [cat_sel_col] + ['Country Code']]
                 for feature in con_checks_features:
-                    table_ind.drop(table[table[feature] <= table[feature].quantile(.05)].index)
+                    table_ind.drop(table[table[feature] <= table[feature].quantile(.05)].index, inplace = True)
                     
                 for flag_quantile in second_quantile:
                     for ratio_col in con_checks_features:
