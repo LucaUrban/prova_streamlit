@@ -694,11 +694,12 @@ if uploaded_file is not None:
                             inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
+                        '''
                         for cat in categories:
                             cat_table = table_ind[table_ind[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
                             inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
-                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
+                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)'''
 
                     dict_check_flags = {}; set_app = set()
                     for cc in countries:
