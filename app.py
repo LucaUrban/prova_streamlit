@@ -710,11 +710,9 @@ if uploaded_file is not None:
                     if flag_quantile == flag_issue_quantile:
                         # table reporting the cases by countries
                         DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
-                        for i in range(con_checks_features):
-                            st.write(1)
+                        for i in range(len(con_checks_features)):
                             for cat in categories:
                                 for el in dict_flags[con_checks_features[i]][cat]:
-                                    st.write(el)
                                     DV_fin_res[i][countries.index(el[:2])] += 1
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
