@@ -725,7 +725,7 @@ if uploaded_file is not None:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
                         for fea in con_checks_features:
-                            for cat in list_un_cat:
+                            for cat in categories:
                                 table_fin_indexes.append(fea + ' (' + cat + ')')
                         table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
 
