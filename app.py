@@ -704,7 +704,7 @@ if uploaded_file is not None:
 
                     if flag_quantile == flag_issue_quantile:
                         # table reporting the cases by countries
-                        DV_fin_res = np.zeros((len(con_checks_features) * len(categories), len(list_countries)), dtype = int)
+                        DV_fin_res = np.zeros((len(con_checks_features) * len(categories), len(countries)), dtype = int)
                         st.write(DV_fin_res)
                         for i in range(len(con_checks_features)):
                             for j in range(len(countries)):
