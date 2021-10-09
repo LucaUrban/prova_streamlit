@@ -727,7 +727,7 @@ if uploaded_file is not None:
                                         if row != len(list_fin_res)-1:
                                             list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))]])
                                         else:
-                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], 'All categories')
+                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], 'All categories'])
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
