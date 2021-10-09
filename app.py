@@ -694,12 +694,11 @@ if uploaded_file is not None:
                             inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
-                        '''
                         for cat in categories:
                             cat_table = table_ind[table_ind[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
                             inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
-                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)'''
+                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
 
                     dict_check_flags = {}; set_app = set()
                     for cc in countries:
@@ -711,6 +710,10 @@ if uploaded_file is not None:
                     if flag_quantile == flag_issue_quantile:
                         # table reporting the cases by countries
                         DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
+                        for i in range(con_checks_features):
+                            for cat in categories:
+                                for el in dict_flags[con_checks_features[i]][cat]:
+                                    DV_fin_res[i][countries.find(el[:2])] += 1
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
                         list_fin_res = DV_fin_res.tolist()
