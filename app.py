@@ -723,7 +723,7 @@ if uploaded_file is not None:
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0:
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
                                     if round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2) >= prob_cases_per:
-                                        list_prob_cases.append([con_checks_features[row // len(categories)], countries[i], categories[categories.index(row % len(categories))]])
+                                        list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[categories.index(row % len(categories))]])
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
