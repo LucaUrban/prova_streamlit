@@ -669,6 +669,7 @@ if uploaded_file is not None:
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
+            prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
 
             con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
             left1, right1 = st.beta_columns(2)
@@ -716,11 +717,13 @@ if uploaded_file is not None:
                         
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(categories), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries) + 1), axis = 0)
-                        list_fin_res = DV_fin_res.tolist()
+                        list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0:
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                                    if round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2) >= prob_cases_per:
+                                        list_prob_cases.append([con_checks_features[row // len(categories)], countries[i], categories[categories.index(row % len(categories))]])
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
@@ -749,6 +752,7 @@ if uploaded_file is not None:
                 st.plotly_chart(fig_concistency, use_container_width=True)
                 st.table(summ_table)
                 st.table(table_fin_res)
+                st.table(pd.DataFrame(list_prob_cases, columns = ['Feature', 'Country', 'Category']))
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
@@ -757,6 +761,7 @@ if uploaded_file is not None:
             retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
             blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
+            prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
 
             con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
             left1, right1 = st.beta_columns(2)
