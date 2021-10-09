@@ -681,11 +681,6 @@ if uploaded_file is not None:
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
             if cat_sel_col != '-':
                 categories = list(table[cat_sel_col].unique())
-                
-                table_ind = table[[con_checks_id_col] + con_checks_features + [cat_sel_col] + ['Country Code']]
-                for feature in con_checks_features:
-                    table_ind.drop(table[table[feature] <= table[feature].quantile(.05)].index, inplace = True)
-                    
                 for flag_quantile in second_quantile:
                     for ratio_col in con_checks_features:
                         dict_flags[ratio_col] = dict()
@@ -709,14 +704,18 @@ if uploaded_file is not None:
 
                     if flag_quantile == flag_issue_quantile:
                         # table reporting the cases by countries
-                        DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
+                        DV_fin_res = np.zeros((len(con_checks_features) * len(categories), len(list_countries)), dtype = int)
                         for i in range(len(con_checks_features)):
-                            for cat in categories:
-                                for el in dict_flags[con_checks_features[i]][cat]:
+                            for j in range(len(countries)):
+                                for el in dict_flags[con_checks_features[i]][countries[j]]:
+                                    DV_fin_res[(i * len(categories)) + categories.index(table[table[con_checks_id_col] == el][cat_sel_col].unique()[0]), j] += 1
+                            for j in range(len(categories)):
+                                for el in dict_flags[con_checks_features[i]][categories[j]]:
                                     if el not in dict_flags[con_checks_features[i]][countries[countries.index(el[:2])]]:
-                                        DV_fin_res[i][countries.index(el[:2])] += 1
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
+                                        DV_fin_res[j, countries.index(el[:2])] += 1
+                            
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(categories), 1)), axis = 1)
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                         list_fin_res = DV_fin_res.tolist()
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
@@ -724,6 +723,11 @@ if uploaded_file is not None:
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
+                        table_fin_indexes = []
+                        for fea in con_checks_features:
+                            for cat in list_un_cat:
+                                table_fin_indexes.append(fea + ' (' + cat + ')')
+                        table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
 
                         # table for the accuracy etc...
                         summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
@@ -744,7 +748,7 @@ if uploaded_file is not None:
 
                 st.plotly_chart(fig_concistency, use_container_width=True)
                 st.table(summ_table)
-                st.table(pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = countries + ['Total']))
+                st.table(table_fin_res)
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
