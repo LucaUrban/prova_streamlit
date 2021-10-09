@@ -722,7 +722,7 @@ if uploaded_file is not None:
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
                                     num_app = list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]
-                                    st.write(num_app)
+                                    st.write(row)
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num_app, 2)) + '%)'
                                     if i != len(list_fin_res[row])-1 and 100 * num_app >= prob_cases_per:
                                         list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))]])
