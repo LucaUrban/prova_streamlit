@@ -711,6 +711,7 @@ if uploaded_file is not None:
                         # table reporting the cases by countries
                         DV_fin_res = [[len(dict_flags[ratio_col][cc]) for cc in countries] for ratio_col in con_checks_features]
                         for i in range(con_checks_features):
+                            st.write(1)
                             for cat in categories:
                                 for el in dict_flags[con_checks_features[i]][cat]:
                                     st.write(el)
