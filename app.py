@@ -24,7 +24,7 @@ import scipy.stats as stats
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
-         "To change the file to be analyzed you have to regresh the page.")
+         "To change the file to be analyzed you have to refresh the page.")
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
