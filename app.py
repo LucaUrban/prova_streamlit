@@ -713,7 +713,7 @@ if uploaded_file is not None:
                         for i in range(con_checks_features):
                             for cat in categories:
                                 for el in dict_flags[con_checks_features[i]][cat]:
-                                    DV_fin_res[i][countries.find(el[:2])] += 1
+                                    DV_fin_res[i][countries.index(el[:2])] += 1
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries)+1), axis = 0)
                         list_fin_res = DV_fin_res.tolist()
