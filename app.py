@@ -721,11 +721,11 @@ if uploaded_file is not None:
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
-                                    num_app = list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]
-                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num_app, 2)) + '%)'
-                                    if i != len(list_fin_res[row])-1 and 100 * num_app >= prob_cases_per:
+                                    num_app = 100 * list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]
+                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(num_app, 2)) + '%)'
+                                    if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
-                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))]])
+                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%'])
                                         else:
                                             list_prob_cases.append(['Total', countries[i], 'All categories'])
                                 else:
@@ -756,7 +756,7 @@ if uploaded_file is not None:
                 st.plotly_chart(fig_concistency, use_container_width=True)
                 st.table(summ_table)
                 st.table(table_fin_res)
-                st.table(pd.DataFrame(list_prob_cases, columns = ['Feature', 'Country', 'Category']))
+                st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
