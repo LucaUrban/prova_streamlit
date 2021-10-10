@@ -927,13 +927,13 @@ if uploaded_file is not None:
                             for row in range(len(list_fin_res)):
                                 for i in range(len(list_fin_res[row])):
                                     if list_fin_res[row][len(list_fin_res[row])-1] != 0:
-                                        num_app = list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]
-                                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num_app, 2)) + '%)'
-                                        if i != len(list_fin_res[row])-1 and 100 * num_app >= prob_cases_per:
+                                        num_app = round(100 * list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1], 2)
+                                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
+                                        if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                             if row != len(list_fin_res)-1:
-                                                list_prob_cases.append([con_checks_features[int(row // len(list_un_cat))], list_countries[i], list_un_cat[int(row % len(list_un_cat))]])
+                                                list_prob_cases.append([con_checks_features[int(row // len(list_un_cat))], list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%'])
                                             else:
-                                                list_prob_cases.append(['Total', list_countries[i], 'All categories'])
+                                                list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%'])
                                     else:
                                         list_fin_res[row][i] = '0\n(0%)'
                             table_fin_indexes = []
@@ -961,7 +961,7 @@ if uploaded_file is not None:
             st.plotly_chart(fig_concistency, use_container_width=True)
             st.table(summ_table)
             st.table(table_fin_res)
-            st.table(pd.DataFrame(list_prob_cases, columns = ['Feature', 'Country', 'Category']))
+            st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
         
         
         
