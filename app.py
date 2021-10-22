@@ -761,7 +761,7 @@ if uploaded_file is not None:
                 st.table(table_fin_res)
                 st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
                 
-                var_hist_plot = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                var_hist_plot = st.selectbox("Choose the variable you want to display the distribution between the flagged and not flagged cases:", col_mul)
                 fig_conf_hist = go.Figure()
                 fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values,
                                                      xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
@@ -771,7 +771,7 @@ if uploaded_file is not None:
                                                      xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                                   size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
                                                      autobinx = False, name = 'Flagged'))
-                fig_conf_hist.update_layout(title_text = 'Distribution of flagged vs all variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
+                fig_conf_hist.update_layout(title_text = 'Distribution of flagged vs not flagged variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
                 
                 fig_conf_hist.update_layout(barmode='overlay')
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
@@ -930,6 +930,9 @@ if uploaded_file is not None:
                             dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
 
                     if S2_S3 == flag_issue_quantile:
+                        table['Prob inst ' + var_control_checks_flag] = 0
+                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
+                        
                         if cat_sel_col == '-':
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
@@ -980,6 +983,21 @@ if uploaded_file is not None:
             st.table(summ_table)
             st.table(table_fin_res)
             st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
+            
+            var_hist_plot = st.selectbox("Choose the variable you want to display the distribution between the flagged and not flagged cases:", col_mul)
+            fig_conf_hist = go.Figure()
+            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values,
+                                                 xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
+                                                              size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
+                                                 autobinx = False, name = 'All'))
+            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 1][var_hist_plot].values,
+                                                 xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
+                                                              size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
+                                                 autobinx = False, name = 'Flagged'))
+            fig_conf_hist.update_layout(title_text = 'Distribution of flagged vs not flagged variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
+
+            fig_conf_hist.update_layout(barmode='overlay')
+            st.plotly_chart(fig_conf_hist, use_container_width=True)
         
         
         
