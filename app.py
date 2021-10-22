@@ -766,11 +766,11 @@ if uploaded_file is not None:
                 fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values,
                                                      xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                                   size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
-                                                     autobinx = False))
+                                                     autobinx = False, name = 'All'))
                 fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 1][var_hist_plot].values,
                                                      xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                                   size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
-                                                     autobinx = False))
+                                                     autobinx = False, name = 'Flagged'))
                 
                 fig_conf_hist.update_layout(barmode='overlay')
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
