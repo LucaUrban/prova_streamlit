@@ -704,6 +704,9 @@ if uploaded_file is not None:
                     dict_check_flags[var_control_checks_flag] = set_app
 
                     if flag_quantile == flag_issue_quantile:
+                        df_con_hist = table[table['ETER ID'].isin(dict_check_flags[var_control_checks_flag])]
+                        st.write(df_con_hist)
+                        
                         # table reporting the cases by countries
                         DV_fin_res = np.zeros((len(con_checks_features) * len(categories), len(countries)), dtype = int)
                         for i in range(len(con_checks_features)):
