@@ -724,13 +724,13 @@ if uploaded_file is not None:
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
-                                    num_app = round(100 * list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1], 2)
+                                    den = list_fin_res[row][len(list_fin_res[row]; num = list_fin_res[row][i];num_app = round(100 * num/den)-1], 2)
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(num_app, 2)) + '%)'
                                     if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
-                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%'])
+                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                                         else:
-                                            list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%'])
+                                            list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
@@ -759,7 +759,7 @@ if uploaded_file is not None:
                 st.plotly_chart(fig_concistency, use_container_width=True)
                 st.table(summ_table)
                 st.table(table_fin_res)
-                st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
+                st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', '% Value', 'Absolute values']))
                 
                 var_hist_plot = st.selectbox("Choose the variable you want to display the distribution between the flagged and not flagged cases:", col_mul)
                 fig_conf_hist = go.Figure()
