@@ -762,7 +762,12 @@ if uploaded_file is not None:
                 st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', 'Value']))
                 
                 var_hist_plot = st.selectbox("Variables chosen for the consistency checks:", col_mul)
-                st.plotly_chart(px.histogram(table, x = var_hist_plot, color = 'Prob inst ' + var_control_checks_flag), use_container_width=True)
+                fig_conf_hist = go.Figure()
+                fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values))
+                fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 1][var_hist_plot].values))
+                
+                fig_conf_hist.update_layout(barmode='overlay')
+                st.plotly_chart(fig_conf_hist, use_container_width=True)
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
