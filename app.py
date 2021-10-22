@@ -771,7 +771,7 @@ if uploaded_file is not None:
                                                      xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                                   size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
                                                      autobinx = False, name = 'Flagged'))
-                fig.update_layout(title_text = 'Distribution of flagged vs all variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
+                fig_conf_hist.update_layout(title_text = 'Distribution of flagged vs all variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
                 
                 fig_conf_hist.update_layout(barmode='overlay')
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
