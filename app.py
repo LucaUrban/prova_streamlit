@@ -704,7 +704,6 @@ if uploaded_file is not None:
                     dict_check_flags[var_control_checks_flag] = set_app
 
                     if flag_quantile == flag_issue_quantile:
-                        st.write(dict_check_flags[var_control_checks_flag])
                         table['Prob inst ' + var_control_checks_flag] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
                            
@@ -931,6 +930,7 @@ if uploaded_file is not None:
                             dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
 
                     if S2_S3 == flag_issue_quantile:
+                        st.write(dict_check_flags[var_control_checks_flag])
                         table['Prob inst ' + var_control_checks_flag] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
                         
