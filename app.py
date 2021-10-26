@@ -990,11 +990,11 @@ if uploaded_file is not None:
             fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values,
                                                  xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                               size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
-                                                 autobinx = False, name = 'All'))
+                                                 autobinx = False, name = 'All', histnorm = 'probability density'))
             fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 1][var_hist_plot].values,
                                                  xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                               size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
-                                                 autobinx = False, name = 'Flagged'))
+                                                 autobinx = False, name = 'Flagged', histnorm = 'probability density'))
             fig_conf_hist.update_layout(title_text = 'Distribution of flagged vs not flagged variables for' + var_hist_plot + '', xaxis_title_text = var_hist_plot, yaxis_title_text = 'Count')
 
             fig_conf_hist.update_layout(barmode='overlay')
