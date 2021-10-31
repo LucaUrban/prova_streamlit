@@ -22,6 +22,8 @@ from statsmodels.stats.stattools import medcouple
 import math
 import scipy.stats as stats
 
+def 
+
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to refresh the page.")
@@ -930,7 +932,6 @@ if uploaded_file is not None:
                             dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
 
                     if S2_S3 == flag_issue_quantile:
-                        st.write(dict_check_flags[var_control_checks_flag])
                         table['Prob inst ' + var_control_checks_flag] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
                         
