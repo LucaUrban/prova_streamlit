@@ -22,8 +22,6 @@ from statsmodels.stats.stattools import medcouple
 import math
 import scipy.stats as stats
 
-def 
-
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to refresh the page.")
