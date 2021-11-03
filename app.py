@@ -667,6 +667,7 @@ if uploaded_file is not None:
         methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
         if methodology == 'Ratio methodology':
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
+            country_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
@@ -678,7 +679,7 @@ if uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            results = [[], [], []]; dict_flags = dict(); second_quantile = np.arange(1.5, 7.5, .25); countries = list(table['Country Code'].unique())
+            results = [[], [], []]; dict_flags = dict(); second_quantile = np.arange(1.5, 7.5, .25); countries = list(table[country_sel_col].unique())
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
             if cat_sel_col != '-':
                 categories = list(table[cat_sel_col].unique())
@@ -686,7 +687,7 @@ if uploaded_file is not None:
                     for ratio_col in con_checks_features:
                         dict_flags[ratio_col] = dict()
                         for cc in countries:
-                            country_table = table[table['Country Code'] == cc][[con_checks_id_col, ratio_col]]
+                            country_table = table[table[country_sel_col] == cc][[con_checks_id_col, ratio_col]]
                             inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
                             inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
                             dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
@@ -724,7 +725,7 @@ if uploaded_file is not None:
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
-                                    den = list_fin_res[row][len(list_fin_res[row])-1]; num = list_fin_res[row][i];num_app = round(100 * num/den, 2)
+                                    den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])].unique()); num = list_fin_res[row][i];num_app = round(100 * num/den, 2)
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(num_app, 2)) + '%)'
                                     if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
