@@ -725,10 +725,11 @@ if uploaded_file is not None:
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0: 
-                                    den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique())
-                                    st.write(countries[i])
-                                    num = list_fin_res[row][i]; num_app = round(100 * num/den, 2)
-                                    list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(num_app, 2)) + '%)'
+                                    den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique()); num = list_fin_res[row][i]
+                                    if den != 0:
+                                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num/den, 2)) + '%)'
+                                    else:
+                                        list_fin_res[row][i] = '0\n(0%)'
                                     if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
                                             list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
