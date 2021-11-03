@@ -723,7 +723,7 @@ if uploaded_file is not None:
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries) + 1), axis = 0)
                         list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                         for row in range(len(list_fin_res)):
-                            for i in range(len(list_fin_res[row])):
+                            for i in range(len(list_fin_res[row])-1):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0:
                                     den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique())
                                     num = list_fin_res[row][i]
@@ -736,7 +736,6 @@ if uploaded_file is not None:
                                             list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                                         else:
                                             list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
-                                    st.write(i)
                                 else:
                                     list_fin_res[row][i] = '0\n(0%)'
                         table_fin_indexes = []
