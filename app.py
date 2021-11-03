@@ -788,6 +788,7 @@ if uploaded_file is not None:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
+            country_sel_col = st.sidebar.selectbox("Country selection column", ['-'] + list(table.columns), 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             retain_quantile = st.sidebar.number_input("Insert the quantile you want to exclude from the calculations (S1)", 1.0, 10.0, 2.0, 0.1)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
@@ -956,16 +957,24 @@ if uploaded_file is not None:
                             list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                             for row in range(len(list_fin_res)):
                                 for i in range(len(list_fin_res[row])):
-                                    if list_fin_res[row][len(list_fin_res[row])-1] != 0:
-                                        den = list_fin_res[row][len(list_fin_res[row])-1]; num = list_fin_res[row][i]; num_app = round(100 * num/den, 2)
-                                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
-                                        if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
-                                            if row != len(list_fin_res)-1:
-                                                list_prob_cases.append([con_checks_features[int(row // len(list_un_cat))], list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
-                                            else:
-                                                list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                    if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
+                                        den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique())
+                                    if row == len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
+                                        den = len(table[table[country_sel_col] == countries[i]][con_checks_id_col].unique())
+                                    if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
+                                        den = len(table[table[cat_sel_col] == categories[row]][con_checks_id_col].unique())
+                                    if row == len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
+                                        den = table.shape[0]
+                                    num = list_fin_res[row][i]
+                                    if den != 0:
+                                        num_app = round(100 * num/den, 2); list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
                                     else:
-                                        list_fin_res[row][i] = '0\n(0%)'
+                                        num_app = 0; list_fin_res[row][i] = '0\n(0%)'
+                                    if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
+                                        if row != len(list_fin_res)-1:
+                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                        else:
+                                            list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
                             table_fin_indexes = []
                             for fea in con_checks_features:
                                 for cat in list_un_cat:
