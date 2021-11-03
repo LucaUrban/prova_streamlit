@@ -725,8 +725,9 @@ if uploaded_file is not None:
                         for row in range(len(list_fin_res)):
                             for i in range(len(list_fin_res[row])):
                                 if list_fin_res[row][len(list_fin_res[row])-1] != 0:
+                                    den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique())
+                                    num = list_fin_res[row][i]
                                     st.write(i)
-                                    den = len(table[(table[country_sel_col] == countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique()); num = list_fin_res[row][i]
                                     if den != 0:
                                         list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * num/den, 2)) + '%)'
                                     else:
