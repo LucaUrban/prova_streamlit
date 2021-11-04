@@ -50,10 +50,10 @@ if demo_data or uploaded_file is not None:
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
     widget = st.selectbox("what is the widget you want to display:",
-                          ["Table", "Map Analysis", "Monodimensional Analysis", "Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", 
-                           "Feature Importance Analysis", "Heatmap", "Time series forecasting", "Anomalies check", "Consistency checks"], 0)
+                          ["Data View", "Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis",
+                           "Correlation Analysis", "Anomalies check", "Consistency checks", "Monodimensional Analysis", "Map Analysis", "Time series forecasting"], 0)
     
-    if widget == "Table":
+    if widget == "Data View":
         # showing the table with the data
         st.header("Table")
         st.write("Data contained into the dataset:", table)
@@ -380,7 +380,7 @@ if demo_data or uploaded_file is not None:
         fig_tot.update_layout(height = 600)
         st.plotly_chart(fig_tot, use_container_width=True)
         
-    if widget == "Heatmap":
+    if widget == "Correlation Analysis":
         heat_cols = st.multiselect("Choose the columns for the correlation heatmap:", col_mul)
         
         if len(heat_cols) >= 2:
