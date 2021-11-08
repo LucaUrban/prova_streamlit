@@ -958,7 +958,7 @@ if demo_data or uploaded_file is not None:
                             for row in range(len(list_fin_res)):
                                 for i in range(len(list_fin_res[row])):
                                     if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
-                                        den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == clist_un_cat[row])][con_checks_id_col].unique())
+                                        den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == list_un_cat[row])][con_checks_id_col].unique())
                                     if row == len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
                                         den = len(table[table[country_sel_col] == list_countries[i]][con_checks_id_col].unique())
                                     if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
@@ -972,7 +972,7 @@ if demo_data or uploaded_file is not None:
                                         num_app = 0; list_fin_res[row][i] = '0\n(0%)'
                                     if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
-                                            list_prob_cases.append([con_checks_features[int(row // len(categories))], list_countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                            list_prob_cases.append([con_checks_features[int(row // len(list_un_cat))], list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                                         else:
                                             list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
                             table_fin_indexes = []
