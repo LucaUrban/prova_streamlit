@@ -958,11 +958,11 @@ if demo_data or uploaded_file is not None:
                             for row in range(len(list_fin_res)):
                                 for i in range(len(list_fin_res[row])):
                                     if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
-                                        den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == categories[row])][con_checks_id_col].unique())
+                                        den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == clist_un_cat[row])][con_checks_id_col].unique())
                                     if row == len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
                                         den = len(table[table[country_sel_col] == list_countries[i]][con_checks_id_col].unique())
                                     if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
-                                        den = len(table[table[cat_sel_col] == categories[row]][con_checks_id_col].unique())
+                                        den = len(table[table[cat_sel_col] == list_un_cat[row]][con_checks_id_col].unique())
                                     if row == len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
                                         den = table.shape[0]
                                     num = list_fin_res[row][i]
