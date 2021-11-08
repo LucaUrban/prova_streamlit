@@ -924,7 +924,7 @@ if demo_data or uploaded_file is not None:
                                             var_flag.add(key_VDS)
                                 cont += 1
 
-                    list_countries = table[country_sel_col].unique()
+                    list_countries = list(table[country_sel_col].unique())
                     if cat_sel_col == '-':
                         DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
                         dict_check_flags = {col: set() for col in con_checks_features}
