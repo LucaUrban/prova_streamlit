@@ -829,16 +829,15 @@ if demo_data or uploaded_file is not None:
             res = dict()
             # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
             for id_inst in indices.index.values:
-                inst = table[table[con_checks_id_col] == id_inst]; delta_pos = list(); delta_neg = list(); num_row = inst.shape[0]
+                delta_pos = list(); delta_neg = list()
                 for var in con_checks_features:
+                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[var]))][var].values; num_row = len(inst)
                     for i in range(1, num_row):
-                        if not np.isnan(inst[var].iloc[num_row - i]) and not np.isnan(inst[var].iloc[num_row - i - 1]):
-                            if inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i] < 0:
-                                delta_neg.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
-                            else:
-                                delta_pos.append(inst[var].iloc[num_row - i - 1] - inst[var].iloc[num_row - i])
-                    lis_app = list(); lis_app.append(delta_pos); lis_app.append(delta_neg)
-                    res[id_inst + "." + var] = lis_app
+                        if inst[num_row - i - 1] - inst[num_row - i] < 0:
+                            delta_neg.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                        else:
+                            delta_pos.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                    res[id_inst + "." + var] = [delta_pos, delta_neg]
                     delta_pos = list(); delta_neg = list()
 
             DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
