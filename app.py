@@ -801,7 +801,7 @@ if demo_data or uploaded_file is not None:
 
             left1, right1 = st.beta_columns(2)
             with left1:
-                  con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
@@ -857,8 +857,8 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
-                        table['Prob inst ' + var_control_checks_flag] = 0
-                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + var_control_checks_flag] = 1
+                        table['Prob inst ' + con_checks_features] = 0
+                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
                         if cat_sel_col == '-':
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1), axis = 1)
