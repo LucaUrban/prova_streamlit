@@ -799,121 +799,76 @@ if demo_data or uploaded_file is not None:
             blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
 
-            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
-            left1, right1 = st.beta_columns(2)
-            with left1:
-                var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
-            with right1:
-                flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+            con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            res = dict()
+            res_ind = dict()
             for id_inst in table[con_checks_id_col].unique():
-                list_par = []
-                for var in con_checks_features:
-                    inst = table[table[con_checks_id_col] == id_inst][var].values; years = 0; res_par = 1
-                    geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
-                    if geo_mean_vec.shape[0] != 0:
-                        list_par.append(math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0]))
-                    else:
-                        list_par.append(np.nan)
-                res[id_inst] = list_par
+                inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values; years = 0; res_par = 1
+                geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                if geo_mean_vec.shape[0] != 0:
+                    res_ind[id_inst] = math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0])
+                else:
+                    res_ind[id_inst] = np.nan
 
             indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
             list_threshold = indices.quantile(retain_quantile/100).values
 
-            el_row = set()
-            for j in range(len(con_checks_features)):
-                el_row.union(set(indices[(pd.isna(indices[con_checks_features[j]])) | (indices[con_checks_features[j]] <= list_threshold[j])].index))
+            el_row = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index)
             indices.drop(index = el_row, axis = 0, inplace = True)
 
             res = dict()
             # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
             for id_inst in indices.index.values:
-                delta_pos = list(); delta_neg = list()
-                for var in con_checks_features:
-                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[var]))][var].values; num_row = len(inst)
-                    for i in range(1, num_row):
-                        if inst[num_row - i - 1] - inst[num_row - i] < 0:
-                            delta_neg.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
-                        else:
-                            delta_pos.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
-                    res[id_inst + "." + var] = [delta_pos, delta_neg]
-                    delta_pos = list(); delta_neg = list()
+                inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[con_checks_features]))][con_checks_features].values
+                num_row = len(inst); delta_pos = list(); delta_neg = list()
+                for i in range(1, num_row):
+                    if inst[num_row - i - 1] - inst[num_row - i] < 0:
+                        delta_neg.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                    else:
+                        delta_pos.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                res[id_inst] = [delta_pos, delta_neg]
 
             DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
             for key, value in res.items():
-                res_par = np.nan
+                res_par = 0
                 if len(value[0]) != 0 and len(value[1]) != 0:
                     res_par = sum(value[0]) * sum(value[1])
-                if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
-                    DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-
-            dict_app_DV = dict()
-            for key, value in DV.items():
-                if key[key.find('.')+1:] not in dict_app_DV.keys():
-                    dict_app_DV[key[key.find('.')+1:]] = [value]
-                else:
-                    dict_app_DV[key[key.find('.')+1:]].append(value)
+                DV[key] = round(math.fabs(res_par)/indices[con_checks_features][key] ** 1.5, 3)
         
             results = [[], [], []]
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
             if blocked_quantile == 'Retain quantile (S1)':
                 second_quantile = np.arange(92.5, 97.5, .25)
                 for S2_S3 in second_quantile:
-                    list_threshold_DV = list()
-                    for key, value in dict_app_DV.items():
-                        list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
-
-                    cont = 0; dict_flag_DV = dict()
-                    for key, value in dict_app_DV.items():
-                        list_app = [[], []]
-                        for el in value:
-                            if el > list_threshold_DV[cont]:
-                                if el not in list_app[0]:
-                                    list_app[0].append(el); list_app[1].append(1)
-                                else:
-                                    list_app[1][list_app[0].index(el)] += 1
-                        dict_flag_DV[key] = list_app; cont += 1
-
-                    var_flag = set()
-                    for key, value in dict_flag_DV.items():
-                        for i in range(len(value[0])):
-                            cont = 0
-                            while cont != value[1][i]:
-                                for key_DV, value_DV in DV.items():
-                                    if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
-                                            var_flag.add(key_DV)
-                                cont += 1
+                    DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
+                    dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(S2_S3)].index)
 
                     list_countries = list(table[country_sel_col].unique())
                     if cat_sel_col == '-':
-                        DV_fin_res = np.zeros((len(con_checks_features), len(list_countries)), dtype = int)
-                        dict_check_flags = {col: set() for col in con_checks_features}
-                        for flag in var_flag:
-                            DV_fin_res[con_checks_features.index(flag[flag.find('.')+1:]), list_countries.index(flag[:2])] += 1
-                            dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+                        DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
+                        for flag in dict_check_flags:
+                            DV_fin_res[0, list_countries.index(flag[:2])] += 1
                     else:
                         list_un_cat = list(table[cat_sel_col].unique())
-                        DV_fin_res = np.zeros((len(con_checks_features) * len(list_un_cat), len(list_countries)), dtype = int)
-                        dict_check_flags = {col: set() for col in con_checks_features}
-                        for flag in var_flag:
-                            DV_fin_res[(con_checks_features.index(flag[flag.find('.')+1:]) * len(list_un_cat)) + list_un_cat.index(table[table[con_checks_id_col] == flag[:flag.find('.')]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
-                            dict_check_flags[flag[flag.find('.')+1:]].add(flag[:flag.find('.')])
+                        DV_fin_res = np.zeros((len(list_un_cat), len(list_countries)), dtype = int)
+                        for flag in dict_check_flags:
+                            DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
                         table['Prob inst ' + var_control_checks_flag] = 0
-                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
+                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + var_control_checks_flag] = 1
                         
                         if cat_sel_col == '-':
-                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features), 1)), axis = 1)
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1)), axis = 1)
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                             list_fin_res = DV_fin_res.tolist()
                             for row in range(len(list_fin_res)):
                                 for i in range(len(list_fin_res[row])):
                                     list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
-                            table_fin_res = pd.DataFrame(list_fin_res, index = con_checks_features + ['Total'], columns = list_countries + ['Total'])
+                            table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features, 'Total'], columns = list_countries + ['Total'])
                         else:
-                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(list_un_cat), 1)), axis = 1)
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                             list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                             for row in range(len(list_fin_res)):
@@ -933,24 +888,20 @@ if demo_data or uploaded_file is not None:
                                         num_app = 0; list_fin_res[row][i] = '0\n(0%)'
                                     if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                         if row != len(list_fin_res)-1:
-                                            list_prob_cases.append([con_checks_features[int(row // len(list_un_cat))], list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                            list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                                         else:
                                             list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
-                            table_fin_indexes = []
-                            for fea in con_checks_features:
-                                for cat in list_un_cat:
-                                    table_fin_indexes.append(fea + ' (' + cat + ')')
-                            table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = list_countries + ['Total'])
+                            table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features + ' (' + cat + ')' for cat in list_un_cat] + ['Total'], columns = list_countries + ['Total'])
 
-                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                                                   [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                                                   [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [len(dict_check_flags.difference(ones.union(twos))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
 
-                    results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
-                    results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
-                    results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
+                    results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
+                    results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
+                    results[2].append(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2))
         
             fig_concistency = go.Figure()
             fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
