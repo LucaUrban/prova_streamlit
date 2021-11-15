@@ -857,7 +857,7 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
-                        st.write(dict_check_flags)
+                        st.write(sorted(list(dict_check_flags)))
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
