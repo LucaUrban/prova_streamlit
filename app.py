@@ -848,27 +848,12 @@ if demo_data or uploaded_file is not None:
                 if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
                     DV[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
 
-            VDS = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
-            for key, value in res.items():
-                res_par = 0
-                if len(value[0]) != 0 or len(value[1]) != 0:
-                    res_par = np.var(np.array(value[0] + value[1]))
-                if not np.isnan(indices[key[key.find('.')+1:]][key[:key.find('.')]]) and indices[key[key.find('.')+1:]][key[:key.find('.')]] != 0:
-                    VDS[key] = round(math.fabs(res_par)/indices[key[key.find('.')+1:]][key[:key.find('.')]] ** 1.5, 3)
-
             dict_app_DV = dict()
             for key, value in DV.items():
                 if key[key.find('.')+1:] not in dict_app_DV.keys():
                     dict_app_DV[key[key.find('.')+1:]] = [value]
                 else:
                     dict_app_DV[key[key.find('.')+1:]].append(value)
-
-            dict_app_VDS = dict()
-            for key, value in VDS.items():
-                if key[key.find('.')+1:] not in dict_app_VDS.keys():
-                    dict_app_VDS[key[key.find('.')+1:]] = [value]
-                else:
-                    dict_app_VDS[key[key.find('.')+1:]].append(value)
         
             results = [[], [], []]
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -878,10 +863,6 @@ if demo_data or uploaded_file is not None:
                     list_threshold_DV = list()
                     for key, value in dict_app_DV.items():
                         list_threshold_DV.append(np.quantile(np.array(value), S2_S3/100))
-
-                    list_threshold_VDS = list()
-                    for key, value in dict_app_VDS.items():
-                        list_threshold_VDS.append(np.quantile(np.array(value), S2_S3/100))
 
                     cont = 0; dict_flag_DV = dict()
                     for key, value in dict_app_DV.items():
@@ -893,17 +874,6 @@ if demo_data or uploaded_file is not None:
                                 else:
                                     list_app[1][list_app[0].index(el)] += 1
                         dict_flag_DV[key] = list_app; cont += 1
-
-                    cont = 0; dict_flag_VDS = dict()
-                    for key, value in dict_app_VDS.items():
-                        list_app = [[], []]
-                        for el in value:
-                            if el > list_threshold_VDS[cont]:
-                                if el not in list_app[0]:
-                                    list_app[0].append(el); list_app[1].append(1)
-                                else:
-                                    list_app[1][list_app[0].index(el)] += 1
-                        dict_flag_VDS[key] = list_app; cont += 1
 
                     var_flag = set()
                     for key, value in dict_flag_DV.items():
