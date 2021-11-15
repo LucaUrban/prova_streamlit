@@ -914,14 +914,6 @@ if demo_data or uploaded_file is not None:
                                     if key_DV[key_DV.find('.')+1:] == key and value_DV == value[0][i]:
                                             var_flag.add(key_DV)
                                 cont += 1
-                    for key, value in dict_flag_VDS.items():
-                        for i in range(len(value[0])):
-                            cont = 0
-                            while cont != value[1][i]:
-                                for key_VDS, value_VDS in VDS.items():
-                                    if key_VDS[key_VDS.find('.')+1:] == key and value_VDS == value[0][i]:
-                                            var_flag.add(key_VDS)
-                                cont += 1
 
                     list_countries = list(table[country_sel_col].unique())
                     if cat_sel_col == '-':
