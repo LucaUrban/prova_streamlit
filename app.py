@@ -799,8 +799,11 @@ if demo_data or uploaded_file is not None:
             blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
 
-            con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
-            flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+            left1, right1 = st.beta_columns(2)
+            with left1:
+                  con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+            with right1:
+                flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
             res_ind = dict()
             for id_inst in table[con_checks_id_col].unique():
@@ -811,11 +814,9 @@ if demo_data or uploaded_file is not None:
                 else:
                     res_ind[id_inst] = np.nan
 
-            indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = con_checks_features)
+            indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features])
             list_threshold = indices.quantile(retain_quantile/100).values
-
-            el_row = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index)
-            indices.drop(index = el_row, axis = 0, inplace = True)
+            indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index), axis = 0, inplace = True)
 
             res = dict()
             # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
