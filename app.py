@@ -811,7 +811,7 @@ if demo_data or uploaded_file is not None:
                 else:
                     res_ind[id_inst] = np.nan
 
-            indices = pd.DataFrame(res.values(), index = res.keys(), columns = con_checks_features)
+            indices = pd.DataFrame(res_ind.values(), index = res.keys(), columns = con_checks_features)
             list_threshold = indices.quantile(retain_quantile/100).values
 
             el_row = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index)
