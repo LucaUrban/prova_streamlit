@@ -860,7 +860,7 @@ if demo_data or uploaded_file is not None:
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + var_control_checks_flag] = 1
                         
                         if cat_sel_col == '-':
-                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1)), axis = 1)
+                            DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1), axis = 1)
                             DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
                             list_fin_res = DV_fin_res.tolist()
                             for row in range(len(list_fin_res)):
