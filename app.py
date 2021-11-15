@@ -843,7 +843,7 @@ if demo_data or uploaded_file is not None:
                 second_quantile = np.arange(92.5, 97.5, .25)
                 for S2_S3 in second_quantile:
                     DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
-                    dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(S2_S3)].index)
+                    dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(S2_S3/100)].index)
 
                     list_countries = list(table[country_sel_col].unique())
                     if cat_sel_col == '-':
