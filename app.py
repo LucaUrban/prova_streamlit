@@ -853,7 +853,7 @@ if demo_data or uploaded_file is not None:
                         list_un_cat = list(table[cat_sel_col].unique())
                         DV_fin_res = np.zeros((len(list_un_cat), len(list_countries)), dtype = int)
                         for flag in dict_check_flags:
-                            DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag]][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
+                            DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
                         table['Prob inst ' + var_control_checks_flag] = 0
