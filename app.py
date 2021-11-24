@@ -678,7 +678,7 @@ if demo_data or uploaded_file is not None:
 
             left1, right1 = st.beta_columns(2)
             with left1:
-                con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
+                con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
