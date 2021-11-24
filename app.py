@@ -676,10 +676,9 @@ if demo_data or uploaded_file is not None:
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
 
-            con_checks_features = st.multiselect("Variables chosen for the consistency checks:", col_mul)
             left1, right1 = st.beta_columns(2)
             with left1:
-                var_control_checks_flag = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
+                con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", con_checks_features)
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
@@ -688,42 +687,40 @@ if demo_data or uploaded_file is not None:
             if cat_sel_col != '-':
                 categories = list(table[cat_sel_col].unique())
                 for flag_quantile in second_quantile:
-                    for ratio_col in con_checks_features:
-                        dict_flags[ratio_col] = dict()
-                        for cc in countries:
-                            country_table = table[table[country_sel_col] == cc][[con_checks_id_col, ratio_col]]
-                            inst_lower = set(country_table[country_table[ratio_col] <= country_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
-                            inst_upper = set(country_table[country_table[ratio_col] >= country_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
-                            dict_flags[ratio_col][cc] = inst_lower.union(inst_upper)
-                        for cat in categories:
-                            cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, ratio_col]]
-                            inst_lower = set(cat_table[cat_table[ratio_col] <= cat_table[ratio_col].quantile(flag_quantile/100)]['ETER ID'].values)
-                            inst_upper = set(cat_table[cat_table[ratio_col] >= cat_table[ratio_col].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
-                            dict_flags[ratio_col][cat] = inst_lower.union(inst_upper)
+                    dict_flags[con_checks_feature] = dict()
+                    for cc in countries:
+                        country_table = table[table[country_sel_col] == cc][[con_checks_id_col, con_checks_feature]]
+                        inst_lower = set(country_table[country_table[con_checks_feature] <= country_table[con_checks_feature].quantile(flag_quantile/100)]['ETER ID'].values)
+                        inst_upper = set(country_table[country_table[con_checks_feature] >= country_table[con_checks_feature].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
+                        dict_flags[con_checks_feature][cc] = inst_lower.union(inst_upper)
+                    for cat in categories:
+                        cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, con_checks_feature]]
+                        inst_lower = set(cat_table[cat_table[con_checks_feature] <= cat_table[con_checks_feature].quantile(flag_quantile/100)]['ETER ID'].values)
+                        inst_upper = set(cat_table[cat_table[con_checks_feature] >= cat_table[con_checks_feature].quantile(1 - (flag_quantile/100))]['ETER ID'].values)
+                        dict_flags[con_checks_feature][cat] = inst_lower.union(inst_upper)
 
                     dict_check_flags = {}; set_app = set()
                     for cc in countries:
-                        set_app = set_app.union(dict_flags[var_control_checks_flag][cc])
+                        set_app = set_app.union(dict_flags[con_checks_feature][cc])
                     for cat in categories:
-                        set_app = set_app.union(dict_flags[var_control_checks_flag][cat])
+                        set_app = set_app.union(dict_flags[con_checks_feature][cat])
                     dict_check_flags[var_control_checks_flag] = set_app
 
                     if flag_quantile == flag_issue_quantile:
-                        table['Prob inst ' + var_control_checks_flag] = 0
-                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags[var_control_checks_flag])].index, 'Prob inst ' + var_control_checks_flag] = 1
+                        table['Prob inst ' + con_checks_feature] = 0
+                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags[con_checks_feature])].index, 'Prob inst ' + con_checks_feature] = 1
                            
                         # table reporting the cases by countries
-                        DV_fin_res = np.zeros((len(con_checks_features) * len(categories), len(countries)), dtype = int)
-                        for i in range(len(con_checks_features)):
-                            for j in range(len(countries)):
-                                for el in dict_flags[con_checks_features[i]][countries[j]]:
-                                    DV_fin_res[(i * len(categories)) + categories.index(table[table[con_checks_id_col] == el][cat_sel_col].unique()[0]), j] += 1
-                            for j in range(len(categories)):
-                                for el in dict_flags[con_checks_features[i]][categories[j]]:
-                                    if el not in dict_flags[con_checks_features[i]][countries[countries.index(el[:2])]]:
-                                        DV_fin_res[j, countries.index(el[:2])] += 1
+                        DV_fin_res = np.zeros((len(categories), len(countries)), dtype = int)
+                        for j in range(len(countries)):
+                            for el in dict_flags[con_checks_feature][countries[j]]:
+                                DV_fin_res[categories.index(table[table[con_checks_id_col] == el][cat_sel_col].unique()[0]), j] += 1
+                        for j in range(len(categories)):
+                            for el in dict_flags[con_checks_feature][categories[j]]:
+                                if el not in dict_flags[con_checks_feature][countries[countries.index(el[:2])]]:
+                                    DV_fin_res[j, countries.index(el[:2])] += 1
                         
-                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(con_checks_features) * len(categories), 1)), axis = 1)
+                        DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(categories), 1)), axis = 1)
                         DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(countries) + 1), axis = 0)
                         list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                         for row in range(len(list_fin_res)):
@@ -743,25 +740,22 @@ if demo_data or uploaded_file is not None:
                                     num_app = 0; list_fin_res[row][i] = '0\n(0%)'
                                 if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                     if row != len(list_fin_res)-1:
-                                        list_prob_cases.append([con_checks_features[int(row // len(categories))], countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                        list_prob_cases.append([con_checks_feature, countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                                     else:
                                         list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
-                        table_fin_indexes = []
-                        for fea in con_checks_features:
-                            for cat in categories:
-                                table_fin_indexes.append(fea + ' (' + cat + ')')
-                        table_fin_res = pd.DataFrame(list_fin_res, index = table_fin_indexes + ['Total'], columns = countries + ['Total'])
+                                        
+                        table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_feature + ' (' + cat + ')' for cat in categories] + ['Total'], columns = countries + ['Total'])
 
                         # table for the accuracy etc...
-                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[var_control_checks_flag]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2)) + '%'], 
-                                                   [str(len(dict_check_flags[var_control_checks_flag])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2)) + '%'], 
-                                                   [len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2)) + '%']], 
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[con_checks_feature]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[con_checks_feature])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [len(dict_check_flags[con_checks_feature].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
 
-                    results[0].append(round((100 * len(twos.intersection(dict_check_flags[var_control_checks_flag]))) / len(twos), 2))
-                    results[1].append(round(100 * (len(dict_check_flags[var_control_checks_flag]) / len(ones.union(twos))), 2))
-                    results[2].append(round((100 * len(dict_check_flags[var_control_checks_flag].difference(ones.union(twos)))) / len(dict_check_flags[var_control_checks_flag]), 2))
+                    results[0].append(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2))
+                    results[1].append(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2))
+                    results[2].append(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2))
 
                 fig_concistency = go.Figure()
                 fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
