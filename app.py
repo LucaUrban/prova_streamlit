@@ -704,7 +704,7 @@ if demo_data or uploaded_file is not None:
                         set_app = set_app.union(dict_flags[con_checks_feature][cc])
                     for cat in categories:
                         set_app = set_app.union(dict_flags[con_checks_feature][cat])
-                    dict_check_flags[var_control_checks_flag] = set_app
+                    dict_check_flags[con_checks_feature] = set_app
 
                     if flag_quantile == flag_issue_quantile:
                         table['Prob inst ' + con_checks_feature] = 0
