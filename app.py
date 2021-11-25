@@ -812,8 +812,7 @@ if demo_data or uploaded_file is not None:
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
             if blocked_quantile == 'Retain quantile (S1)':
                 indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features])
-                list_threshold = indices.quantile(retain_quantile/100).values
-                indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index), axis = 0, inplace = True)
+                indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= indices.quantile(retain_quantile/100).values[0])].index), axis = 0, inplace = True)
 
                 res = dict()
                 # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
@@ -834,8 +833,8 @@ if demo_data or uploaded_file is not None:
                         res_par = sum(value[0]) * sum(value[1])
                     DV[key] = round(math.fabs(res_par)/indices[con_checks_features][key] ** 1.5, 3)
        
-                second_quantile = np.arange(92.5, 97.5, .25)
-                for S2_S3 in second_quantile:
+                first_second_quantile = np.arange(92.5, 97.5, .25)
+                for S2_S3 in first_second_quantile:
                     DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
                     dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(S2_S3/100)].index)
 
@@ -898,10 +897,9 @@ if demo_data or uploaded_file is not None:
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
                     results[2].append(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2))
             else:
-                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features]); first_quantile = np.arange(2, 7, .25)
-                for S1 in first_quantile:
-                    list_threshold = indices.quantile(S1/100).values
-                    indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= list_threshold[0])].index), axis = 0, inplace = True)
+                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features]); first_second_quantile = np.arange(2, 7, .25)
+                for S1 in first_second_quantile:
+                    indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= indices.quantile(S1/100).values[0])].index), axis = 0, inplace = True)
 
                     res = dict()
                     # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
@@ -985,9 +983,9 @@ if demo_data or uploaded_file is not None:
                     results[2].append(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2))
         
             fig_concistency = go.Figure()
-            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
-            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
-            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
+            fig_concistency.add_trace(go.Scatter(x = first_second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
+            fig_concistency.add_trace(go.Scatter(x = first_second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
+            fig_concistency.add_trace(go.Scatter(x = first_second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
             fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
 
             st.plotly_chart(fig_concistency, use_container_width=True)
