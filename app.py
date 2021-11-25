@@ -997,11 +997,11 @@ if demo_data or uploaded_file is not None:
             
             var_hist_plot = st.selectbox("Choose the variable you want to display the distribution between the flagged and not flagged cases:", col_mul)
             fig_conf_hist = go.Figure()
-            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 0][var_hist_plot].values,
+            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + con_checks_features] == 0][var_hist_plot].values,
                                                  xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                               size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
                                                  autobinx = False, name = 'All', histnorm = 'probability density'))
-            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + var_control_checks_flag] == 1][var_hist_plot].values,
+            fig_conf_hist.add_trace(go.Histogram(x = table[table['Prob inst ' + con_checks_features] == 1][var_hist_plot].values,
                                                  xbins = dict(start = table[var_hist_plot].min(), end = table[var_hist_plot].max(), 
                                                               size = (table[var_hist_plot].max() - table[var_hist_plot].min()) / 25),
                                                  autobinx = False, name = 'Flagged', histnorm = 'probability density'))
