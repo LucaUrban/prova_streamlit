@@ -985,9 +985,9 @@ if demo_data or uploaded_file is not None:
                     results[2].append(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2))
         
             fig_concistency = go.Figure()
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
-            fig_concistency.add_trace(go.Scatter(x = second_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
+            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[0], mode = 'lines+markers', name = 'Accuracy'))
+            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[1], mode = 'lines+markers', name = 'app cases vs. std cases'))
+            fig_concistency.add_trace(go.Scatter(x = first_quantile, y = results[2], mode = 'lines+markers', name = 'Not flagged cases'))
             fig_concistency.update_layout(xaxis_title = 'Threshold', yaxis_title = 'Percentages', title_text = "General results based on the threshold (in %)")
 
             st.plotly_chart(fig_concistency, use_container_width=True)
