@@ -830,7 +830,7 @@ if demo_data or uploaded_file is not None:
                 for key, value in res.items():
                     res_par = 0
                     if len(value[0]) != 0 and len(value[1]) != 0:
-                        res_par = sum(value[0]) * sum(value[1])
+                        res_par = max(value[0]) * max(value[1])
                     DV[key] = round(math.fabs(res_par)/indices[con_checks_features][key] ** 1.5, 3)
        
                 first_second_quantile = np.arange(92.5, 97.5, .25)
