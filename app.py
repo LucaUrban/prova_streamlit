@@ -914,7 +914,7 @@ if demo_data or uploaded_file is not None:
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
                         for i in range(5):
                             dict_trend[list(dict_trend.keys())[i]] = len(table[table['Class trend'] == i+1][con_checks_id_col].unique())
-                        trend_table = pd.DataFrame(np.array(dict_trend.values()).reshape(1, 5), index = [0], columns = dict_trend.keys())
+                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Type of trend'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
