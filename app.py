@@ -912,8 +912,8 @@ if demo_data or uploaded_file is not None:
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                         
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
-                        for i in range(5):
-                            dict_trend[list(dict_trend.keys())[i]] = len(table[table['Class trend'] == i+1][con_checks_id_col].unique())
+                        for inst in dict_check_flags:
+                            dict_trend[list(dict_trend.keys())[table[table[con_checks_id_col] == inst]['Class trend'].unique()[0]]] += 1
                         trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Type of trend'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
@@ -1044,7 +1044,6 @@ if demo_data or uploaded_file is not None:
                             res[inst] = 1
             res = dict(sorted(res.items(), key=lambda item: item[1]))
             st.write('Prova', pd.DataFrame(res.values(), index = res.keys(), columns = ['Num. of occurrences']))'''
-            wuedgewgfyf
             
             
             
