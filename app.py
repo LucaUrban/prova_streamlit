@@ -800,14 +800,31 @@ if demo_data or uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            res_ind = dict()
+            res_ind = dict(); table['Class trend'] = np.nan
             for id_inst in table[con_checks_id_col].unique():
-                inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values; years = 0; res_par = 1
+                # calculations of the geometric mean
+                inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values[::-1]
                 geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
                 if geo_mean_vec.shape[0] != 0:
                     res_ind[id_inst] = math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0])
                 else:
                     res_ind[id_inst] = np.nan
+                    
+                # trend classification
+                if geo_mean_vec.shape[0] > 3:
+                    mann_kend_res = mk.original_test(geo_mean_vec)
+                    trend, p, tau = mann_kend_res.trend, mann_kend_res.p, mann_kend_res.Tau
+                    if trend == 'increasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 5
+                    if trend == 'decreasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
+                    if trend == 'no trend':
+                        if p <= 0.1 and tau >= 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
+                        if p <= 0.1 and tau < 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
+                        if p > 0.1:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
             
             results = [[], [], []]
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -893,6 +910,11 @@ if demo_data or uploaded_file is not None:
                                                    [len(dict_check_flags.difference(ones.union(twos))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                        
+                        dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
+                        for i in range(5):
+                            dict_trend[list(dict_trend.keys())[i]] = len(table[table['Class trend'] == i+1][con_checks_id_col].unique())
+                        trend_table = pd.DataFrame(dict_trend.values(), columns = dict_trend.keys())
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
@@ -1009,9 +1031,11 @@ if demo_data or uploaded_file is not None:
             fig_conf_hist.update_layout(barmode='overlay')
             st.plotly_chart(fig_conf_hist, use_container_width=True)
             
+            st.table(trend_table)
+            
+            '''
             res = {}
             for col in table.columns:
-                st.write(col)
                 if col.startswith('Prob inst '):
                     for inst in table[table[col] == 1][con_checks_id_col].unique():
                         if inst in res.keys():
@@ -1019,5 +1043,8 @@ if demo_data or uploaded_file is not None:
                         else:
                             res[inst] = 1
             res = dict(sorted(res.items(), key=lambda item: item[1]))
-            st.write('Prova', pd.DataFrame(res.values(), index = res.keys(), columns = ['Num. of occurrences']))
-            st.write(len(res.keys()))
+            st.write('Prova', pd.DataFrame(res.values(), index = res.keys(), columns = ['Num. of occurrences']))'''
+            wuedgewgfyf
+            
+            
+            
