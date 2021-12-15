@@ -1019,4 +1019,4 @@ if demo_data or uploaded_file is not None:
                             res[inst] = 1
             res = dict(sorted(res.items(), key=lambda item: item[1]))
             st.write('Prova', pd.DataFrame(res.values(), index = res.keys(), columns = ['Num. of occurrences']))
-            st.write(len(res.keys())
+            st.write(len(res.keys()))
