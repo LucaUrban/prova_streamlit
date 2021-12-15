@@ -819,11 +819,11 @@ if demo_data or uploaded_file is not None:
                     if trend == 'decreasing':
                         table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
                     if trend == 'no trend':
-                        if p <= 0.1 and tau >= 0:
+                        if p <= 0.25 and tau >= 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
-                        if p <= 0.1 and tau < 0:
+                        if p <= 0.25 and tau < 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
-                        if p > 0.1:
+                        if p > 0.25:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
             
             results = [[], [], []]
@@ -913,8 +913,6 @@ if demo_data or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
                         for inst in dict_check_flags:
-                            if int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1 == 4:
-                                st.write(inst)
                             dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
                         trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
 
