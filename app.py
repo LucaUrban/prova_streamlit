@@ -913,8 +913,10 @@ if demo_data or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
                         for inst in dict_check_flags:
+                            if int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1 == 4:
+                                st.write(inst)
                             dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
-                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Type of trend'])
+                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
@@ -1000,6 +1002,11 @@ if demo_data or uploaded_file is not None:
                                                    [len(dict_check_flags.difference(ones.union(twos))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                        
+                        dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
+                        for inst in dict_check_flags:
+                            dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
+                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
