@@ -1008,7 +1008,15 @@ if demo_data or uploaded_file is not None:
 
             fig_conf_hist.update_layout(barmode='overlay')
             st.plotly_chart(fig_conf_hist, use_container_width=True)
-        
-        
-        
+            
+            res = {}
+            for col in table.columns:
+                if col.startswith('Prob inst '):
+                    for inst in table[table[col] == 1][con_checks_id_col].unique():
+                        if inst in res.keys():
+                            res[inst] += 1
+                        else:
+                            res[inst] = 1
+            res = dict(sorted(res.items(), key=lambda item: item[1]))
+            st.write('Prova', pd.DataFrame(res.values(), index = res.keys(), columns = ['Num. of occurrences']))
         
