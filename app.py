@@ -1011,6 +1011,7 @@ if demo_data or uploaded_file is not None:
             
             res = {}
             for col in table.columns:
+                st.write(col)
                 if col.startswith('Prob inst '):
                     for inst in table[table[col] == 1][con_checks_id_col].unique():
                         if inst in res.keys():
