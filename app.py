@@ -868,6 +868,7 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
+                        dict_pr_inst = {pr_inst: 1 for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
@@ -960,6 +961,7 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S1 == retain_quantile:
+                        dict_pr_inst = {pr_inst: 1 for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
 
@@ -1044,6 +1046,41 @@ if demo_data or uploaded_file is not None:
                                    [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
                                    [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
                                    columns = ['Absolute Values', 'In percentage'], index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
-                                   
+            
+            cols_pr_inst = st.multiselect('Choose the variables', col_mul)
+            for col in cols_pr_inst:
+                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features])
+                indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= indices.quantile(0.02).values[0])].index), axis = 0, inplace = True)
+
+                res = dict()
+                # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
+                for id_inst in indices.index.values:
+                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[con_checks_features]))][con_checks_features].values
+                    num_row = len(inst); delta_pos = list(); delta_neg = list()
+                    for i in range(1, num_row):
+                        if inst[num_row - i - 1] - inst[num_row - i] < 0:
+                            delta_neg.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                        else:
+                            delta_pos.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                    res[id_inst] = [delta_pos, delta_neg]
+
+                DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
+                for key, value in res.items():
+                    res_par = 0
+                    if len(value[0]) != 0 and len(value[1]) != 0:
+                        res_par = sum(value[0]) * sum(value[1])
+                    DV[key] = round(math.fabs(res_par)/indices[con_checks_features][key] ** 1.5, 3)
+       
+                DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
+                dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(0.95)].index)
+            
+                for inst in dict_check_flags:
+                    if inst not in dict_pr_inst.keys():
+                        dict_pr_inst[inst] = 1
+                    else:
+                        dict_pr_inst[inst] += 1
+                
+            dict_pr_inst = dict(sorted(dict_pr_inst.items(), key=lambda item: item[1]))
+            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problematics']).head(15))
             
             
