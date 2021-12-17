@@ -1081,6 +1081,6 @@ if demo_data or uploaded_file is not None:
                         dict_pr_inst[inst] += 1
                 
             dict_pr_inst = dict(sorted(dict_pr_inst.items(), key=lambda item: item[1]))
-            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problematics']).head(15))
-            
+            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problematics']).head(25))
+            st.write(dict_pr_inst)
             
