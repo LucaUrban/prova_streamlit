@@ -1049,13 +1049,22 @@ if demo_data or uploaded_file is not None:
             
             cols_pr_inst = st.multiselect('Choose the variables', col_mul)
             for col in cols_pr_inst:
-                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features])
-                indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= indices.quantile(0.02).values[0])].index), axis = 0, inplace = True)
+                for id_inst in table[con_checks_id_col].unique():
+                    # calculations of the geometric mean
+                    inst = table[table[con_checks_id_col] == id_inst][col].values[::-1]
+                    geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                    if geo_mean_vec.shape[0] != 0:
+                        res_ind[id_inst] = math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0])
+                    else:
+                        res_ind[id_inst] = np.nan
+                        
+                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [col])
+                indices.drop(index = set(indices[(pd.isna(indices[col])) | (indices[col] <= indices.quantile(0.02).values[0])].index), axis = 0, inplace = True)
 
                 res = dict()
                 # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
                 for id_inst in indices.index.values:
-                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[con_checks_features]))][con_checks_features].values
+                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[col]))][col].values
                     num_row = len(inst); delta_pos = list(); delta_neg = list()
                     for i in range(1, num_row):
                         if inst[num_row - i - 1] - inst[num_row - i] < 0:
@@ -1069,10 +1078,10 @@ if demo_data or uploaded_file is not None:
                     res_par = 0
                     if len(value[0]) != 0 and len(value[1]) != 0:
                         res_par = sum(value[0]) * sum(value[1])
-                    DV[key] = round(math.fabs(res_par)/indices[con_checks_features][key] ** 1.5, 3)
+                    DV[key] = round(math.fabs(res_par)/indices[col][key] ** 1.5, 3)
        
-                DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
-                dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(0.95)].index)
+                DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [col])
+                dict_check_flags = set(DV_df[DV_df[col] >= DV_df[col].quantile(0.95)].index)
             
                 for inst in dict_check_flags:
                     if inst not in dict_pr_inst.keys():
