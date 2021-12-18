@@ -868,7 +868,7 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
-                        dict_pr_inst = {pr_inst: 1 for pr_inst in dict_check_flags}
+                        dict_pr_inst = {pr_inst: [con_checks_features] for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
@@ -961,7 +961,7 @@ if demo_data or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S1 == retain_quantile:
-                        dict_pr_inst = {pr_inst: 1 for pr_inst in dict_check_flags}
+                        dict_pr_inst = {pr_inst: [con_checks_features] for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
 
@@ -1085,9 +1085,9 @@ if demo_data or uploaded_file is not None:
             
                 for inst in dict_check_flags:
                     if inst not in dict_pr_inst.keys():
-                        dict_pr_inst[inst] = 1
+                        dict_pr_inst[inst] = [col]
                     else:
-                        dict_pr_inst[inst] += 1
+                        dict_pr_inst[inst].append(col)
                 
             dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problematics', 'prob. variables']).head(25))
