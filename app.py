@@ -914,9 +914,10 @@ if demo_data or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'Undetermined trend': 0, 'Weak increase': 0, 'Strong increase': 0}; set_trend = set()
                         for inst in dict_check_flags:
-                            if int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0]) != 3:
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                 set_trend.add(inst)
-                            dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
+                            dict_trend[list(dict_trend.keys())[class_tr-1]] += 1
                         trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
@@ -1007,6 +1008,9 @@ if demo_data or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'Undetermined trend': 0, 'Weak increase': 0, 'Strong increase': 0}
                         for inst in dict_check_flags:
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                set_trend.add(inst)
                             dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
                         trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
 
