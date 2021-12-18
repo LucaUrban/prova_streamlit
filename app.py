@@ -1090,5 +1090,5 @@ if demo_data or uploaded_file is not None:
                         dict_pr_inst[inst].append(col)
                 
             dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
-            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problematics', 'prob. variables']).head(25))
+            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['prob. variables']).head(25))
             
