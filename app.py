@@ -1051,7 +1051,7 @@ if demo_data or uploaded_file is not None:
                                    [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
                                    columns = ['Absolute Values', 'In percentage'], index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
             
-            trend_type = st.selectbox('Choose the institution trend type you want to vizualize', dict_trend.keys(), 0)
+            trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
             trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
             st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_features, 'Reference year']], 
                                     x = 'Reference year', y = con_checks_features, markers = True), use_container_width=True)
