@@ -819,11 +819,11 @@ if demo_data or uploaded_file is not None:
                     if trend == 'decreasing':
                         table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
                     if trend == 'no trend':
-                        if p <= 0.3 and tau >= 0:
+                        if p <= 0.1 and tau >= 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
-                        if p <= 0.3 and tau < 0:
+                        if p <= 0.1 and tau < 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
-                        if p > 0.3:
+                        if p > 0.1:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
             
             results = [[], [], []]
