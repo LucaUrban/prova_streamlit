@@ -28,6 +28,7 @@ st.write("In this part you can upload your csv file either dropping your file or
          "To change the file to be analyzed you have to refresh the page.")
 uploaded_file = st.file_uploader("Choose a file")
 demo_data = st.button('Try the tool with a demo dataset'); is_demo = False
+st.write(is_demo)
 
 if demo_data or is_demo or uploaded_file is not None:
     if uploaded_file is not None:
