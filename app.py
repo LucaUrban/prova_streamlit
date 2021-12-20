@@ -27,13 +27,14 @@ st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to refresh the page.")
 uploaded_file = st.file_uploader("Choose a file")
-demo_data = st.button('Try the tool with a demo dataset')
+demo_data = st.button('Try the tool with a demo dataset'); is_demo = False
 
-if demo_data or uploaded_file is not None:
+if demo_data or uploaded_file is not None or is_demo == True:
     if uploaded_file is not None:
         table = pd.read_csv(uploaded_file)
     else:
         table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_fin_ratio_.csv')
+        is_demo = True
 
     # importing all other necessary files
     with urlopen('https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson') as response:
