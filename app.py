@@ -29,7 +29,7 @@ st.write("In this part you can upload your csv file either dropping your file or
 uploaded_file = st.file_uploader("Choose a file")
 demo_data = st.button('Try the tool with a demo dataset')
 
-if demo_data or is_demo or uploaded_file is not None:
+if demo_data or uploaded_file is not None:
     if uploaded_file is not None:
         table = pd.read_csv(uploaded_file)
     if demo_data:
