@@ -30,7 +30,7 @@ uploaded_file = st.file_uploader("Choose a file")
 demo_data = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_fin_ratio_.csv')
 demo_data_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No'))
 
-if demo_data_radio = 'Yes' or uploaded_file is not None:
+if demo_data_radio == 'Yes' or uploaded_file is not None:
     if uploaded_file is not None:
         table = pd.read_csv(uploaded_file)
     else:
