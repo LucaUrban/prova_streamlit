@@ -684,6 +684,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
             
+            table['Class trend'] = np.nan
             for id_inst in table[con_checks_id_col].unique():
                 # trend classification
                 inst = table[table[con_checks_id_col] == id_inst][con_checks_feature].values[::-1]
