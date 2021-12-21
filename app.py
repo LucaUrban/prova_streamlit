@@ -777,6 +777,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
+                            st.write(table[table[con_checks_id_col] == inst]['Class trend'].unique())
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
                             if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                 set_trend.add(inst)
@@ -910,7 +911,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S2_S3 == flag_issue_quantile:
-                        dict_pr_inst = {pr_inst: [con_checks_features] for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
@@ -1004,7 +1004,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                             DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
                     if S1 == retain_quantile:
-                        dict_pr_inst = {pr_inst: [con_checks_features] for pr_inst in dict_check_flags}
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
 
@@ -1098,7 +1097,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_features, 'Reference year']], 
                                     x = 'Reference year', y = con_checks_features), use_container_width=True)
             
-            cols_pr_inst = st.multiselect('Choose the variables', col_mul)
+            cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
             for col in cols_pr_inst:
                 for id_inst in table[con_checks_id_col].unique():
                     # calculations of the geometric mean
