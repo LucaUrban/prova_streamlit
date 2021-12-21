@@ -676,6 +676,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
+            p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
             left1, right1 = st.beta_columns(2)
             with left1:
@@ -793,6 +794,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
             blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
+            p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
             left1, right1 = st.beta_columns(2)
             with left1:
@@ -819,11 +821,11 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                     if trend == 'decreasing':
                         table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
                     if trend == 'no trend':
-                        if p <= 0.5 and tau >= 0:
+                        if p <= p_value_trend_per/100 and tau >= 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
-                        if p <= 0.5 and tau < 0:
+                        if p <= p_value_trend_per/100 and tau < 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
-                        if p > 0.5:
+                        if p > p_value_trend_per/100:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
             
             results = [[], [], []]
