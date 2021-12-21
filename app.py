@@ -778,9 +778,10 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags[con_checks_feature]:
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
-                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
-                                set_trend.add(inst)
-                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2))
@@ -814,7 +815,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
                   
                 st.table(trend_table)
-                st.write(set_trend)
                 st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
                                        [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
                                        [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
@@ -956,8 +956,10 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
-                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
-                                set_trend.add(inst)
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
                             dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
@@ -1049,8 +1051,10 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
-                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
-                                set_trend.add(inst)
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
                             dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
