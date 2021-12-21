@@ -77,7 +77,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         st.plotly_chart(ratio_plot, use_container_width=True)
 
         # map pplot + violin plot on the aggregated results
-        left, right = st.beta_columns(2)
+        left, right = st.columns(2)
         with left: 
             ratio_vio_sel1 = st.selectbox("multivariable index col", table.columns, 0)
         with right:
