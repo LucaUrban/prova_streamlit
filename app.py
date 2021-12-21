@@ -776,8 +776,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                         
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
-                        for inst in dict_check_flags:
-                            st.write(inst)
+                        for inst in dict_check_flags[con_checks_feature]:
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
                             if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                 set_trend.add(inst)
