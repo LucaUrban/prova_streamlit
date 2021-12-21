@@ -686,7 +686,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             
             for id_inst in table[con_checks_id_col].unique():
                 # trend classification
-                inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values[::-1]
+                inst = table[table[con_checks_id_col] == id_inst][con_checks_feature].values[::-1]
                 geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
                 if geo_mean_vec.shape[0] > 3:
                     mann_kend_res = mk.original_test(geo_mean_vec)
@@ -811,6 +811,18 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 
                 fig_conf_hist.update_layout(barmode='overlay')
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
+                  
+                st.table(trend_table)
+            
+                st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
+                                       [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
+                                       [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
+                                       columns = ['Absolute Values', 'In percentage'], index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+
+                trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
+                trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
+                st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_feature, 'Reference year']], 
+                                        x = 'Reference year', y = con_checks_feature), use_container_width=True)
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
