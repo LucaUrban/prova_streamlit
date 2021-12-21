@@ -51,7 +51,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
     lis_check = [{'label': col, 'value': col} for col in col_mul if col != col_mul[0]]
 
     widget = st.selectbox("what is the widget you want to display:",
-                          ["Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis", "Anomalies check"], 0)
+                          ["Ratio Analysis", "Multidimensional Analysis", "Autocorrelation Analysis", "Feature Importance Analysis", "Anomalies check", "Consistency checks"], 0)
 
     if widget == "Ratio Analysis":
         # ratio analysis part
