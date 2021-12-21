@@ -684,7 +684,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
             
-            table['Class trend'] = np.nan
+            table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
                 # trend classification
                 inst = table[table[con_checks_id_col] == id_inst][con_checks_feature].values[::-1]
@@ -843,7 +843,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            res_ind = dict(); table['Class trend'] = np.nan
+            res_ind = dict(); table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
                 # calculations of the geometric mean
                 inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values[::-1]
