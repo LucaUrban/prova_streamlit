@@ -27,9 +27,9 @@ st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to refresh the page.")
 uploaded_file = st.file_uploader("Choose a file")
-demo_data = st.button('Try the tool with a demo dataset')
+demo_data_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No'))
 
-if demo_data or uploaded_file is not None:
+if demo_data_radio == 'Yes' or uploaded_file is not None:
     if uploaded_file is not None:
         table = pd.read_csv(uploaded_file)
     else:
