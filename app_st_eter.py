@@ -539,7 +539,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
-            left1, right1 = st.beta_columns(2)
+            left1, right1 = st.columns(2)
             with left1:
                 con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
@@ -728,7 +728,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
-            left1, right1 = st.beta_columns(2)
+            left1, right1 = st.columns(2)
             with left1:
                 con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
