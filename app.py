@@ -814,7 +814,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
                   
                 st.table(trend_table)
-            
+                st.write(set_trend)
                 st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
                                        [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
                                        [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
@@ -1085,7 +1085,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             st.plotly_chart(fig_conf_hist, use_container_width=True)
             
             st.table(trend_table)
-            st.write(set_trend)
             st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
                                    [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
                                    [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
