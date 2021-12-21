@@ -683,6 +683,25 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+            
+            for id_inst in table[con_checks_id_col].unique():
+                # trend classification
+                inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values[::-1]
+                geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                if geo_mean_vec.shape[0] > 3:
+                    mann_kend_res = mk.original_test(geo_mean_vec)
+                    trend, p, tau = mann_kend_res.trend, mann_kend_res.p, mann_kend_res.Tau
+                    if trend == 'increasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 5
+                    if trend == 'decreasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
+                    if trend == 'no trend':
+                        if p <= p_value_trend_per/100 and tau >= 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
+                        if p <= p_value_trend_per/100 and tau < 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
+                        if p > p_value_trend_per/100:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
                 
             results = [[], [], []]; dict_flags = dict(); second_quantile = np.arange(1.5, 7.5, .25); countries = list(table[country_sel_col].unique())
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -754,6 +773,14 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                                    [len(dict_check_flags[con_checks_feature].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                        
+                        dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
+                        for inst in dict_check_flags:
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                set_trend.add(inst)
+                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                        trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2))
