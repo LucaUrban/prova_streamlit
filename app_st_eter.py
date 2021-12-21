@@ -537,12 +537,33 @@ if demo_data or uploaded_file is not None:
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
+            p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
             left1, right1 = st.beta_columns(2)
             with left1:
                 con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+            
+            table['Class trend'] = 0
+            for id_inst in table[con_checks_id_col].unique():
+                # trend classification
+                inst = table[table[con_checks_id_col] == id_inst][con_checks_feature].values[::-1]
+                geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                if geo_mean_vec.shape[0] > 3:
+                    mann_kend_res = mk.original_test(geo_mean_vec)
+                    trend, p, tau = mann_kend_res.trend, mann_kend_res.p, mann_kend_res.Tau
+                    if trend == 'increasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 5
+                    if trend == 'decreasing':
+                        table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
+                    if trend == 'no trend':
+                        if p <= p_value_trend_per/100 and tau >= 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
+                        if p <= p_value_trend_per/100 and tau < 0:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
+                        if p > p_value_trend_per/100:
+                            table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
                 
             results = [[], [], []]; dict_flags = dict(); second_quantile = np.arange(1.5, 7.5, .25); countries = list(table[country_sel_col].unique())
             ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -614,6 +635,15 @@ if demo_data or uploaded_file is not None:
                                                    [len(dict_check_flags[con_checks_feature].difference(ones.union(twos))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                        
+                        dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
+                        for inst in dict_check_flags[con_checks_feature]:
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
+                        trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2))
@@ -644,6 +674,48 @@ if demo_data or uploaded_file is not None:
                 
                 fig_conf_hist.update_layout(barmode='overlay')
                 st.plotly_chart(fig_conf_hist, use_container_width=True)
+                  
+                st.table(trend_table)
+                st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
+                                       [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
+                                       [len(set_trend.difference(ones.union(twos))), '0%']], 
+                                       columns = ['Absolute Values', 'In percentage'], index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+
+                trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
+                trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
+                st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_feature, 'Reference year']], 
+                                        x = 'Reference year', y = con_checks_feature), use_container_width=True)
+                
+                cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
+                for col in cols_pr_inst:
+                    dict_flags[col] = dict()
+                    for cc in countries:
+                        country_table = table[table[country_sel_col] == cc][[con_checks_id_col, col]]
+                        inst_lower = set(country_table[country_table[col] <= country_table[col].quantile(0.05)]['ETER ID'].values)
+                        inst_upper = set(country_table[country_table[col] >= country_table[col].quantile(1 - (0.05))]['ETER ID'].values)
+                        dict_flags[col][cc] = inst_lower.union(inst_upper)
+                    for cat in categories:
+                        cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, col]]
+                        inst_lower = set(cat_table[cat_table[col] <= cat_table[col].quantile(0.05)]['ETER ID'].values)
+                        inst_upper = set(cat_table[cat_table[col] >= cat_table[col].quantile(1 - (0.05))]['ETER ID'].values)
+                        dict_flags[col][cat] = inst_lower.union(inst_upper)
+
+                    dict_check_flags = {}; set_app = set()
+                    for cc in countries:
+                        set_app = set_app.union(dict_flags[col][cc])
+                    for cat in categories:
+                        set_app = set_app.union(dict_flags[col][cat])
+                    dict_check_flags[col] = set_app
+
+                    for inst in dict_check_flags[col]:
+                        if inst not in dict_pr_inst.keys():
+                            dict_pr_inst[inst] = [col]
+                        else:
+                            dict_pr_inst[inst].append(col)
+
+                dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
+                dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
+                st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
@@ -654,6 +726,7 @@ if demo_data or uploaded_file is not None:
             flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 90.0, 100.0, 95.0, 0.1)
             blocked_quantile = st.sidebar.selectbox("Quantile to fix", ['Retain quantile (S1)', 'Flags quantile (S2 and S3)'], 0)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
+            p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
             left1, right1 = st.beta_columns(2)
             with left1:
@@ -661,7 +734,7 @@ if demo_data or uploaded_file is not None:
             with right1:
                 flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 
-            res_ind = dict(); table['Class trend'] = np.nan
+            res_ind = dict(); table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
                 # calculations of the geometric mean
                 inst = table[table[con_checks_id_col] == id_inst][con_checks_features].values[::-1]
@@ -680,11 +753,11 @@ if demo_data or uploaded_file is not None:
                     if trend == 'decreasing':
                         table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 1
                     if trend == 'no trend':
-                        if p <= 0.9 and tau >= 0:
+                        if p <= p_value_trend_per/100 and tau >= 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 4
-                        if p <= 0.9 and tau < 0:
+                        if p <= p_value_trend_per/100 and tau < 0:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
-                        if p > 0.9:
+                        if p > p_value_trend_per/100:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
             
             results = [[], [], []]
@@ -772,12 +845,15 @@ if demo_data or uploaded_file is not None:
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                         
-                        dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}; set_trend = set()
+                        dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
-                            if int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0]) != 3:
-                                set_trend.add(inst)
-                            dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
-                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
+                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                        trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
@@ -864,10 +940,15 @@ if demo_data or uploaded_file is not None:
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                         
-                        dict_trend = {'Strong decrease': 0, 'Weak decrease': 0, 'No trend': 0, 'Weak increase': 0, 'Strong increase': 0}
+                        dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
-                            dict_trend[list(dict_trend.keys())[int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])-1]] += 1
-                        trend_table = pd.DataFrame(dict_trend.values(), index = dict_trend.keys(), columns = ['Number of institutions'])
+                            class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
+                            if class_tr != 0:
+                                dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                    set_trend.add(inst)
+                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
+                        trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
                     results[1].append(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2))
@@ -900,11 +981,61 @@ if demo_data or uploaded_file is not None:
             st.plotly_chart(fig_conf_hist, use_container_width=True)
             
             st.table(trend_table)
-            
             st.table(pd.DataFrame([[str(len(twos.intersection(set_trend))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(set_trend))) / len(twos), 2)) + '%'], 
                                    [str(len(set_trend)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(set_trend) / len(ones.union(twos))), 2)) + '%'], 
                                    [len(set_trend.difference(ones.union(twos))), str(round((100 * len(set_trend.difference(ones.union(twos)))) / len(set_trend), 2)) + '%']], 
                                    columns = ['Absolute Values', 'In percentage'], index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases']))
+            
+            trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
+            trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
+            st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_features, 'Reference year']], 
+                                    x = 'Reference year', y = con_checks_features), use_container_width=True)
+            
+            cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
+            for col in cols_pr_inst:
+                for id_inst in table[con_checks_id_col].unique():
+                    # calculations of the geometric mean
+                    inst = table[table[con_checks_id_col] == id_inst][col].values[::-1]
+                    geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+                    if geo_mean_vec.shape[0] != 0:
+                        res_ind[id_inst] = math.pow(math.fabs(np.prod(geo_mean_vec)), 1/geo_mean_vec.shape[0])
+                    else:
+                        res_ind[id_inst] = np.nan
+                        
+                indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [col])
+                indices.drop(index = set(indices[(pd.isna(indices[col])) | (indices[col] <= indices.quantile(0.02).values[0])].index), axis = 0, inplace = True)
+
+                res = dict()
+                # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
+                for id_inst in indices.index.values:
+                    inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[col]))][col].values
+                    num_row = len(inst); delta_pos = list(); delta_neg = list()
+                    for i in range(1, num_row):
+                        if inst[num_row - i - 1] - inst[num_row - i] < 0:
+                            delta_neg.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                        else:
+                            delta_pos.append(round(inst[num_row - i - 1] - inst[num_row - i], 2))
+                    res[id_inst] = [delta_pos, delta_neg]
+
+                DV = dict() # the dictionary in wich we'll store all the DV and further the DM values for the variability from years
+                for key, value in res.items():
+                    res_par = 0
+                    if len(value[0]) != 0 and len(value[1]) != 0:
+                        res_par = sum(value[0]) * sum(value[1])
+                    DV[key] = round(math.fabs(res_par)/indices[col][key] ** 1.5, 3)
+       
+                DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [col])
+                dict_check_flags = set(DV_df[DV_df[col] >= DV_df[col].quantile(0.95)].index)
+            
+                for inst in dict_check_flags:
+                    if inst not in dict_pr_inst.keys():
+                        dict_pr_inst[inst] = [col]
+                    else:
+                        dict_pr_inst[inst].append(col)
+                
+            dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
+            dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
+            st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
                                    
             
             
