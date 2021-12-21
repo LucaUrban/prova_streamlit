@@ -824,6 +824,37 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
                 st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_feature, 'Reference year']], 
                                         x = 'Reference year', y = con_checks_feature), use_container_width=True)
+                
+                cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
+                for col in cols_pr_inst:
+                    dict_flags[col] = dict()
+                    for cc in countries:
+                        country_table = table[table[country_sel_col] == cc][[con_checks_id_col, col]]
+                        inst_lower = set(country_table[country_table[col] <= country_table[col].quantile(0.05)]['ETER ID'].values)
+                        inst_upper = set(country_table[country_table[col] >= country_table[col].quantile(1 - (0.05))]['ETER ID'].values)
+                        dict_flags[col][cc] = inst_lower.union(inst_upper)
+                    for cat in categories:
+                        cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, col]]
+                        inst_lower = set(cat_table[cat_table[col] <= cat_table[col].quantile(0.05)]['ETER ID'].values)
+                        inst_upper = set(cat_table[cat_table[col] >= cat_table[col].quantile(1 - (0.05))]['ETER ID'].values)
+                        dict_flags[col][cat] = inst_lower.union(inst_upper)
+
+                    dict_check_flags = {}; set_app = set()
+                    for cc in countries:
+                        set_app = set_app.union(dict_flags[col][cc])
+                    for cat in categories:
+                        set_app = set_app.union(dict_flags[col][cat])
+                    dict_check_flags[col] = set_app
+
+                    for inst in dict_check_flags[col]:
+                        if inst not in dict_pr_inst.keys():
+                            dict_pr_inst[inst] = [col]
+                        else:
+                            dict_pr_inst[inst].append(col)
+
+                dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
+                dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
+                st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
