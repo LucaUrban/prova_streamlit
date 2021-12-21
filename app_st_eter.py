@@ -253,7 +253,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
 
         st.header("Feature Importance Analysis")
         
-        left, right = st.beta_columns(2)
+        left, right = st.columns(2)
         with left: 
             fea_Imp_features = st.multiselect("Feature Importance multiselection box:", col_mul)
         with right:
