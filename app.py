@@ -777,7 +777,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         
                         dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                         for inst in dict_check_flags:
-                            st.write(table[table[con_checks_id_col] == inst]['Class trend'])
+                            st.write(table[table[con_checks_id_col] == inst])
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
                             if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                 set_trend.add(inst)
