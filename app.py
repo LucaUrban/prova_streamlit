@@ -132,7 +132,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         st.plotly_chart(ratio_plot, use_container_width=True)
 
         # map pplot + violin plot on the aggregated results 
-        ratio_vio_sel1 = st.selectbox("multivariable index col", table.columns, 0)
+        ratio_vio_sel1 = st.selectbox("Choose the id column", table.columns, 0)
         
         res_ratio['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         res = {ratio_vio_sel1: res_ratio['Sel'].unique(), 'R_1': []}
@@ -156,7 +156,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         with left:
             cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
         with right:
-            ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + list(table.columns), 0)
+            ratio_vio_sel2 = st.selectbox("Choose the category column", ['None'] + list(table.columns), 0)
         res_ratio['Un Name'] = table['Institution Name']
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
