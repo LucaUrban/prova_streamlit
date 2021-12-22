@@ -991,7 +991,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                 dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                                 if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                     set_trend.add(inst)
-                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
@@ -1086,7 +1085,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                 dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                                 if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                     set_trend.add(inst)
-                            dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
                     results[0].append(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2))
