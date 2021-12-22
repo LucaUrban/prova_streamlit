@@ -666,7 +666,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         if out_cou == 'All ids': 
             st.write(df_AllOut)
         else:
-            st.write(df_AllOut[df_AllOut.str.contains(out_cou)])
+            st.write(df_AllOut[df_AllOut[out_id_col].str.contains(out_cou)])
         
     if widget == "Consistency checks":
         methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
