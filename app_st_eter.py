@@ -353,7 +353,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         # visual part
         dis_fit = [[result_norm[1], result_exp[1], result_lognorm[1], result_weibull2[1]], 
                    [str(result_norm[1] > 0.05), str(result_exp[1] > 0.05), str(result_lognorm[1] > 0.05), str(result_weibull2[1] > 0.05)]]
-        st.table(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
+        st.dataframe(pd.DataFrame(dis_fit, columns = ['Normal', 'Exponential', 'Log-Norm', 'Weibul'], index = ['P-value', 'P > t']))
 
         ch_distr = st.selectbox("Choose the distribution you want to use for the anomalies estimation", ['Normal', 'Exponential', 'Log-Norm', 'Weibull'])
         fig_distr = go.Figure(data = [go.Histogram(x = var_clean, 
