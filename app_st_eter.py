@@ -527,6 +527,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         if out_cou == 'All ids': 
             st.write(df_AllOut)
         else:
+            st.write(1)
             st.write(df_AllOut)
         
     if widget == "Consistency checks":
