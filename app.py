@@ -152,7 +152,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         st.plotly_chart(map_box, use_container_width=True)
         
         uniques = list(res_ratio['Sel'].unique())
-        left, right = st.columns(2)
+        left, right = st.beta_columns(2)
         with left:
             cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
         with right:
