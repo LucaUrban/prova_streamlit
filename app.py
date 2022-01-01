@@ -855,6 +855,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
                 dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
                 st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
+                st.download_button(label = "Download data with lables", data = table, file_name = 'result.csv', mime = 'text/csv')
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
@@ -1174,5 +1175,5 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
                   
-            st.download_button(label = "Download data with lables", data = table, file_name = 'result.csv', mime = 'text/csv',)      
+            st.download_button(label = "Download data with lables", data = table, file_name = 'result.csv', mime = 'text/csv')      
             
