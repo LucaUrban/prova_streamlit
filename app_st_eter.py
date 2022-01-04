@@ -1041,7 +1041,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             # part of confronting trends
             conf_trend_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No', 'Maybe'))
             if conf_trend_radio == 'Yes':
-                conf_trend_var = st.selectbox("Variables chosen for the consistency checks:", col_mul); set_not_det = set()
+                conf_trend_var = st.selectbox("Variables chosen for the consistency checks:", col_mul, key = 'conf_trend_var'); set_not_det = set()
                 set_inc_inc = set(); set_inc_ukn = set(); set_inc_dec = set()
                 set_ukn_inc = set(); set_ukn_ukn = set(); set_ukn_dec = set()
                 set_dec_inc = set(); set_dec_ukn = set(); set_dec_dec = set()
