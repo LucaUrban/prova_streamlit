@@ -22,6 +22,7 @@ from statsmodels.stats.stattools import medcouple
 import math
 import scipy.stats as stats
 import pymannkendall as mk
+global.dataFrameSerialization = "legacy"
 
 st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
