@@ -528,6 +528,8 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             st.write(df_AllOut)
         else:
             st.write(df_AllOut)
+                  
+        st.download_button(label = "Download data with lables", data = table, file_name = 'result.csv', mime = 'text/csv')   
         
     if widget == "Consistency checks":
         methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
