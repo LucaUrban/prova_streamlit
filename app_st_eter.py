@@ -527,9 +527,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
         if out_cou == 'All ids': 
             st.write(df_AllOut)
         else:
-            st.write(df_AllOut)
-                  
-        st.download_button(label = "Download data with lables", data = table.to_csv().encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')   
+            st.write(df_AllOut) 
         
     if widget == "Consistency checks":
         methodology = st.sidebar.selectbox("Choose the type of methodology you want to apply", ['Multiannual methodology', 'Ratio methodology'], 0)
@@ -718,6 +716,9 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
                 dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
                 st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
+                
+                st.write('If you want to download the result file with all the issued flags you have only to clik on the following button:')
+                st.download_button(label = "Download data with lables", data = table.to_csv().encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
@@ -843,7 +844,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
 
                         summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2)) + '%'], 
                                                    [str(len(dict_check_flags)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2)) + '%'], 
-                                                   [len(dict_check_flags.difference(ones.union(twos))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
+                                                   [str(len(dict_check_flags.difference(ones.union(twos)))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                         
@@ -1039,5 +1040,6 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
                                    
-            
+            st.write('If you want to download the result file with all the issued flags you have only to clik on the following button:')
+            st.download_button(label = "Download data with lables", data = table.to_csv().encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
