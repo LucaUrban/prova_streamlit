@@ -948,8 +948,8 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                             class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
                             if class_tr != 0:
                                 dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
-                                if class_tr == 1 or class_tr == 3 or class_tr == 5:
-                                    set_trend.add(inst)
+                            if class_tr == 1 or class_tr == 3 or class_tr == 5:
+                                set_trend.add(inst)
                             dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
                         trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
 
