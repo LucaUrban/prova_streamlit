@@ -1039,7 +1039,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
             
             # part of confronting trends
-            conf_trend_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No', 'Maybe'))
+            conf_trend_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No'), key = 'conf_trend_ratio')
             if conf_trend_radio == 'Yes':
                 conf_trend_var = st.selectbox("Variables chosen for the consistency checks:", col_mul, key = 'conf_trend_var'); set_not_det = set()
                 set_inc_inc = set(); set_inc_ukn = set(); set_inc_dec = set()
@@ -1081,7 +1081,9 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 table_conf_trend = [[len(set_inc_inc), len(set_inc_ukn), len(set_inc_dec)], 
                                     [len(set_ukn_inc), len(set_ukn_ukn), len(set_ukn_dec)], 
                                     [len(set_dec_inc), len(set_dec_ukn), len(set_dec_dec)]]
-                st.table(pd.DataFrame(table_conf_trend, index = ['Increasing', 'Unknown', 'Decreasing'], columns = ['Increasing', 'Unknown', 'Decreasing']))
+                st.table(pd.DataFrame(table_conf_trend, 
+                                      index = ['(' + conf_trend_var + ') ' + 'Increasing', '(' + conf_trend_var + ') ' + 'Unknown', '(' + conf_trend_var + ') ' + 'Decreasing'], 
+                                      columns = ['(' + con_checks_features + ') ' + 'Increasing', '(' + con_checks_features + ') ' + 'Unknown', '(' + con_checks_features + ') ' + 'Decreasing']))
                 st.write(len(set_not_det))
                                    
             st.write('If you want to download the result file with all the issued flags you have only to clik on the following button:')
