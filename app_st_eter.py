@@ -431,7 +431,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                       index = ['Number'], columns = ['Strong left outliers', 'Weak left outliers', 'Weak right outliers', 'Strong right outliers']))
         
         # a more specific view of the ouliers by country or generic id and type
-        left, right = st.beta_columns(2)
+        left, right = st.columns(2)
         with left: 
             out_id_col = st.selectbox("Outlier index col", table.columns, 0)
         with right:
