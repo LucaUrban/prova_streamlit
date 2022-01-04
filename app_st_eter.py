@@ -1037,6 +1037,51 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
             dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
             dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
+            
+            # part of confronting trends
+            conf_trend_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No'))
+            if conf_trend_radio == 'Yes':
+                conf_trend_var = st.selectbox("Variables chosen for the consistency checks:", col_mul); set_not_det = set()
+                set_inc_inc = set(); set_inc_ukn = set(); set_inc_dec = set()
+                set_ukn_inc = set(); set_ukn_ukn = set(); set_ukn_dec = set()
+                set_dec_inc = set(); set_dec_ukn = set(); set_dec_dec = set()
+                
+                for var in table[table['Prob inst ' + con_checks_features] == 1][con_checks_id_col].unique():
+                    inst = table[table[con_checks_id_col] == id_inst][conf_trend_var].values[::-1]
+                    geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
+
+                    # trend classification
+                    if geo_mean_vec.shape[0] > 3:
+                        mann_kend_res = mk.original_test(geo_mean_vec)
+                        trend, p, tau = mann_kend_res.trend, mann_kend_res.p, mann_kend_res.Tau
+                        if p <= p_value_trend_per/100 and tau >= 0:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                                set_inc_inc.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
+                                set_inc_ukn.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                                set_inc_dec.add(var)
+                        if p <= p_value_trend_per/100 and tau < 0:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                                set_dec_inc.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
+                                set_dec_ukn.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                                set_dec_dec.add(var)
+                        if p > p_value_trend_per/100:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                                set_ukn_inc.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
+                                set_ukn_ukn.add(var)
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                                set_ukn_dec.add(var)
+                    else:
+                        set_not_det.add(var)
+                    
+                    table_conf_trend = [[len(set_inc_inc), len(set_inc_ukn), len(set_inc_dec)], 
+                                        [len(set_ukn_inc), len(set_ukn_ukn), len(set_ukn_dec)], 
+                                        [len(set_dec_inc), len(set_dec_ukn), len(set_dec_dec)]]
+                    st.table(pd.DataFrame(table_conf_trend, index = columns = ['Increasing', 'Unknown', 'Decreasing']))        
                                    
             st.write('If you want to download the result file with all the issued flags you have only to clik on the following button:')
             st.download_button(label = "Download data with lables", data = table.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
