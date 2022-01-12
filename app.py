@@ -33,7 +33,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
     if uploaded_file is not None:
         table = pd.read_csv(uploaded_file)
     else:
-        table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_fin_ratio_.csv')
+        table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_ratio_fin_wf.csv')
         
     # importing all other necessary files
     with urlopen('https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson') as response:
