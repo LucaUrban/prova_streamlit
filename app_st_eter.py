@@ -803,39 +803,39 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         table['Prob inst ' + con_checks_features] = 0
                         table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
-                if cat_sel_col == '-':
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1), axis = 1)
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    list_fin_res = DV_fin_res.tolist()
-                    for row in range(len(list_fin_res)):
-                        for i in range(len(list_fin_res[row])):
-                            list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
-                    table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features, 'Total'], columns = list_countries + ['Total'])
-                else:
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
-                    DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                    list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
-                    for row in range(len(list_fin_res)):
-                        for i in range(len(list_fin_res[row])):
-                            if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
-                                den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == list_un_cat[row])][con_checks_id_col].unique())
-                            if row == len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
-                                den = len(table[table[country_sel_col] == list_countries[i]][con_checks_id_col].unique())
-                            if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
-                                den = len(table[table[cat_sel_col] == list_un_cat[row]][con_checks_id_col].unique())
-                            if row == len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
-                                den = table.shape[0]
-                            num = list_fin_res[row][i]
-                            if den != 0:
-                                num_app = round(100 * num/den, 2); list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
+            if cat_sel_col == '-':
+                DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1), axis = 1)
+                DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                list_fin_res = DV_fin_res.tolist()
+                for row in range(len(list_fin_res)):
+                    for i in range(len(list_fin_res[row])):
+                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features, 'Total'], columns = list_countries + ['Total'])
+            else:
+                DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
+                DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
+                list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
+                for row in range(len(list_fin_res)):
+                    for i in range(len(list_fin_res[row])):
+                        if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
+                            den = len(table[(table[country_sel_col] == list_countries[i]) & (table[cat_sel_col] == list_un_cat[row])][con_checks_id_col].unique())
+                        if row == len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
+                            den = len(table[table[country_sel_col] == list_countries[i]][con_checks_id_col].unique())
+                        if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
+                            den = len(table[table[cat_sel_col] == list_un_cat[row]][con_checks_id_col].unique())
+                        if row == len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
+                            den = table.shape[0]
+                        num = list_fin_res[row][i]
+                        if den != 0:
+                            num_app = round(100 * num/den, 2); list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
+                        else:
+                            num_app = 0; list_fin_res[row][i] = '0\n(0%)'
+                        if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
+                            if row != len(list_fin_res)-1:
+                                list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                             else:
-                                num_app = 0; list_fin_res[row][i] = '0\n(0%)'
-                            if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
-                                if row != len(list_fin_res)-1:
-                                    list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
-                                else:
-                                    list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
-                    table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features + ' (' + cat + ')' for cat in list_un_cat] + ['Total'], columns = list_countries + ['Total'])
+                                list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
+                table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features + ' (' + cat + ')' for cat in list_un_cat] + ['Total'], columns = list_countries + ['Total'])
 
             summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2)) + '%'], 
                                        [str(len(dict_check_flags)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2)) + '%'], 
