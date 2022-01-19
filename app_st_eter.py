@@ -789,19 +789,19 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
                 dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(flag_issue_quantile/100)].index)
 
-                list_countries = list(table[country_sel_col].unique())
-                if cat_sel_col == '-':
-                    DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
-                    for flag in dict_check_flags:
-                        DV_fin_res[0, list_countries.index(flag[:2])] += 1
-                else:
-                    list_un_cat = list(table[cat_sel_col].unique())
-                    DV_fin_res = np.zeros((len(list_un_cat), len(list_countries)), dtype = int)
-                    for flag in dict_check_flags:
-                        DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
+            list_countries = list(table[country_sel_col].unique())
+            if cat_sel_col == '-':
+                DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
+                for flag in dict_check_flags:
+                    DV_fin_res[0, list_countries.index(flag[:2])] += 1
+            else:
+                list_un_cat = list(table[cat_sel_col].unique())
+                DV_fin_res = np.zeros((len(list_un_cat), len(list_countries)), dtype = int)
+                for flag in dict_check_flags:
+                    DV_fin_res[list_un_cat.index(table[table[con_checks_id_col] == flag][cat_sel_col].unique()[0]), list_countries.index(flag[:2])] += 1
 
-                        table['Prob inst ' + con_checks_features] = 0
-                        table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
+            table['Prob inst ' + con_checks_features] = 0
+            table.loc[table[table[con_checks_id_col].isin(dict_check_flags)].index, 'Prob inst ' + con_checks_features] = 1
                         
             if cat_sel_col == '-':
                 DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1), axis = 1)
