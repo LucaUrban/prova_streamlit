@@ -32,7 +32,12 @@ demo_data_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No')
 
 if demo_data_radio == 'Yes' or uploaded_file is not None:
     if uploaded_file is not None:
-        table = pd.read_csv(uploaded_file)
+        with open(uploaded_file, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                dialect = sniffer.sniff(row[0])
+                break
+        table = pd.read_csv(uploaded_file, delimiter = dialect.delimiter)
     else:
         table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_ratio_fin_wf.csv')
 
