@@ -960,6 +960,24 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                       columns = ['(' + con_checks_features + ') ' + 'Increasing', '(' + con_checks_features + ') ' + 'Unknown', '(' + con_checks_features + ') ' + 'Decreasing']))
                 st.write('The number of institurion that couldn\'t be classified because of lacking data: ' + str(len(set_not_det)))
                                    
-            st.write('If you want to download the result file with all the issued flags you have only to clik on the following button:')
-            st.download_button(label = "Download data with lables", data = table.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
+            time_col = 'Reference year'; descr_col = ['Institution Name', 'Country Code', 'Legal status', 'Institution Category standardized']
+
+            t_col = [str(el) for el in sorted(result[time_col].unique())]; list_fin = []
+            df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
+            for inst in sorted(list(result[con_checks_id_col].unique())):
+                df_inst = result[result[con_checks_id_col] == inst]
+                list_el = [inst]
+                for col in descr_col:
+                    list_el.append(df_inst[col].unique()[0])
+                for t in t_col:
+                    if df_inst[df_inst[time_col] == int(t)].shape[0] != 0:
+                        list_el.append(df_inst[df_inst[time_col] == int(t)][con_checks_features].values[0])
+                    else:
+                        list_el.append(np.nan)
+                list_el.append(con_checks_features)
+                list_el.append(df_inst[flags_col].unique()[0]); list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
+                list_fin.append(list_el)
+            table_download = pd.DataFrame(list_fin, columns = df_cols)
+            st.write('If you want to download the result file with all the issued flags you have first to choose at least the time column and then to clik on the following button:')
+            st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
