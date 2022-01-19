@@ -964,8 +964,8 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
 
             t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
             df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
-            for inst in sorted(list(result[con_checks_id_col].unique())):
-                df_inst = result[result[con_checks_id_col] == inst]
+            for inst in sorted(list(table[con_checks_id_col].unique())):
+                df_inst = table[table[con_checks_id_col] == inst]
                 list_el = [inst]
                 for col in descr_col:
                     list_el.append(df_inst[col].unique()[0])
