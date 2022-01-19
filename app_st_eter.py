@@ -962,7 +962,7 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                    
             time_col = 'Reference year'; descr_col = ['Institution Name', 'Country Code', 'Legal status', 'Institution Category standardized']
 
-            t_col = [str(el) for el in sorted(result[time_col].unique())]; list_fin = []
+            t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
             df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
             for inst in sorted(list(result[con_checks_id_col].unique())):
                 df_inst = result[result[con_checks_id_col] == inst]
