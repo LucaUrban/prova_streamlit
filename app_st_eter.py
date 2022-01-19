@@ -32,6 +32,7 @@ demo_data_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No')
 
 if demo_data_radio == 'Yes' or uploaded_file is not None:
     if uploaded_file is not None:
+        st.write(uploaded_file)
         with open(uploaded_file, 'r') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
