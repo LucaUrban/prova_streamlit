@@ -959,8 +959,13 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                                       index = ['(' + conf_trend_var + ') ' + 'Increasing', '(' + conf_trend_var + ') ' + 'Unknown', '(' + conf_trend_var + ') ' + 'Decreasing'], 
                                       columns = ['(' + con_checks_features + ') ' + 'Increasing', '(' + con_checks_features + ') ' + 'Unknown', '(' + con_checks_features + ') ' + 'Decreasing']))
                 st.write('The number of institurion that couldn\'t be classified because of lacking data: ' + str(len(set_not_det)))
-                                   
-            time_col = 'Reference year'; descr_col = ['Institution Name', 'Country Code', 'Legal status', 'Institution Category standardized']
+            
+            st.write('If you want to download the result file with all the issued flags you have first to choose at least the time column and then to clik on the following button:')
+            left1, right1 = st.columns(2)
+            with left1:
+                time_col = st.selectbox("Select the variable from wich you want to extract the time values:", table.columns)
+            with right1:
+                descr_col = st.multiselect("Select the desciptive columns you want to add to the result dataset:", table.columns)
 
             t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
             df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
@@ -978,6 +983,5 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                 list_el.append(df_inst[flags_col].unique()[0]); list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
                 list_fin.append(list_el)
             table_download = pd.DataFrame(list_fin, columns = df_cols)
-            st.write('If you want to download the result file with all the issued flags you have first to choose at least the time column and then to clik on the following button:')
             st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
