@@ -28,13 +28,25 @@ st.title("Visual Information Quality Environment")
 st.write("In this part you can upload your csv file either dropping your file or browsing it. Then the application will start showing all of the charts for the Dataset. " +
          "To change the file to be analyzed you have to refresh the page.")
 uploaded_file = st.file_uploader("Choose a file")
-demo_data_radio = st.radio("Do you want to use the demo dataset:", ('Yes', 'No'))
+demo_data_radio = st.radio("What is the dataset you want to import:", ('Demo datset', 'ETER Dataset', 'Another dataset'))
 
-if demo_data_radio == 'Yes' or uploaded_file is not None:
+if demo_data_radio == 'Demo datset' or uploaded_file is not None:
     if uploaded_file is not None:
-        table = pd.read_csv(uploaded_file)
+        if demo_data_radio == 'ETER Dataset':
+            table = pd.read_csv(uploaded_file, delimiter = ';')
+            
+            for token in ['a', 'c', 'm',  'nc','s', 'x', 'xc', 'xr']:
+                table.replace({token: np.nan}, inplace = True)
+            
+            for col in table.columns:
+                table[col] = pd.to_numeric(table[col], errors = 'ignore')
+        else:
+            table = pd.read_csv(uploaded_file)
     else:
         table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_ratio_fin_wf.csv')
+
+    if demo_data_radio == 'ETER Dataset':
+        
 
     # importing all other necessary files
     with urlopen('https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson') as response:
