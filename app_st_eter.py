@@ -624,8 +624,8 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                             if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                                 if row != len(list_fin_res)-1:
                                     list_prob_cases.append([con_checks_feature, countries[i], categories[int(row % len(categories))], str(num_app) + '%', str(num) + ' / ' + str(den)])
-                                    else:
-                                        list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                else:
+                                    list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
                                         
                     table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_feature + ' (' + cat + ')' for cat in categories] + ['Total'], columns = countries + ['Total'])
 
