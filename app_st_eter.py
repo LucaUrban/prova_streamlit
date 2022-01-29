@@ -707,11 +707,11 @@ if demo_data_radio == 'Yes' or uploaded_file is not None:
                         list_el.append(df_inst[col].unique()[0])
                     for t in t_col:
                         if df_inst[df_inst[time_col] == int(t)].shape[0] != 0:
-                            list_el.append(df_inst[df_inst[time_col] == int(t)][con_checks_features].values[0])
+                            list_el.append(df_inst[df_inst[time_col] == int(t)][con_checks_feature].values[0])
                         else:
                             list_el.append(np.nan)
-                    list_el.append(con_checks_features)
-                    list_el.append(df_inst[flags_col].unique()[0]); list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
+                    list_el.append(con_checks_feature)
+                    list_el.append(df_inst[flags_col].unique()[0]); list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
                 st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
