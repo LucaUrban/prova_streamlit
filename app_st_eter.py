@@ -45,9 +45,6 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
     else:
         table = pd.read_csv('https://raw.githubusercontent.com/LucaUrban/prova_streamlit/main/eter_ratio_fin_wf.csv')
 
-    if demo_data_radio == 'ETER Dataset':
-        
-
     # importing all other necessary files
     with urlopen('https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson') as response:
         eu_nut0 = json.load(response)
