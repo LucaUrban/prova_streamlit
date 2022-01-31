@@ -715,7 +715,10 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     descr_col = st.multiselect("Select the desciptive columns you want to add to the result dataset:", table.columns)
 
                 t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
-                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
+                if flag_radio == 'Yes':
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
+                else:
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Application Flag']
                 for inst in sorted(list(table[con_checks_id_col].unique())):
                     df_inst = table[table[con_checks_id_col] == inst]
                     list_el = [inst]
@@ -726,9 +729,10 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             list_el.append(df_inst[df_inst[time_col] == int(t)][con_checks_feature].values[0])
                         else:
                             list_el.append(np.nan)
-                    list_el.append(con_checks_feature); list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
+                    list_el.append(con_checks_feature)
                     if flag_radio == 'Yes':
                         list_el.append(df_inst[flags_col].unique()[0])
+                    list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
                 st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
