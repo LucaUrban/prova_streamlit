@@ -751,7 +751,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             if flag_radio == 'Yes':
                 left1, right1 = st.columns(2)
                 with left1:
-                    con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                    con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
                 with right1:
                     flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
             else:
