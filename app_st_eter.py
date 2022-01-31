@@ -726,8 +726,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             list_el.append(df_inst[df_inst[time_col] == int(t)][con_checks_feature].values[0])
                         else:
                             list_el.append(np.nan)
-                    list_el.append(con_checks_feature)
-                    list_el.append(df_inst[flags_col].unique()[0]); list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
+                    list_el.append(con_checks_feature); list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
+                    if flag_radio == 'Yes':
+                        list_el.append(df_inst[flags_col].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
                 st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
