@@ -980,7 +980,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 st.table(pd.DataFrame(table_conf_trend, 
                                       index = ['(' + conf_trend_var + ') ' + 'Increasing', '(' + conf_trend_var + ') ' + 'Unknown', '(' + conf_trend_var + ') ' + 'Decreasing'], 
                                       columns = ['(' + con_checks_features + ') ' + 'Increasing', '(' + con_checks_features + ') ' + 'Unknown', '(' + con_checks_features + ') ' + 'Decreasing']))
-                st.write('The number of institurion that couldn\'t be classified because of lacking data: ' + str(len(set_not_det)))
+                st.write('The number of institution that couldn\'t be classified because of lacking data: ' + str(len(set_not_det)))
             
             st.write('If you want to download the result file with all the issued flags you have first to choose at least the time column and then to clik on the following button:')
             left1, right1 = st.columns(2)
@@ -1009,6 +1009,6 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     list_el.append(df_inst[flags_col].unique()[0])
                 list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
                 list_fin.append(list_el)
-            table_download = pd.DataFrame(list_fin, columns = df_cols)
+            table_download = pd.DataFrame(list_fin, columns = df_cols, delimiter = ';')
             st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
