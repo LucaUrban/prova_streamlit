@@ -735,7 +735,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
-                st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
+                st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
@@ -1009,6 +1009,6 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     list_el.append(df_inst[flags_col].unique()[0])
                 list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
                 list_fin.append(list_el)
-            table_download = pd.DataFrame(list_fin, columns = df_cols, delimiter = ';')
-            st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None).encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
+            table_download = pd.DataFrame(list_fin, columns = df_cols)
+            st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
