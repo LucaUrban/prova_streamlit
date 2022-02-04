@@ -655,7 +655,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 if len(list(table['Class trend'].unique())) != 1:
                     dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                     for inst in dict_check_flags:
-                        st.write(inst)
+                        st.write(dict_check_flags)
                         class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
                         if class_tr != 0:
                             dict_trend[list(dict_trend.keys())[class_tr-1]].append(inst)
