@@ -716,9 +716,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
                 t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
                 if flag_radio == 'Yes':
-                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Meta flag', 'Application Flag']
                 else:
-                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Application Flag']
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Application Flag']
                 for inst in sorted(list(table[con_checks_id_col].unique())):
                     df_inst = table[table[con_checks_id_col] == inst]
                     list_el = [inst]
@@ -730,8 +730,10 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                         else:
                             list_el.append(np.nan)
                     list_el.append(con_checks_feature)
+                    list_el.append(df_inst['Class trend'].unique()[0])
                     if flag_radio == 'Yes':
                         list_el.append(df_inst[flags_col].unique()[0])
+                    list_el.append(df_inst['Class trend'].unique()[0])
                     list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
@@ -991,9 +993,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
             t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
             if flag_radio == 'Yes':
-                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Meta flag', 'Application Flag']
+                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Meta flag', 'Application Flag']
             else:
-                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Application Flag']
+                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Application Flag']
             for inst in sorted(list(table[con_checks_id_col].unique())):
                 df_inst = table[table[con_checks_id_col] == inst]
                 list_el = [inst]
@@ -1005,6 +1007,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     else:
                         list_el.append(np.nan)
                 list_el.append(con_checks_features)
+                list_el.append(df_inst['Class trend'].unique()[0])
                 if flag_radio == 'Yes':
                     list_el.append(df_inst[flags_col].unique()[0])
                 list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
