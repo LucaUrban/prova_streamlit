@@ -733,7 +733,6 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     list_el.append(df_inst['Class trend'].unique()[0])
                     if flag_radio == 'Yes':
                         list_el.append(df_inst[flags_col].unique()[0])
-                    list_el.append(df_inst['Class trend'].unique()[0])
                     list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
