@@ -853,9 +853,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                                 list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
                             else:
                                 list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
-                st.write(list_countries + ['Total'])
-                st.write([con_checks_features + ' (' + cat + ')' for cat in list_un_cat])
-                table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features + ' (' + cat + ')' for cat in list_un_cat] + ['Total'], columns = list_countries + ['Total'])
+                table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features + ' (' + str(cat) + ')' for cat in list_un_cat] + ['Total'], columns = list_countries + ['Total'])
 
             if flag_radio == 'Yes':
                 ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
