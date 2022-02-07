@@ -1038,7 +1038,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 list_el.append(df_inst['Class trend'].unique()[0])
                 if flag_radio == 'Yes':
                     if notes_col != '-':
-                        if (inst not in ones) and (inst not in two):
+                        if (inst not in ones) and (inst not in twos):
                             list_el.append(0)
                         if inst in ones:
                             list_el.append(1)
