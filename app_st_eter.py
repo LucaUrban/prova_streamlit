@@ -988,7 +988,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 set_dec_inc = set(); set_dec_ukn = set(); set_dec_dec = set()
                 
                 for var in table[table['Prob inst ' + con_checks_features] == 1][con_checks_id_col].unique():
-                    inst = table[table[con_checks_id_col] == var][conf_trend_var].values[::-1]
+                    inst = table[table[con_checks_id_col] == var][conf_trend_var].values
                     geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
 
                     # trend classification
