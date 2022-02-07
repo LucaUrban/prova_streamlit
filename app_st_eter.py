@@ -834,7 +834,20 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 list_fin_res = DV_fin_res.tolist()
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
-                        list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
+                        if i != len(list_fin_res[row])-1:
+                            den = len(table[table[country_sel_col] == list_countries[i]][con_checks_id_col].unique())
+                        else:
+                            den = len(table[con_checks_id_col].unique())
+                        num = list_fin_res[row][i]
+                        if den != 0:
+                            num_app = round(100 * num/den, 2); list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
+                        else:
+                            num_app = 0; list_fin_res[row][i] = '0\n(0%)'
+                        if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
+                            if row != len(list_fin_res)-1:
+                                list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                            else:
+                                list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
                 table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features, 'Total'], columns = list_countries + ['Total'])
             else:
                 DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
@@ -849,7 +862,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                         if row != len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
                             den = len(table[table[cat_sel_col] == list_un_cat[row]][con_checks_id_col].unique())
                         if row == len(list_fin_res)-1 and i == len(list_fin_res[row])-1:
-                            den = table.shape[0]
+                            den = len(table[con_checks_id_col].unique())
                         num = list_fin_res[row][i]
                         if den != 0:
                             num_app = round(100 * num/den, 2); list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(num_app) + '%)'
