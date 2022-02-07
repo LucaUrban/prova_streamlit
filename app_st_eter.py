@@ -831,7 +831,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             if cat_sel_col == '-':
                 DV_fin_res = np.append(DV_fin_res, np.array([np.sum(DV_fin_res, axis = 0)]), axis = 0)
                 DV_fin_res = np.append(DV_fin_res, DV_fin_res, axis = 1)
-                list_fin_res = DV_fin_res.tolist()
+                list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
                         if i != len(list_fin_res[row])-1:
@@ -980,7 +980,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
             
             # part of confronting trends
-            conf_trend_radio = st.radio("Do you want to use the comparation of trend part:", ('Yes', 'No'), key = 'conf_trend_ratio')
+            conf_trend_radio = st.radio("Do you want to compare trends?", ('Yes', 'No'), key = 'conf_trend_ratio')
             if conf_trend_radio == 'Yes':
                 conf_trend_var = st.selectbox("Variables chosen for the consistency checks:", col_mul, key = 'conf_trend_var'); set_not_det = set()
                 set_inc_inc = set(); set_inc_ukn = set(); set_inc_dec = set()
