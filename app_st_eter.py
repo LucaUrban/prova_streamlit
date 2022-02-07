@@ -831,6 +831,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             if cat_sel_col == '-':
                 DV_fin_res = np.array([np.append(DV_fin_res, np.array([np.sum(DV_fin_res, axis = 0)]), axis = 0)])
                 DV_fin_res = np.append(DV_fin_res, DV_fin_res, axis = 0)
+                st.write(DV_fin_res.shape)
                 list_fin_res = DV_fin_res.tolist()[0]
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
