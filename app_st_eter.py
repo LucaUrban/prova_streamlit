@@ -832,6 +832,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 DV_fin_res = np.array([np.append(DV_fin_res, np.array([np.sum(DV_fin_res, axis = 0)]), axis = 0)])
                 DV_fin_res = np.append(DV_fin_res, DV_fin_res, axis = 0)
                 list_fin_res = DV_fin_res.tolist()
+                st.write(list_fin_res)
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
                         list_fin_res[row][i] = str(list_fin_res[row][i]) + '\n(' + str(round(100 * (list_fin_res[row][i]/list_fin_res[row][len(list_fin_res[row])-1]), 2)) + '%)'
