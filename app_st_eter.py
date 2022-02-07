@@ -912,6 +912,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                                                [str(len(dict_check_flags.difference(ones))), str(round((100 * len(dict_check_flags.difference(ones))) / len(dict_check_flags), 2)) + '%']], 
                                                columns = ['Absolute Values', 'In percentage'], 
                                                index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                st.table(summ_table)
             
             trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
             trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
