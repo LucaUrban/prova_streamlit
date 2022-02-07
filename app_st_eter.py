@@ -1035,7 +1035,10 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     else:
                         list_el.append(np.nan)
                 list_el.append(con_checks_features)
-                list_el.append(df_inst['Class trend'].unique()[0])
+                if df_inst['Class trend'].unique()[0] == 0:
+                    list_el.append('Impossible to calculate')
+                else:
+                    list_el.append(list(dict_trend.keys())[df_inst['Class trend'].unique()[0]-1])
                 if flag_radio == 'Yes':
                     if notes_col != '-':
                         if (inst not in ones) and (inst not in twos):
