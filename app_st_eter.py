@@ -1022,9 +1022,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
             t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
             if flag_radio == 'Yes':
-                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Meta flag', 'Application Flag']
+                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Existing flag', 'Detected case']
             else:
-                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Application Flag']
+                df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Detected case']
             for inst in sorted(list(table[con_checks_id_col].unique())):
                 df_inst = table[table[con_checks_id_col] == inst]
                 list_el = [inst]
