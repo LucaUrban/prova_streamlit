@@ -845,9 +845,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             num_app = 0; list_fin_res[row][i] = '0\n(0%)'
                         if i != len(list_fin_res[row])-1 and num_app >= prob_cases_per:
                             if row != len(list_fin_res)-1:
-                                list_prob_cases.append([con_checks_features, list_countries[i], list_un_cat[int(row % len(list_un_cat))], str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                list_prob_cases.append([con_checks_features, list_countries[i], str(num_app) + '%', str(num) + ' / ' + str(den)])
                             else:
-                                list_prob_cases.append(['Total', list_countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
+                                list_prob_cases.append(['Total', list_countries[i], str(num_app) + '%', str(num) + ' / ' + str(den)])
                 table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_features, 'Total'], columns = list_countries + ['Total'])
             else:
                 DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
