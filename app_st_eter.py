@@ -36,7 +36,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             table = pd.read_csv(uploaded_file, delimiter = ';', decimal = ',')
             
             for col in table.columns:
-                if table[col].dtypes == 'O' and (col.startswith('Flag') or col.startswith('Notes')):
+                if table[col].dtypes == 'O' and not (col.startswith('Flag') or col.startswith('Notes')):
                     table[col] = table[col].apply(lambda x: x.replace(',', '.') if not pd.isna(x) else x)
             
             for token in ['a', 'c', 'm',  'nc','s', 'x', 'xc', 'xr']:
