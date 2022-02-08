@@ -816,8 +816,8 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
             for el in table[country_sel_col].unique():
                 if len(el) > 2:
-                    country_sel_col = 'New Country Code'
                     table['New Country Code'] = table[country_sel_col].str[:2]
+                    country_sel_col = 'New Country Code'
                     break
              
             if cat_sel_col == '-':
