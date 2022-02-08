@@ -1078,7 +1078,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             list_el.append(1)
                 list_el.append(df_inst['Prob inst ' + con_checks_features].unique()[0])
                 list_fin.append(list_el)
-            st.write(len(df_cols)); st.write(len(list_fin[0]))
+            for i in range(len(list_fin)):
+                if len(df_cols) != len(list_fin[i]):
+                    st.write(len(list_fin[i]))
             table_download = pd.DataFrame(list_fin, columns = df_cols)
             st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
