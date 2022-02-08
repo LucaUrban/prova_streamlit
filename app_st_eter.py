@@ -814,10 +814,12 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 DV_df = pd.DataFrame(DV.values(), index = DV.keys(), columns = [con_checks_features])
                 dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(flag_issue_quantile/100)].index)
 
-            list_countries_pre = list(table[country_sel_col].unique()); list_countries = []
-            for i in range(len(list_countries_pre)):
-                if (len(list_countries_pre[i]) > 2) and (list_countries_pre[i][:2] not in list_countries):
-                    list_countries.append(list_countries_pre[i][:2])
+            for el in table[country_sel_col].unique():
+                if len(el) > 2:
+                    country_sel_col = 'New Country Code'
+                    table['New Country Code'] = table[country_sel_col].str[:2]
+                    break
+             
             if cat_sel_col == '-':
                 DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
                 for flag in dict_check_flags:
