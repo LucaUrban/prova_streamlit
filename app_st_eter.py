@@ -818,7 +818,6 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             for i in range(len(list_countries_pre)):
                 if (len(list_countries_pre[i]) > 2) and (list_countries_pre[i][:2] not in list_countries):
                     list_countries.append(list_countries_pre[i][:2])
-            st.write(list_countries_pre); st.write(list_countries)
             if cat_sel_col == '-':
                 DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
                 for flag in dict_check_flags:
