@@ -1080,7 +1080,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 list_fin.append(list_el)
             for i in range(len(list_fin)):
                 if len(df_cols) != len(list_fin[i]):
-                    st.write(len(list_fin[i]))
+                    st.write(list_fin[i])
             table_download = pd.DataFrame(list_fin, columns = df_cols)
             st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             
