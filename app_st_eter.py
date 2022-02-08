@@ -999,25 +999,25 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                         mann_kend_res = mk.original_test(geo_mean_vec)
                         trend, p, tau = mann_kend_res.trend, mann_kend_res.p, mann_kend_res.Tau
                         if p <= p_value_trend_per/100 and tau >= 0:
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
                                 set_inc_inc.add(var)
                             if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
                                 set_inc_ukn.add(var)
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
                                 set_inc_dec.add(var)
                         if p <= p_value_trend_per/100 and tau < 0:
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
                                 set_dec_inc.add(var)
                             if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
                                 set_dec_ukn.add(var)
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
                                 set_dec_dec.add(var)
                         if p > p_value_trend_per/100:
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
                                 set_ukn_inc.add(var)
                             if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] == 3:
                                 set_ukn_ukn.add(var)
-                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] > 3:
+                            if table[table[con_checks_id_col] == var]['Class trend'].unique()[0] < 3:
                                 set_ukn_dec.add(var)
                     else:
                         set_not_det.add(var)
