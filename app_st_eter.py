@@ -792,7 +792,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             indices = pd.DataFrame(res_ind.values(), index = res_ind.keys(), columns = [con_checks_features])
             indices.drop(index = set(indices[(pd.isna(indices[con_checks_features])) | (indices[con_checks_features] <= indices.quantile(retain_quantile/100).values[0])].index), axis = 0, inplace = True)
 
-            res = dict()
+            res = dict(); list_prob_cases = []
             # does the calculation with the delta+ and delta-minus for the multiannual checks and stores it into a dictionary 
             for id_inst in indices.index.values:
                 inst = table[(table[con_checks_id_col] == id_inst) & (-pd.isna(table[con_checks_features]))][con_checks_features].values
@@ -819,7 +819,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     table['New Country Code'] = table[country_sel_col].str[:2]
                     country_sel_col = 'New Country Code'
                     break
-            list_countries = list(table[country_sel_col].unique()); st.write(list_countries)
+            list_countries = list(table[country_sel_col].unique())
              
             if cat_sel_col == '-':
                 DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
@@ -837,7 +837,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             if cat_sel_col == '-':
                 DV_fin_res = np.append(DV_fin_res, np.array([np.sum(DV_fin_res, axis = 0)]), axis = 0)
                 DV_fin_res = np.append(DV_fin_res, DV_fin_res, axis = 1)
-                list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
+                list_fin_res = DV_fin_res.tolist()
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
                         if i != len(list_fin_res[row])-1:
@@ -858,8 +858,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             else:
                 DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 1).reshape((len(list_un_cat), 1)), axis = 1)
                 DV_fin_res = np.append(DV_fin_res, np.sum(DV_fin_res, axis = 0).reshape(1, len(list_countries)+1), axis = 0)
-                list_fin_res = DV_fin_res.tolist(); list_prob_cases = []
-                st.write(list_fin_res)
+                list_fin_res = DV_fin_res.tolist()
                 for row in range(len(list_fin_res)):
                     for i in range(len(list_fin_res[row])):
                         if row != len(list_fin_res)-1 and i != len(list_fin_res[row])-1:
