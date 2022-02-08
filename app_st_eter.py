@@ -818,6 +818,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             for i in range(len(list_countries)):
                 if len(list_countries[i]) > 2:
                     list_countries.append(list_countries[i][:2]); list_countries.remove(list_countries[i])
+            st.write(list_countries)
             if cat_sel_col == '-':
                 DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
                 for flag in dict_check_flags:
