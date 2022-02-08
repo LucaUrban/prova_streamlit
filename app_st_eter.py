@@ -815,6 +815,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 dict_check_flags = set(DV_df[DV_df[con_checks_features] >= DV_df[con_checks_features].quantile(flag_issue_quantile/100)].index)
 
             list_countries = list(table[country_sel_col].unique())
+            for i in range(len(list_countries)):
+                if len(list_countries[i]) > 2:
+                    list_countries.append(list_countries[i][:2]); list_countries.remove(list_countries[i])
             if cat_sel_col == '-':
                 DV_fin_res = np.zeros((1, len(list_countries)), dtype = int)
                 for flag in dict_check_flags:
