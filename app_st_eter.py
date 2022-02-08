@@ -901,7 +901,10 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 st.table(summ_table)
 
             st.table(table_fin_res)
-            st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', '% Value', 'Absolute values']))
+            if cat_sel_col == '-':
+                st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', '% Value', 'Absolute values']))
+            else:
+                st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', '% Value', 'Absolute values']))
             
             dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
             for inst in dict_check_flags:
