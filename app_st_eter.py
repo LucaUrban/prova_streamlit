@@ -754,8 +754,8 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
             flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
             if flag_radio == 'Yes':
-                left1, right1 = st.columns(2)
                 con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                left1, right1 = st.columns(2)
                 with left1:
                     flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 with right1:
@@ -988,7 +988,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 set_dec_inc = set(); set_dec_ukn = set(); set_dec_dec = set()
                 
                 for var in table[table['Prob inst ' + con_checks_features] == 1][con_checks_id_col].unique():
-                    inst = table[table[con_checks_id_col] == var][conf_trend_var].values
+                    inst = table[table[con_checks_id_col] == var][conf_trend_var].values[::-1]
                     geo_mean_vec = np.delete(inst, np.where((inst == 0) | (np.isnan(inst))))
 
                     # trend classification
