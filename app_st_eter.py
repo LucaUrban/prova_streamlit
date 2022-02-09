@@ -941,7 +941,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             trend_type = st.selectbox('Choose the institution trend type you want to vizualize', list(dict_trend.keys()), 0)
             trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
             line_trend_ch_inst = px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_features, 'Reference year']], x = 'Reference year', y = con_checks_features)
-            line_trend_ch_inst.update_yaxes(range = [0, max(table[table[con_checks_id_col] == trend_inst][con_checks_features].values)])
+            line_trend_ch_inst.update_yaxes(range = [0, max(table[table[con_checks_id_col] == trend_inst][con_checks_features].values) + (.05 * max(table[table[con_checks_id_col] == trend_inst][con_checks_features].values))])
             st.plotly_chart(line_trend_ch_inst, use_container_width=True)
             
             cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
