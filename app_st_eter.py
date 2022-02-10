@@ -75,7 +75,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         ratio_num = st.sidebar.multiselect("select the ratio numerator", col_mul)
         ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
-        res_ratio = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])
+        res_ratio = pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = ['R_1'])
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
