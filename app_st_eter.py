@@ -553,15 +553,14 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
+            con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
             if flag_radio == 'Yes':
                 left1, right1 = st.columns(2)
                 with left1:
-                    con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
-                with right1:
                     flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
-            else:
-                con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                with right1:
+                    notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
             
             table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
@@ -642,14 +641,30 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             else:
                                 list_prob_cases.append(['Total', countries[i], 'All categories', str(num_app) + '%', str(num) + ' / ' + str(den)])
 
+                flag_notes_on = False
                 if flag_radio == 'Yes':
-                    # table for the accuracy etc...
-                    ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
-                    summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[con_checks_feature]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2)) + '%'], 
-                                               [str(len(dict_check_flags[con_checks_feature])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2)) + '%'], 
-                                               [str(len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
-                                               columns = ['Absolute Values', 'In percentage'], 
-                                               index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                    if table[flags_col].dtypes == 'O':
+                        if notes_col == '-':
+                            ones = set(table[(-pd.isna(table[flags_col])) & (table[flags_col] != 'p')][con_checks_id_col].values)
+                        else:
+                            flag_notes_on = True
+                            ones = set(table[(-pd.isna(table[flags_col])) & (table[flags_col] != 'p') & (pd.isna(table[notes_col]))][con_checks_id_col].values).union(set(table[table[flags_col] == 'p'][con_checks_id_col].values))
+                            twos = set(table[(-pd.isna(table[flags_col])) & (table[flags_col] != 'p') & (-pd.isna(table[notes_col]))][con_checks_id_col].values)
+                            ones = ones - (ones & twos)
+                    else:
+                        ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
+                    if flag_notes_on:
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [str(len(dict_check_flags.difference(ones.union(twos)))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
+                                                   columns = ['Absolute Values', 'In percentage'], 
+                                                   index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
+                    else:
+                        summ_table = pd.DataFrame([[str(len(ones.intersection(dict_check_flags))) + ' over ' + str(len(ones)), str(round((100 * len(ones.intersection(dict_check_flags))) / len(ones), 2)) + '%'], 
+                                                   [str(len(dict_check_flags)) + ' / ' + str(len(ones)), str(round(100 * (len(dict_check_flags) / len(ones)), 2)) + '%'], 
+                                                   [str(len(dict_check_flags.difference(ones))), str(round((100 * len(dict_check_flags.difference(ones))) / len(dict_check_flags), 2)) + '%']], 
+                                                   columns = ['Absolute Values', 'In percentage'], 
+                                                   index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                     st.table(summ_table)
                 
                 table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_feature + ' (' + str(cat) + ')' for cat in categories] + ['Total'], columns = countries + ['Total'])
@@ -752,16 +767,14 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
+            con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
             flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
             if flag_radio == 'Yes':
-                con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
                 left1, right1 = st.columns(2)
                 with left1:
                     flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
                 with right1:
                     notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
-            else:
-                con_checks_features = st.selectbox("Variables chosen for the consistency checks:", col_mul)
                 
             res_ind = dict(); table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
