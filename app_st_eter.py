@@ -606,13 +606,13 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 dict_flags[con_checks_feature] = dict()
                 for cc in countries:
                     country_table = table[table[country_sel_col] == cc][[con_checks_id_col, con_checks_feature]]
-                    inst_lower = set(country_table[country_table[con_checks_feature] <= country_table[con_checks_feature].quantile(flag_issue_quantile/100)]['ETER ID'].values)
-                    inst_upper = set(country_table[country_table[con_checks_feature] >= country_table[con_checks_feature].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
+                    inst_lower = set(country_table[country_table[con_checks_feature] <= country_table[con_checks_feature].quantile(flag_issue_quantile/100)][con_checks_id_col].values)
+                    inst_upper = set(country_table[country_table[con_checks_feature] >= country_table[con_checks_feature].quantile(1 - (flag_issue_quantile/100))][con_checks_id_col].values)
                     dict_flags[con_checks_feature][cc] = inst_lower.union(inst_upper)
                 for cat in categories:
                     cat_table = table[table[cat_sel_col] == cat][[con_checks_id_col, con_checks_feature]]
-                    inst_lower = set(cat_table[cat_table[con_checks_feature] <= cat_table[con_checks_feature].quantile(flag_issue_quantile/100)]['ETER ID'].values)
-                    inst_upper = set(cat_table[cat_table[con_checks_feature] >= cat_table[con_checks_feature].quantile(1 - (flag_issue_quantile/100))]['ETER ID'].values)
+                    inst_lower = set(cat_table[cat_table[con_checks_feature] <= cat_table[con_checks_feature].quantile(flag_issue_quantile/100)][con_checks_id_col].values)
+                    inst_upper = set(cat_table[cat_table[con_checks_feature] >= cat_table[con_checks_feature].quantile(1 - (flag_issue_quantile/100))][con_checks_id_col].values)
                     dict_flags[con_checks_feature][cat] = inst_lower.union(inst_upper)
 
                 dict_check_flags = {}; set_app = set()
