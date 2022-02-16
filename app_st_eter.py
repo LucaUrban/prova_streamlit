@@ -576,8 +576,8 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     left2, right2 = st.columns(2)
                     with left2:
                         flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
-                with right2:
-                    notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
+                    with right2:
+                        notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
             
 
             table['Class trend'] = 0
