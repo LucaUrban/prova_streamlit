@@ -549,7 +549,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             con_checks_id_col = st.sidebar.selectbox("Index col", table.columns, 0)
             country_sel_col = st.sidebar.selectbox("Country selection column", ['-'] + list(table.columns), 0)
             cat_sel_col = st.sidebar.selectbox("Category selection column", ['-'] + list(table.columns), 0)
-            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 10.0, 5.0, 0.1)
+            flag_issue_quantile = st.sidebar.number_input("Insert the quantile that will issue the flag (S2 and S3)", 0.0, 30.0, 5.0, 0.1)
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
