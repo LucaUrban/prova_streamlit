@@ -553,15 +553,33 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             prob_cases_per = st.sidebar.number_input("Insert the percentage for the problematic cases", 0.0, 100.0, 20.0)
             p_value_trend_per = st.sidebar.number_input("Insert the p-value percentage for the trend estimation", 5.0, 50.0, 10.0)
 
-            con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
-            flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
-            if flag_radio == 'Yes':
+            new_ratio_radio = st.radio("Do you want to create a new ratio or you want to use an existing one:", ('Create a new ratio', 'Existing one'))
+            if new_ratio_radio == 'Existing one':
+                con_checks_feature = st.selectbox("Variables chosen for the consistency checks:", col_mul)
+                flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
+                if flag_radio == 'Yes':
+                    left1, right1 = st.columns(2)
+                    with left1:
+                        flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+                    with right1:
+                        notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
+            else:
+                con_checks_feature = st.text_input('What is the name of the new ratio', 'R_1')
                 left1, right1 = st.columns(2)
                 with left1:
-                    flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+                    ratio_num = st.selectbox("Select the numerator column", col_mul)
                 with right1:
+                    ratio_den = st.selectbox("Select the denominator column", col_mul)
+                table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = [con_checks_feature])], axis = 1)
+                flag_radio = st.radio("Do you want to use the flags:", ('Yes', 'No'))
+                if flag_radio == 'Yes':
+                    left2, right2 = st.columns(2)
+                    with left2:
+                        flags_col = st.selectbox("Select the specific flag variable for the checks", table.columns)
+                with right2:
                     notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
             
+
             table['Class trend'] = 0
             for id_inst in table[con_checks_id_col].unique():
                 # trend classification
@@ -581,7 +599,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 2
                         if p > p_value_trend_per/100:
                             table.loc[table[table[con_checks_id_col] == id_inst].index, 'Class trend'] = 3
-                
+
             dict_flags = dict(); countries = list(table[country_sel_col].unique())
             if cat_sel_col != '-':
                 categories = list(table[cat_sel_col].unique())
@@ -654,24 +672,24 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     else:
                         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
                     if flag_notes_on:
-                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags))) / len(twos), 2)) + '%'], 
-                                                   [str(len(dict_check_flags)) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags) / len(ones.union(twos))), 2)) + '%'], 
-                                                   [str(len(dict_check_flags.difference(ones.union(twos)))), str(round((100 * len(dict_check_flags.difference(ones.union(twos)))) / len(dict_check_flags), 2)) + '%']], 
+                        summ_table = pd.DataFrame([[str(len(twos.intersection(dict_check_flags[con_checks_feature]))) + ' over ' + str(len(twos)), str(round((100 * len(twos.intersection(dict_check_flags[con_checks_feature]))) / len(twos), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[con_checks_feature])) + ' / ' + str(len(ones.union(twos))), str(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones.union(twos))), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones.union(twos)))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                     else:
-                        summ_table = pd.DataFrame([[str(len(ones.intersection(dict_check_flags))) + ' over ' + str(len(ones)), str(round((100 * len(ones.intersection(dict_check_flags))) / len(ones), 2)) + '%'], 
-                                                   [str(len(dict_check_flags)) + ' / ' + str(len(ones)), str(round(100 * (len(dict_check_flags) / len(ones)), 2)) + '%'], 
-                                                   [str(len(dict_check_flags.difference(ones))), str(round((100 * len(dict_check_flags.difference(ones))) / len(dict_check_flags), 2)) + '%']], 
+                        summ_table = pd.DataFrame([[str(len(ones.intersection(dict_check_flags[con_checks_feature]))) + ' over ' + str(len(ones)), str(round((100 * len(ones.intersection(dict_check_flags[con_checks_feature]))) / len(ones), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[con_checks_feature])) + ' / ' + str(len(ones)), str(round(100 * (len(dict_check_flags[con_checks_feature]) / len(ones)), 2)) + '%'], 
+                                                   [str(len(dict_check_flags[con_checks_feature].difference(ones))), str(round((100 * len(dict_check_flags[con_checks_feature].difference(ones))) / len(dict_check_flags[con_checks_feature]), 2)) + '%']], 
                                                    columns = ['Absolute Values', 'In percentage'], 
                                                    index = ['Accuracy respect the confirmed cases', '#application cases vs. #standard cases', 'Number of not flagged cases'])
                     st.table(summ_table)
-                
+
                 table_fin_res = pd.DataFrame(list_fin_res, index = [con_checks_feature + ' (' + str(cat) + ')' for cat in categories] + ['Total'], columns = countries + ['Total'])
                 st.table(table_fin_res)
                 st.table(pd.DataFrame(list_prob_cases, columns = ['Variable', 'Country', 'Category', '% Value', 'Absolute values']))
 
-                if len(list(table['Class trend'].unique())) != 1:
+                if len(list(table['Class trend'].unique())) > 1:
                     dict_trend = {'Strong decrease': [], 'Weak decrease': [], 'Undetermined trend': [], 'Weak increase': [], 'Strong increase': []}; set_trend = set()
                     for inst in dict_check_flags[con_checks_feature]:
                         class_tr = int(table[table[con_checks_id_col] == inst]['Class trend'].unique()[0])
@@ -680,7 +698,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                             if class_tr == 1 or class_tr == 3 or class_tr == 5:
                                 set_trend.add(inst)
                     trend_table = pd.DataFrame([len(v) for v in dict_trend.values()], index = dict_trend.keys(), columns = ['Number of institutions'])
-                    
+
                     st.table(trend_table)
                     if flag_radio == 'Yes':
                         ones = set(table[table[flags_col] == 1][con_checks_id_col].values); twos = set(table[table[flags_col] == 2][con_checks_id_col].values)
@@ -694,7 +712,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     trend_inst = st.selectbox('Choose the institution you want to vizualize', dict_trend[trend_type])
                     st.plotly_chart(px.line(table[table[con_checks_id_col] == trend_inst][[con_checks_feature, 'Reference year']], 
                                             x = 'Reference year', y = con_checks_feature), use_container_width=True)
-                
+
                 cols_pr_inst = st.multiselect('Choose the variables', col_mul); dict_pr_inst = {}
                 for col in cols_pr_inst:
                     dict_flags[col] = dict()
@@ -725,7 +743,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 dict_pr_inst = dict(sorted(dict_pr_inst.items(), key = lambda item: len(item[1]), reverse = True))
                 dict_pr_inst = {k: [len(v), ' '.join(v)] for k, v in dict_pr_inst.items()}
                 st.table(pd.DataFrame(dict_pr_inst.values(), index = dict_pr_inst.keys(), columns = ['# of problems', 'Probematic variables']).head(25))
-                
+
                 st.write('If you want to download the result file with all the issued flags you have first to choose at least the time column and then to clik on the following button:')
                 left1, right1 = st.columns(2)
                 with left1:
@@ -735,9 +753,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
 
                 t_col = [str(el) for el in sorted(table[time_col].unique())]; list_fin = []
                 if flag_radio == 'Yes':
-                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Meta flag', 'Application Flag']
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Existing flag', 'Detected case']
                 else:
-                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Application Flag']
+                    df_cols = [con_checks_id_col] + descr_col + t_col + ['Variable', 'Trend', 'Detected case']
                 for inst in sorted(list(table[con_checks_id_col].unique())):
                     df_inst = table[table[con_checks_id_col] == inst]
                     list_el = [inst]
@@ -749,13 +767,30 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                         else:
                             list_el.append(np.nan)
                     list_el.append(con_checks_feature)
-                    list_el.append(df_inst['Class trend'].unique()[0])
+                    if df_inst['Class trend'].unique()[0] == 0:
+                        list_el.append('Impossible to calculate')
+                    else:
+                        list_el.append(list(dict_trend.keys())[df_inst['Class trend'].unique()[0]-1])
                     if flag_radio == 'Yes':
-                        list_el.append(df_inst[flags_col].unique()[0])
+                        if notes_col != '-':
+                            if (inst not in ones) and (inst not in twos):
+                                list_el.append(0)
+                            if inst in ones:
+                                list_el.append(1)
+                            if inst in twos:
+                                list_el.append(2)
+                        else:
+                            if inst not in ones:
+                                list_el.append(0)
+                            else:
+                                list_el.append(1)
                     list_el.append(df_inst['Prob inst ' + con_checks_feature].unique()[0])
                     list_fin.append(list_el)
+                for i in range(len(list_fin)):
+                    if len(df_cols) != len(list_fin[i]):
+                        st.write(list_fin[i])
                 table_download = pd.DataFrame(list_fin, columns = df_cols)
-                st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')  
+                st.download_button(label = "Download data with lables", data = table_download.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
             else:
                 st.warning('you have to choose a value for the field "Category selection column".')
         else:
