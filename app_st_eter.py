@@ -91,7 +91,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             value = table[new_ratio_name].mean(),
             delta = {"reference": 2 * table[new_ratio_name].mean() - table[new_ratio_name].quantile(0.95)},
             domain = {'x': [0, 1], 'y': [0, 1]},
-            gauge = {'axis': {'range': table[new_ratio_name].min(), table[new_ratio_name].max()]},
+            gauge = {'axis': {'range': table[new_ratio_name].min(), table[new_ratio_name].max()},
                      'steps' : [
                          {'range': table[new_ratio_name].min(), table[new_ratio_name].quantile(0.05)], 'color': "lightgray"},
                          {'range': table[new_ratio_name].quantile(0.95), table[new_ratio_name].max()], 'color': "gray"}],},
