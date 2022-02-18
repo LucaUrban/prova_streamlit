@@ -76,11 +76,11 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
         if len(ratio_num) == 1 and len(ratio_den) == 1:
-            res_ratio = pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = ['R_1'])
+            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = ['R_1'])], axis = 1)
         if len(ratio_num) > 1 and len(ratio_den) == 1:
-            res_ratio = pd.DataFrame(np.divide(np.nansum(table[ratio_num].values axis = 1), table[ratio_den].values), columns = ['R_1'])
+            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), table[ratio_den].values), columns = ['R_1'])], axis = 1)
         if len(ratio_num) == 1 and len(ratio_den) > 1:
-            res_ratio = pd.DataFrame(np.divide(table[ratio_num].values, np.nansum(table[ratio_den].values), axis = 1), columns = ['R_1'])
+            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])], axis = 1)
         if len(ratio_num) > 1 and len(ratio_den) > 1:
             table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])], axis = 1)
         
