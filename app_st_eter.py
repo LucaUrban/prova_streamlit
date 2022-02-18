@@ -127,14 +127,14 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                                     hover_data = 'Institution Name')
             else:
                 fig_vio = px.violin(table, y = new_ratio_name, color = table[ratio_vio_sel2], box = True, points = 'suspectedoutliers', 
-                                    title = 'Violin plot for the created ratio', hover_data = table['Institution Name'])
+                                    title = 'Violin plot for the created ratio', hover_data = 'Institution Name')
         else:
             if ratio_vio_sel2 == '-':
                 fig_vio = px.violin(table[table['Sel'] == cou_sel], y = new_ratio_name, x = 'Sel', box = True, points = 'suspectedoutliers', 
-                                    title = 'Violin plot for the created ratio', hover_data = table['Institution Name'])
+                                    title = 'Violin plot for the created ratio', hover_data = 'Institution Name')
             else:
                 fig_vio = px.violin(table[table['Sel'] == cou_sel], y = new_ratio_name, x = 'Sel', color = table[ratio_vio_sel2], box = True, points = 'suspectedoutliers', 
-                                    title = 'Violin plot for the created ratio', hover_data = table['Institution Name'])
+                                    title = 'Violin plot for the created ratio', hover_data = 'Institution Name')
         st.plotly_chart(fig_vio, use_container_width=True)
     
     if widget == "Multidimensional Analysis":
