@@ -109,7 +109,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         table['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         res = {ratio_vio_sel1: table[ratio_vio_sel1].unique(), 'R_1': []}
         for nut_id in res[ratio_vio_sel1]:
-                  res['R_1'].append(res_ratio[table['Sel'] == nut_id]['R_1'].mean())
+                  res['R_1'].append(table[table['Sel'] == nut_id]['R_1'].mean())
         res = pd.DataFrame(res)
 
         px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
