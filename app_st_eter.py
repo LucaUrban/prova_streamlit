@@ -75,14 +75,16 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         ratio_num = st.sidebar.multiselect("select the ratio numerator", col_mul)
         ratio_den = st.sidebar.multiselect("select the ratio denominator", col_mul)
         
+        new_ratio_name = st.text_input('Write here the name of the new ratio', 'R_1')
+        
         if len(ratio_num) == 1 and len(ratio_den) == 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = ['R_1'])], axis = 1)
+            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = [new_ratio_name])], axis = 1)
         if len(ratio_num) > 1 and len(ratio_den) == 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), table[ratio_den].values), columns = ['R_1'])], axis = 1)
+            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), table[ratio_den].values), columns = [new_ratio_name])], axis = 1)
         if len(ratio_num) == 1 and len(ratio_den) > 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])], axis = 1)
+            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, np.nansum(table[ratio_den].values, axis = 1)), columns = [new_ratio_name])], axis = 1)
         if len(ratio_num) > 1 and len(ratio_den) > 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = ['R_1'])], axis = 1)
+            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = [new_ratio_name])], axis = 1)
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
@@ -571,7 +573,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                     with right1:
                         notes_col = st.selectbox("Select the specific flag notes variable for the checks", ['-'] + list(table.columns))
             else:
-                con_checks_feature = st.text_input('What is the name of the new ratio', 'R_1')
+                con_checks_feature = st.text_input('Write here the name of the new ratio', 'R_1')
                 left1, right1 = st.columns(2)
                 with left1:
                     ratio_num = st.selectbox("Select the numerator column", col_mul)
