@@ -100,7 +100,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         with left: 
             ratio_vio_sel1 = st.selectbox("multivariable index col", table.columns, 0)
         with right:
-            ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + list(table.columns), 0)
+            ratio_vio_sel2 = st.selectbox("multivariable index col", ['-'] + list(table.columns), 0)
         
         table['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
         res = {ratio_vio_sel1: table[ratio_vio_sel1].unique(), 'R_1': []}
@@ -120,22 +120,20 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         st.plotly_chart(map_box, use_container_width=True)
         
         uniques = list(table['Sel'].unique())
-        cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
+        cou_sel = st.selectbox("Choose the specific id you want to explore", ['All ids'] + uniques, 0)
         res_ratio['Un Name'] = table['Institution Name']
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == 'None':
-                fig_vio = px.violin(res_ratio, y = "R_1", box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
+                fig_vio = px.violin(table, y = new_ratio_name, box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
             else:
-                res_ratio['Color'] = table[ratio_vio_sel2]
-                fig_vio = px.violin(res_ratio, y = "R_1", color = 'Color', box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', 
-                                    hover_data = ['Un Name'])
+                fig_vio = px.violin(table, y = new_ratio_name, color = table[ratio_vio_sel2], box = True, points = 'suspectedoutliers', 
+                                    title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
         else:
             if ratio_vio_sel2 == 'None':
-                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', box = True, points = 'suspectedoutliers', 
+                fig_vio = px.violin(table[table['Sel'] == cou_sel], y = new_ratio_name, x = 'Sel', box = True, points = 'suspectedoutliers', 
                                     title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
             else:
-                res_ratio['Color'] = table[ratio_vio_sel2]
-                fig_vio = px.violin(res_ratio[res_ratio['Sel'] == cou_sel], y = "R_1", x = 'Sel', color = 'Color', box = True, points = 'suspectedoutliers', 
+                fig_vio = px.violin(table[table['Sel'] == cou_sel], y = new_ratio_name, x = 'Sel', color = table[ratio_vio_sel2], box = True, points = 'suspectedoutliers', 
                                     title = 'Violin plot for the created ratio', hover_data = ['Un Name'])
         st.plotly_chart(fig_vio, use_container_width=True)
     
