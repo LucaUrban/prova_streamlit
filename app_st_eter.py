@@ -88,13 +88,13 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         
         ratio_plot = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
-            value = res_ratio['R_1'].mean(),
-            delta = {"reference": 2 * res_ratio['R_1'].mean() - res_ratio['R_1'].quantile(0.95)},
+            value = table[new_ratio_name].mean(),
+            delta = {"reference": 2 * table[new_ratio_name].mean() - table[new_ratio_name].quantile(0.95)},
             domain = {'x': [0, 1], 'y': [0, 1]},
-            gauge = {'axis': {'range': [res_ratio['R_1'].min(), res_ratio['R_1'].max()]},
+            gauge = {'axis': {'range': table[new_ratio_name].min(), table[new_ratio_name].max()]},
                      'steps' : [
-                         {'range': [res_ratio['R_1'].min(), res_ratio['R_1'].quantile(0.05)], 'color': "lightgray"},
-                         {'range': [res_ratio['R_1'].quantile(0.95), res_ratio['R_1'].max()], 'color': "gray"}],},
+                         {'range': table[new_ratio_name].min(), table[new_ratio_name].quantile(0.05)], 'color': "lightgray"},
+                         {'range': table[new_ratio_name].quantile(0.95), table[new_ratio_name].max()], 'color': "gray"}],},
             title = {'text': "Gauge plot for the variable: R_1"}))
         
         st.plotly_chart(ratio_plot, use_container_width=True)
@@ -106,24 +106,24 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         with right:
             ratio_vio_sel2 = st.selectbox("multivariable index col", ['None'] + list(table.columns), 0)
         
-        res_ratio['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
-        res = {ratio_vio_sel1: res_ratio['Sel'].unique(), 'R_1': []}
+        table['Sel'] = table[ratio_vio_sel1].str.slice(0, 2).values
+        res = {ratio_vio_sel1: table[ratio_vio_sel1].unique(), 'R_1': []}
         for nut_id in res[ratio_vio_sel1]:
-                  res['R_1'].append(res_ratio[res_ratio['Sel'] == nut_id]['R_1'].mean())
+                  res['R_1'].append(res_ratio[table['Sel'] == nut_id]['R_1'].mean())
         res = pd.DataFrame(res)
 
         px.set_mapbox_access_token("pk.eyJ1IjoibHVjYXVyYmFuIiwiYSI6ImNrZm5seWZnZjA5MjUydXBjeGQ5ZDBtd2UifQ.T0o-wf5Yc0iTSeq-A9Q2ww")
         map_box = px.choropleth_mapbox(res, geojson = eu_nut0, locations = res[ratio_vio_sel1], featureidkey = 'properties.ISO2',
                                        color = 'R_1', color_continuous_scale = px.colors.cyclical.IceFire,
-                                       range_color = (res_ratio['R_1'].min(), res_ratio['R_1'].max()),
+                                       range_color = (table[new_ratio_name].min(), table[new_ratio_name].max()),
                                        mapbox_style = "carto-positron",
                                        zoom = 3, center = {"lat": 47.42, "lon": 15.53},
                                        opacity = 0.5,
-                                       labels = {'R_1': 'R_1'})
+                                       labels = {new_ratio_name: new_ratio_name})
 
         st.plotly_chart(map_box, use_container_width=True)
         
-        uniques = list(res_ratio['Sel'].unique())
+        uniques = list(table['Sel'].unique())
         cou_sel = st.selectbox("Choose the id of the country you want to explore", ['All ids'] + uniques, 0)
         res_ratio['Un Name'] = table['Institution Name']
         if cou_sel == 'All ids':
