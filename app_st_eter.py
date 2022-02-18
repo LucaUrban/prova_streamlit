@@ -135,6 +135,9 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
                 fig_vio = px.violin(table[table['Sel'] == cou_sel], y = new_ratio_name, x = 'Sel', color = table[table['Sel'] == cou_sel][ratio_vio_sel2], 
                                     box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio')
         st.plotly_chart(fig_vio, use_container_width=True)
+
+        st.write('If you want to download the result file with the new ratio clik on the following button:')
+        st.download_button(label = "Download data with lables", data = table.to_csv(index = None, sep = ';').encode('utf-8'), file_name = 'result.csv', mime = 'text/csv')
     
     if widget == "Multidimensional Analysis":
         # multi variable analysis part
