@@ -79,11 +79,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         
         if len(ratio_num) == 1 and len(ratio_den) == 1:
             table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, table[ratio_den].values), columns = [new_ratio_name])], axis = 1)
-        if len(ratio_num) > 1 and len(ratio_den) == 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), table[ratio_den].values), columns = [new_ratio_name])], axis = 1)
-        if len(ratio_num) == 1 and len(ratio_den) > 1:
-            table = pd.concat([table, pd.DataFrame(np.divide(table[ratio_num].values, np.nansum(table[ratio_den].values, axis = 1)), columns = [new_ratio_name])], axis = 1)
-        if len(ratio_num) > 1 and len(ratio_den) > 1:
+        else:
             table = pd.concat([table, pd.DataFrame(np.divide(np.nansum(table[ratio_num].values, axis = 1), np.nansum(table[ratio_den].values, axis = 1)), columns = [new_ratio_name])], axis = 1)
         
         ratio_plot = go.Figure(go.Indicator(
