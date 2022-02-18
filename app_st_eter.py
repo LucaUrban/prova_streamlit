@@ -93,8 +93,8 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
             domain = {'x': [0, 1], 'y': [0, 1]},
             gauge = {'axis': {'range': [table[new_ratio_name].min(), table[new_ratio_name].max()]},
                      'steps' : [
-                         {'range': table[new_ratio_name].min(), table[new_ratio_name].quantile(0.05)], 'color': "lightgray"},
-                         {'range': table[new_ratio_name].quantile(0.95), table[new_ratio_name].max()], 'color': "gray"}],},
+                         {'range': [table[new_ratio_name].min(), table[new_ratio_name].quantile(0.05)], 'color': "lightgray"},
+                         {'range': [table[new_ratio_name].quantile(0.95), table[new_ratio_name].max()], 'color': "gray"}],},
             title = {'text': "Gauge plot for the variable: R_1"}))
         
         st.plotly_chart(ratio_plot, use_container_width=True)
