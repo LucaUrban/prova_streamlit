@@ -123,8 +123,7 @@ if demo_data_radio == 'Demo datset' or uploaded_file is not None:
         cou_sel = st.selectbox("Choose the specific id you want to explore", ['All ids'] + uniques, 0)
         if cou_sel == 'All ids':
             if ratio_vio_sel2 == '-':
-                fig_vio = px.violin(table, y = new_ratio_name, box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio', 
-                                    hover_data = table['Institution Name'])
+                fig_vio = px.violin(table, y = new_ratio_name, box = True, points = 'suspectedoutliers', title = 'Violin plot for the created ratio')
             else:
                 fig_vio = px.violin(table, y = new_ratio_name, color = table[ratio_vio_sel2], box = True, points = 'suspectedoutliers', 
                                     title = 'Violin plot for the created ratio', hover_data = table['Institution Name'])
